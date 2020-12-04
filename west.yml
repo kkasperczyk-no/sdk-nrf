@@ -33,6 +33,8 @@ manifest:
       url-base: https://github.com/nanopb
     - name: alexa
       url-base: https://github.com/alexa
+    - name: connectedhomeip
+      url-base: https://github.com/project-chip
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -104,6 +106,18 @@ manifest:
       path: nrfxlib
       revision: 801f484e5cf4e9b2207583c08e0eab52ab4aadb2
     # Other third-party repositories.
+    - name: connectedhomeip
+      revision: c4aeea05df53c1e30f2a6c990e7d3d13a7095bc0
+      path: modules/lib/connectedhomeip
+      # TODO: replace it with repo-path: sdk-connectedhomeip after creating CHIP fork in NCS repo.
+      remote: connectedhomeip
+      submodules:
+          - name: nlio
+            path: third_party/nlio/repo
+          - name: nlassert
+            path: third_party/nlassert/repo
+          - name: pigweed
+            path: third_party/pigweed/repo
     - name: cmock
       path: test/cmock
       revision: c243b9a7a7b3c471023193992b46cf1bd1910450
