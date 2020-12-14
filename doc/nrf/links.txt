@@ -500,6 +500,10 @@
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
 
+.. _`Connected Home over IP`: https://www.connectedhomeip.com/
+.. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/master/src/android/CHIPTool
+.. _`Commissioning nRF Connect Accessory using Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/master/docs/guides/nrfconnect_android_commissioning.md
+
 .. _`BH1749NUC-E`: https://www.rohm.com/datasheet/BH1749NUC/bh1749nuc-e
 
 .. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
