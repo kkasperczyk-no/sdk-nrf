@@ -64,6 +64,13 @@ HTTP Update
   * Extracted certificate, button, and LED handling functionality from :ref:`http_application_update_sample` to :file:`samples/nrf9160/http_update/common`, to share them with :ref:`http_modem_delta_update_sample`.
   * Moved the :ref:`http_application_update_sample` sample from :file:`samples/nrf9160/http_application_update/` to :file:`samples/nrf9160/http_update/application_update`
 
+Connected Home over IP (CHIP)
+-----------------------------
+
+* Added:
+
+  * New :ref:`Bolt lock <chip_lock_sample>` sample.
+
 Thread
 ------
 
