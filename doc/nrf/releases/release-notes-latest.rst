@@ -30,6 +30,13 @@ nRF5340 SoC
   * ``bl_boot`` library - Disabled clock interrupts before booting the application.
     This change fixes an issue where the :ref:`bootloader` sample would not be able to boot a Zephyr application on the nRF5340 SoC.
 
+Connected Home over IP (CHIP)
+-----------------------------
+
+* Added:
+
+  * New :ref:`Bolt lock <chip_lock_sample>` sample.
+
 Thread
 ------
 

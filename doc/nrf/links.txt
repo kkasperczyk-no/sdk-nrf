@@ -305,6 +305,7 @@
 
 .. _`AWS IoT Just-in-time-provisioning`: https://aws.amazon.com/blogs/iot/just-in-time-registration-of-device-certificates-on-aws-iot/
 
+.. _`Connected Home over IP`: https://www.connectedhomeip.com/
 
 .. ### Links to Bluetooth specs
 
@@ -546,6 +547,8 @@
 
 .. _`TF-M documentation`: https://ci-builds.trustedfirmware.org/static-files/DkdCrQzFZSnnOE237JnAP31qbSUWnEhVzQwxZ_NIpaExNjA2NDMwMTIxODMyOjk6YW5vbnltb3VzOnZpZXcvVEYtTS9qb2IvdGYtbS1idWlsZC1kb2NzLW5pZ2h0bHkvbGFzdFN0YWJsZUJ1aWxkL2FydGlmYWN0/trusted-firmware-m/build/install/doc/user_guide/html/docs/introduction/readme.html
 
+.. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/master/src/android/CHIPTool
+.. _`Commissioning nRF Connect Accessory using Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/master/docs/guides/nrfconnect_android_commissioning.md
 
 .. ### Links to specific files on GitHub
 
