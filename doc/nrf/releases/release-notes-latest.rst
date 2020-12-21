@@ -45,6 +45,15 @@ nRF5340 SoC
   * ``bl_boot`` library - Disabled clock interrupts before booting the application.
     This change fixes an issue where the :ref:`bootloader` sample would not be able to boot a Zephyr application on the nRF5340 SoC.
 
+Connected Home over IP (CHIP)
+-----------------------------
+
+* CHIP is now supported for development as an |NCS| submodule.
+* Added:
+
+  * :ref:`ug_chip` protocol user guide
+  * :ref:`Bolt lock <chip_lock_sample>` sample
+
 DFU Target
 ----------
 
@@ -63,13 +72,6 @@ HTTP Update
 
   * Extracted certificate, button, and LED handling functionality from :ref:`http_application_update_sample` to :file:`samples/nrf9160/http_update/common`, to share them with :ref:`http_modem_delta_update_sample`.
   * Moved the :ref:`http_application_update_sample` sample from :file:`samples/nrf9160/http_application_update/` to :file:`samples/nrf9160/http_update/application_update`
-
-Connected Home over IP (CHIP)
------------------------------
-
-* Added:
-
-  * New :ref:`Bolt lock <chip_lock_sample>` sample.
 
 Thread
 ------
@@ -517,3 +519,19 @@ The following list summarizes the most important changes inherited from upstream
 
   * Added initial LoRaWAN support.
   * Updated ``west flash`` support for ``nrfjprog`` to fail if a HEX file has UICR data and ``--erase`` was not specified.
+
+Documentation
+=============
+
+In addition to documentation related to the changes listed above, the following documentation has been updated:
+
+User guides
+-----------
+
+* :ref:`ug_nrf52` - updated with information about support for CHIP
+
+Known issues
+************
+
+Known issues are only tracked for the latest official release.
+See `known issues for nRF Connect SDK v1.4.1`_ for the list of issues valid for this release.
