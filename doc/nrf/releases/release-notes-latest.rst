@@ -32,7 +32,6 @@ nRF52832 SoC
     * Removed support for nRF52832 revision 1 workarounds for Errata 102, Errata 106, and Errata 107.
     * Removed support for nRF52832 revision 2 workarounds for Errata 143.
 
-
 nRF5340 SoC
 -----------
 
