@@ -219,6 +219,51 @@ Therefore, remember to regularly check for updates:
          pip3 install -U west
 
 
+Installing additional toolchains for Connected Home over IP applications development
+====================================================================================
+
+.. note::
+   If you are not interested in the `Connected Home over IP`_ applications, you can ommit steps presented in this section.
+
+`Connected Home over IP`_ project is using `GN`_ meta-build system to generate files for `Ninja`_ and both tools are necessary in order to build an applications.
+However Ninja is also required tool for Zephyr, so it is assumed that it should be installed with the rest of Zephyr's dependencies and GN is the only missing |NCS| requirement.
+
+.. note::
+   Connected Home over IP project supports only Linux and macOS platforms. Windows platform is not available.
+
+Download GN binary archive by entering the following commands:
+
+.. tabs::
+
+   .. group-tab:: Linux
+
+      .. parsed-literal::
+         :class: highlight
+
+         wget -O gn_archive https://chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+/latest
+
+   .. group-tab:: macOS
+
+      .. parsed-literal::
+         :class: highlight
+
+         wget -O gn_archive https://chrome-infra-packages.appspot.com/dl/gn/gn/mac-amd64/+/latest
+
+Extract GN archive:
+
+   .. parsed-literal::
+      :class: highlight
+
+      unzip gn_archive
+
+Put GN location into the system PATH, by invoking following command in the directory with extracted executable file:
+
+   .. parsed-literal::
+      :class: highlight
+
+      echo "export PATH=$PWD:$PATH" >> $HOME/.bashrc
+
+
 Cloning the repositories
 ========================
 
