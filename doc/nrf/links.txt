@@ -516,3 +516,7 @@
 .. _`Baltimore CyberTrust Root certificate`: https://www.digicert.com/CACerts/BaltimoreCyberTrustRoot.crt.pem
 
 .. _`SKY66112-11 page`: https://www.skyworksinc.com/en/Products/Front-end-Modules/SKY66112-11
+
+.. _`GN` : https://gn.googlesource.com/gn/
+
+.. _`Ninja` : https://ninja-build.org/
