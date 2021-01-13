@@ -14,10 +14,7 @@ struct k_timer;
 
 class BoltLockManager {
 public:
-	enum class Action : uint8_t {
-		Lock,
-		Unlock
-	};
+	enum class Action : uint8_t { Lock, Unlock };
 
 	void Init();
 
@@ -25,15 +22,10 @@ public:
 	bool IsActionInProgress();
 
 	bool InitiateAction(Action action, bool chipInitiated);
-	bool CompleteCurrentAction(bool& chipInitiated);
+	bool CompleteCurrentAction(bool &chipInitiated);
 
 private:
-	enum class State : uint8_t {
-		LockingInitiated = 0,
-		LockingCompleted,
-		UnlockingInitiated,
-		UnlockingCompleted
-	};
+	enum class State : uint8_t { LockingInitiated = 0, LockingCompleted, UnlockingInitiated, UnlockingCompleted };
 
 	static constexpr uint32_t ACTUATOR_MOVEMENT_PERIOS_MS = 2000;
 
@@ -42,7 +34,7 @@ private:
 
 	static void ActuatorTimerHandler(k_timer *timer);
 
-	friend BoltLockManager & BoltLockMgr();
+	friend BoltLockManager &BoltLockMgr();
 
 	State mState;
 	bool mChipInitiatedAction;
@@ -50,7 +42,7 @@ private:
 	static BoltLockManager sLock;
 };
 
-inline BoltLockManager & BoltLockMgr()
+inline BoltLockManager &BoltLockMgr()
 {
 	return BoltLockManager::sLock;
 }

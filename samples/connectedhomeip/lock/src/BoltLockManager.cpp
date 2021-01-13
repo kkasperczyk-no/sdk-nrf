@@ -65,7 +65,7 @@ bool BoltLockManager::InitiateAction(Action action, bool chipInitiated)
 	return true;
 }
 
-bool BoltLockManager::CompleteCurrentAction(bool& chipInitiated)
+bool BoltLockManager::CompleteCurrentAction(bool &chipInitiated)
 {
 	switch (mState) {
 	case State::LockingInitiated:

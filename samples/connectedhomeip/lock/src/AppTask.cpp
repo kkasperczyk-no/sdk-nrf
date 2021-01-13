@@ -32,7 +32,8 @@ using namespace ::chip::DeviceLayer;
 LOG_MODULE_DECLARE(app);
 K_MSGQ_DEFINE(sAppEventQueue, sizeof(AppEvent), AppTask::APP_EVENT_QUEUE_SIZE, alignof(AppEvent));
 
-namespace {
+namespace
+{
 LEDWidget sStatusLED;
 LEDWidget sLockLED;
 
@@ -151,7 +152,7 @@ int AppTask::StartApp()
 	}
 }
 
-void AppTask::PostEvent(const AppEvent& aEvent)
+void AppTask::PostEvent(const AppEvent &aEvent)
 {
 	if (k_msgq_put(&sAppEventQueue, &aEvent, K_NO_WAIT)) {
 		LOG_INF("Failed to post event to app task event queue");
@@ -163,15 +164,15 @@ void AppTask::UpdateClusterState()
 	uint8_t newValue = !BoltLockMgr().IsUnlocked();
 
 	// write the new on/off value
-	EmberAfStatus status = emberAfWriteAttribute(1, ZCL_ON_OFF_CLUSTER_ID, ZCL_ON_OFF_ATTRIBUTE_ID, CLUSTER_MASK_SERVER, &newValue,
-						     ZCL_BOOLEAN_ATTRIBUTE_TYPE);
+	EmberAfStatus status = emberAfWriteAttribute(1, ZCL_ON_OFF_CLUSTER_ID, ZCL_ON_OFF_ATTRIBUTE_ID,
+						     CLUSTER_MASK_SERVER, &newValue, ZCL_BOOLEAN_ATTRIBUTE_TYPE);
 
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating on/off cluster failed: %x", status);
 	}
 }
 
-void AppTask::DispatchEvent(const AppEvent& aEvent)
+void AppTask::DispatchEvent(const AppEvent &aEvent)
 {
 	switch (aEvent.Type) {
 	case AppEvent::Lock:
@@ -181,7 +182,8 @@ void AppTask::DispatchEvent(const AppEvent& aEvent)
 		LockActionHandler(BoltLockManager::Action::Unlock, aEvent.LockEvent.ChipInitiated);
 		break;
 	case AppEvent::Toggle:
-		LockActionHandler(BoltLockMgr().IsUnlocked() ? BoltLockManager::Action::Lock : BoltLockManager::Action::Unlock,
+		LockActionHandler(BoltLockMgr().IsUnlocked() ? BoltLockManager::Action::Lock :
+							       BoltLockManager::Action::Unlock,
 				  aEvent.LockEvent.ChipInitiated);
 		break;
 	case AppEvent::CompleteLockAction:

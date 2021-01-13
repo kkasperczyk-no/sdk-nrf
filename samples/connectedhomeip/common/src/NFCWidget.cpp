@@ -11,7 +11,7 @@
 #include <nfc_t2t_lib.h>
 #include <zephyr.h>
 
-int NFCWidget::Init(chip::DeviceLayer::ConnectivityManager & mgr)
+int NFCWidget::Init(chip::DeviceLayer::ConnectivityManager &mgr)
 {
 	mIsTagStarted = false;
 	return nfc_t2t_setup(FieldDetectionHandler, &mgr);
@@ -22,8 +22,8 @@ int NFCWidget::StartTagEmulation(const char *tagPayload, uint8_t tagPayloadLengt
 	uint32_t len = sizeof(mNdefBuffer);
 	int result = 0;
 
-	result =
-		nfc_ndef_uri_msg_encode(NFC_URI_NONE, reinterpret_cast<const uint8_t *>(tagPayload), tagPayloadLength, mNdefBuffer, &len);
+	result = nfc_ndef_uri_msg_encode(NFC_URI_NONE, reinterpret_cast<const uint8_t *>(tagPayload), tagPayloadLength,
+					 mNdefBuffer, &len);
 	VerifyOrExit(result >= 0, ChipLogProgress(AppServer, "nfc_ndef_uri_msg_encode failed: %d", result));
 
 	result = nfc_t2t_payload_set(mNdefBuffer, len);

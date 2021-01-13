@@ -9,22 +9,13 @@
 #include <cstdint>
 
 struct AppEvent {
-	enum LockEventType : uint8_t {
-		Lock,
-		Unlock,
-		Toggle,
-		CompleteLockAction
-	};
+	enum LockEventType : uint8_t { Lock, Unlock, Toggle, CompleteLockAction };
 
-	enum OtherEventType : uint8_t {
-		FactoryReset = CompleteLockAction + 1,
-		StartThread,
-		StartBleAdvertising
-	};
+	enum OtherEventType : uint8_t { FactoryReset = CompleteLockAction + 1, StartThread, StartBleAdvertising };
 
 	AppEvent() = default;
 
-	AppEvent(LockEventType type, bool chipInitiated) : Type(type), LockEvent{chipInitiated}
+	AppEvent(LockEventType type, bool chipInitiated) : Type(type), LockEvent{ chipInitiated }
 	{
 	}
 

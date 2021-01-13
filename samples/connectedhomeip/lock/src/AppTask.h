@@ -19,13 +19,13 @@ public:
 
 	int StartApp();
 
-	void PostEvent(const AppEvent& aEvent);
+	void PostEvent(const AppEvent &aEvent);
 	void UpdateClusterState();
 
 private:
 	int Init();
 
-	void DispatchEvent(const AppEvent& event);
+	void DispatchEvent(const AppEvent &event);
 	void LockActionHandler(BoltLockManager::Action action, bool chipInitiated);
 	void CompleteLockActionHandler();
 	void StartThreadHandler();
@@ -38,12 +38,12 @@ private:
 	static void ButtonEventHandler(uint32_t buttons_state, uint32_t has_changed);
 	static void ThreadProvisioningHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 
-	friend AppTask & GetAppTask();
+	friend AppTask &GetAppTask();
 
 	static AppTask sAppTask;
 };
 
-inline AppTask & GetAppTask()
+inline AppTask &GetAppTask()
 {
 	return AppTask::sAppTask;
 }

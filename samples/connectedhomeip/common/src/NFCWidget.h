@@ -12,7 +12,7 @@
 
 class NFCWidget {
 public:
-	int Init(chip::DeviceLayer::ConnectivityManager & mgr);
+	int Init(chip::DeviceLayer::ConnectivityManager &mgr);
 	int StartTagEmulation(const char *tagPayload, uint8_t tagPayloadLength);
 	int StopTagEmulation();
 	bool IsTagEmulationStarted() const;
