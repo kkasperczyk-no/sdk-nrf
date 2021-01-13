@@ -21,16 +21,13 @@ target_sources(app PRIVATE
                src/gen/call-command-handler.cpp
                src/gen/callback-stub.cpp
                src/main.cpp
-               src/server/DataModelHandler.cpp
-               src/server/QRCodeUtil.cpp
-               src/server/RendezvousServer.cpp
-               src/server/Server.cpp
-               src/server/ZclCallbacks.cpp
+               src/ZclCallbacks.cpp
                ${COMMON_ROOT}/src/LEDWidget.cpp
                ${COMMON_ROOT}/src/NFCWidget.cpp
                ${COMMON_ROOT}/src/ThreadUtil.cpp
                ${CHIP_ROOT}/src/app/reporting/reporting-default-configuration.cpp
                ${CHIP_ROOT}/src/app/reporting/reporting.cpp
+               ${CHIP_ROOT}/src/app/server/DataModelHandler.cpp
                ${CHIP_ROOT}/src/app/util/af-event.cpp
                ${CHIP_ROOT}/src/app/util/af-main-common.cpp
                ${CHIP_ROOT}/src/app/util/attribute-size.cpp
@@ -44,4 +41,5 @@ target_sources(app PRIVATE
                ${CHIP_ROOT}/src/app/util/process-cluster-message.cpp
                ${CHIP_ROOT}/src/app/util/process-global-message.cpp
                ${CHIP_ROOT}/src/app/util/util.cpp
+               ${CHIP_ROOT}/src/app/clusters/bindings/bindings.cpp
                ${CHIP_ROOT}/src/app/clusters/on-off-server/on-off.cpp)
