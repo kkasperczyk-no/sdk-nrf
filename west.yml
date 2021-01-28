@@ -116,7 +116,7 @@ manifest:
     - name: connectedhomeip
       repo-path: sdk-connectedhomeip
       path: modules/lib/connectedhomeip
-      revision: b430c424ab62438fffae71c9bd2f23d3f0d442d2
+      revision: ff13bdcd03a7e1da7539e75578f0dc069e5e4d76
     # Other third-party repositories.
     - name: cmock
       path: test/cmock

@@ -9,7 +9,8 @@ cmake_minimum_required(VERSION 3.13.1)
 get_filename_component(CHIP_ROOT ../../../../modules/lib/connectedhomeip REALPATH)
 get_filename_component(COMMON_ROOT ../common REALPATH)
 
-include(${CHIP_ROOT}/config/nrfconnect/app/app.cmake)
+list(APPEND ZEPHYR_EXTRA_MODULES ${CHIP_ROOT}/config/nrfconnect/chip-module)
+find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(chip-lock)
 
