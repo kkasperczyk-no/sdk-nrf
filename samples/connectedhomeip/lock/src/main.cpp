@@ -30,16 +30,30 @@ int main()
 		return ret;
 	}
 
+	ret = PlatformMgr().StartEventLoopTask();
+	if (ret != CHIP_NO_ERROR) {
+		LOG_ERR("PlatformMgr().StartEventLoopTask() failed");
+		return ret;
+	}
+
 	ret = ThreadStackMgr().InitThreadStack();
 	if (ret != CHIP_NO_ERROR) {
 		LOG_ERR("ThreadStackMgr().InitThreadStack() failed");
 		return ret;
 	}
 
-	ret = PlatformMgr().StartEventLoopTask();
-	if (ret != CHIP_NO_ERROR) {
-		LOG_ERR("PlatformMgr().StartEventLoopTask() failed");
-		return ret;
+	/* Until all CHIP data needed to perform full communication are not saved in the persistent storage,
+	 * Thread configuration should not be saved either.
+	 * TODO: Remove it after having full support for persistent storage in CHIP */
+	if(otDatasetIsCommissioned(openthread_get_default_instance())) {
+		ConnectivityMgr().ErasePersistentInfo();
+	}
+
+	ret = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
+	if (ret != CHIP_NO_ERROR)
+	{
+	    LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed");
+	    return ret;
 	}
 
 	return GetAppTask().StartApp();
