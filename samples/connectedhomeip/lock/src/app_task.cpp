@@ -27,6 +27,8 @@
 #include <logging/log.h>
 #include <zephyr.h>
 
+#include <algorithm>
+
 using namespace ::chip::DeviceLayer;
 
 LOG_MODULE_DECLARE(app);
@@ -243,8 +245,13 @@ void AppTask::StartThreadHandler()
 
 void AppTask::StartBLEAdvertisingHandler()
 {
+	if (chip::DeviceLayer::ConnectivityMgr().IsThreadProvisioned()) {
+		LOG_INF("NFC Tag emulation and BLE advertisement not started - device is commissioned to a Thread network.");
+		return;
+	}
+
 	if (!sNFC.IsTagEmulationStarted()) {
-		if (!(StartNFCTag() < 0)) {
+		if (!(GetAppTask().StartNFCTag() < 0)) {
 			LOG_INF("Started NFC Tag emulation");
 		} else {
 			LOG_ERR("Starting NFC Tag failed");
@@ -253,11 +260,15 @@ void AppTask::StartBLEAdvertisingHandler()
 		LOG_INF("NFC Tag emulation is already started");
 	}
 
-	if (!ConnectivityMgr().IsBLEAdvertisingEnabled()) {
-		ConnectivityMgr().SetBLEAdvertisingEnabled(true);
-		LOG_INF("Enabled BLE Advertising");
+	if (ConnectivityMgr().IsBLEAdvertisingEnabled()) {
+		LOG_INF("BLE Advertisement is already enabled");
+		return;
+	}
+
+	if (OpenDefaultPairingWindow() == CHIP_NO_ERROR) {
+		LOG_INF("Enabled BLE Advertisement");
 	} else {
-		LOG_INF("BLE Advertising is already enabled");
+		LOG_ERR("OpenDefaultPairingWindow() failed");
 	}
 }
 
@@ -268,8 +279,9 @@ int AppTask::StartNFCTag()
 	std::string QRCode;
 
 	int result = GetQRCode(QRCode, chip::RendezvousInformationFlags::kBLE);
-
 	VerifyOrExit(!result, ChipLogError(AppServer, "Getting QR code payload failed"));
+
+	std::replace(QRCode.begin(), QRCode.end(), ' ', '_');
 
 	result = sNFC.StartTagEmulation(QRCode.c_str(), QRCode.size());
 	VerifyOrExit(result >= 0, ChipLogError(AppServer, "Starting NFC Tag emulation failed"));
