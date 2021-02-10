@@ -48,8 +48,6 @@ LightBulbPublishService sLightBulbPublishService;
 
 bool sIsThreadProvisioned;
 bool sIsThreadEnabled;
-bool sIsThreadAttached;
-bool sIsPairedToAccount;
 bool sHaveBLEConnections;
 bool sHaveServiceConnectivity;
 } /* namespace */
@@ -124,15 +122,10 @@ int AppTask::StartApp()
 		if (PlatformMgr().TryLockChipStack()) {
 			sIsThreadProvisioned = ConnectivityMgr().IsThreadProvisioned();
 			sIsThreadEnabled = ConnectivityMgr().IsThreadEnabled();
-			sIsThreadAttached = ConnectivityMgr().IsThreadAttached();
 			sHaveBLEConnections = (ConnectivityMgr().NumBLEConnections() != 0);
 			sHaveServiceConnectivity = ConnectivityMgr().HaveServiceConnectivity();
 			PlatformMgr().UnlockChipStack();
 		}
-
-		/* Consider the system to be "fully connected" if it has service
-		 * connectivity and it is able to interact with the service on a regular basis. */
-		bool isFullyConnected = sHaveServiceConnectivity;
 
 		/* Update the status LED.
 		 *
@@ -142,13 +135,13 @@ int AppTask::StartApp()
 		 * connectivity to the service OR subscriptions are not fully established
 		 * THEN blink the LED Off for a short period of time.
 		 *
-		 * If the system has ble connection(s) uptill the stage above, THEN blink the LEDs at an even
+		 * If the system has ble connection(s) uptill the stage above, THEN blink the LED at an even
 		 * rate of 100ms.
 		 *
-		 * Otherwise, blink the LED ON for a very short time. */
-		if (isFullyConnected) {
+		 * Otherwise, blink the LED On for a very short time. */
+		if (sHaveServiceConnectivity) {
 			sStatusLED.Set(true);
-		} else if (sIsThreadProvisioned && sIsThreadEnabled && sIsPairedToAccount) {
+		} else if (sIsThreadProvisioned && sIsThreadEnabled) {
 			sStatusLED.Blink(950, 50);
 		} else if (sHaveBLEConnections) {
 			sStatusLED.Blink(100, 100);
