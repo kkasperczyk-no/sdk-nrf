@@ -13,6 +13,20 @@
 
 #include "ble_utils.h"
 
+// MCUMgr BT FOTA includes
+#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
+#include "os_mgmt/os_mgmt.h"
+#endif
+#ifdef CONFIG_MCUMGR_CMD_IMG_MGMT
+#include "img_mgmt/img_mgmt.h"
+#endif
+#ifdef CONFIG_MCUMGR_SMP_BT
+#include <mgmt/mcumgr/smp_bt.h>
+#endif
+#ifdef CONFIG_BOOTLOADER_MCUBOOT
+#include <dfu/mcuboot.h>
+#endif
+
 LOG_MODULE_REGISTER(ble_utils, CONFIG_BLE_UTILS_LOG_LEVEL);
 
 #define DEVICE_NAME CONFIG_BT_DEVICE_NAME
@@ -143,6 +157,14 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 	LOG_INF("Pairing failed conn: %s, reason %d", log_strdup(addr), reason);
 }
 
+int software_update_confirmation_handler(uint32_t offset, uint32_t size, void * arg)
+{
+    // For now just print update progress and confirm data chunk without any additional checks.
+    LOG_INF("Software update progress %d B / %d B", offset, size);
+
+    return 0;
+}
+
 int ble_utils_init(struct bt_nus_cb *nus_clbs,
 		   ble_connection_cb_t on_connect,
 		   ble_disconnection_cb_t on_disconnect)
@@ -182,6 +204,11 @@ int ble_utils_init(struct bt_nus_cb *nus_clbs,
 		LOG_ERR("Advertising failed to start (error: %d)", ret);
 		goto end;
 	}
+
+    os_mgmt_register_group();
+    img_mgmt_register_group();
+    img_mgmt_set_upload_cb(software_update_confirmation_handler, NULL);
+    smp_bt_register();
 
 end:
 	return ret;
