@@ -33,12 +33,15 @@ private:
 	int StartNFCTag();
 #endif
 
+	static int SoftwareUpdateConfirmationHandler(uint32_t offset, uint32_t size, void * arg);
+
 	static void ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged);
 	static void ThreadProvisioningHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 
 	friend AppTask &GetAppTask();
 
 	static AppTask sAppTask;
+	bool mSoftwareUpdateEnabled = false;
 };
 
 inline AppTask &GetAppTask()
