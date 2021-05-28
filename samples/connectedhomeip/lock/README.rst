@@ -42,6 +42,8 @@ It can be tested in the following ways:
 The remote control testing requires either commissioning by the Matter controller device into a network or using the test mode.
 Both methods can be enabled after :ref:`building and running the sample <matter_lock_sample_remote_control>`.
 
+The sample can be configured to use the secure bootloader and utilize it for performing over-the-air Device Firmware Upgrade using Bluetooth LE.
+
 .. _matter_lock_sample_network_mode:
 
 Remote testing in a network
@@ -94,8 +96,15 @@ LED 2:
     * Off - The bolt is retracted and the door is unlocked.
     * Rapid Even Flashing (50 ms on/50 ms off during 2 s) - The simulated bolt is in motion from one position to another.
 
+.. matter_door_lock_sample_button1_start
+
 Button 1:
-    Initiates the factory reset of the device.
+    It can be used in the following purposes:
+
+    * Pressed for 6 s - Initiates the factory reset of the device and releasing the button within the 6-second window cancels the factory reset procedure.
+    * Pressed for less than 3 s - Initiates the OTA software update process, that is disabled by default, but feature can be enabled by following the :ref:`building with DFU support <matter_lock_build_with_dfu_support>` instruction.
+
+.. matter_door_lock_sample_button1_end
 
 Button 2:
     Changes the lock state to the opposite one.
@@ -119,6 +128,21 @@ Building and running
 .. |sample path| replace:: :file:`samples/connectedhomeip/lock`
 
 .. include:: /includes/build_and_run.txt
+
+.. _matter_lock_build_with_dfu_support:
+
+Building with Device Firmware Upgrade support
+=============================================
+
+.. matter_door_lock_sample_build_with_dfu_start
+
+To build the sample with configuration enabling DFU, run the following command with `build-target` replaced with the nRF board name you own:
+
+    .. code-block:: console
+
+      west build -b build-target -- -DOVERLAY_CONFIG=../common/config/overlay-dfu_support.conf -DPM_STATIC_YML_FILE="configuration/build-target/pm_static.yml"
+
+.. matter_door_lock_sample_build_with_dfu_end
 
 Testing
 =======
@@ -191,6 +215,11 @@ To start the commissioning procedure, the controller must get the commissioning 
 The data payload, which includes the device discriminator and setup PIN code, is encoded within a QR code, printed to the UART console, and can be shared using an NFC tag.
 
 .. matter_door_lock_sample_commissioning_end
+
+Upgrading the device firmware
+=============================
+
+To upgrade the device firmware, visit the `Performing Device Firmware Upgrade in Matter device`_ tutorial and complete steps for the selected method.
 
 Dependencies
 ************

@@ -50,6 +50,8 @@ It can be tested in the following ways:
 The remote control testing requires either commissioning by the Matter controller device into a network or using the test mode.
 Both methods can be enabled after :ref:`building and running the sample <matter_light_bulb_sample_remote_control>`.
 
+The sample can be configured to use the secure bootloader and utilize it for performing over-the-air Device Firmware Upgrade using Bluetooth LE.
+
 .. _matter_light_bulb_network_mode:
 
 Remote testing in a network
@@ -90,8 +92,9 @@ LED 2:
     * Solid On - The light bulb is on.
     * Off - The light bulb is off.
 
-Button 1:
-    Initiates the factory reset of the device.
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_button1_start
+    :end-before: matter_door_lock_sample_button1_end
 
 Button 2:
     Changes the light bulb state to the opposite one.
@@ -118,6 +121,15 @@ Building and running
 .. |sample path| replace:: :file:`samples/connectedhomeip/light_bulb`
 
 .. include:: /includes/build_and_run.txt
+
+.. _matter_lock_build_with_dfu_support:
+
+Building with Device Firmware Upgrade support
+=============================================
+
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_build_with_dfu_start
+    :end-before: matter_door_lock_sample_build_with_dfu_end
 
 Testing
 =======
@@ -182,6 +194,11 @@ Commissioning the device
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_commissioning_start
     :end-before: matter_door_lock_sample_commissioning_end
+
+Upgrading the device firmware
+=============================
+
+To upgrade the device firmware, visit the `Performing Device Firmware Upgrade in Matter device`_ tutorial and complete steps for the selected method.
 
 Dependencies
 ************

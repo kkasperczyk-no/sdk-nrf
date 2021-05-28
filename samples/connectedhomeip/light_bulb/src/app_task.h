@@ -25,8 +25,13 @@ public:
 private:
 	int Init();
 
+	void CancelFunctionTimer();
+	void StartFunctionTimer(uint32_t timeoutInMs);
+
 	void DispatchEvent(const AppEvent &event);
-	void CompleteLockActionHandler();
+	void FunctionPressHandler();
+	void FunctionReleaseHandler();
+	void FunctionTimerEventHandler();
 	void StartThreadHandler();
 	void StartBLEAdvertisingHandler();
 
@@ -37,11 +42,25 @@ private:
 	static void ActionInitiated(LightingManager::Action aAction);
 	static void ActionCompleted(LightingManager::Action aAction);
 	static void ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged);
+	static void TimerEventHandler(k_timer *timer);
 	static void ThreadProvisioningHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
+	static int SoftwareUpdateConfirmationHandler(uint32_t offset, uint32_t size, void *arg);
 
 	friend AppTask &GetAppTask();
 
+	enum Function_t {
+		kFunction_NoneSelected = 0,
+		kFunction_SoftwareUpdate = 0,
+		kFunction_FactoryReset,
+
+		kFunction_Invalid
+	};
+
+	Function_t mFunction = kFunction_NoneSelected;
+
 	static AppTask sAppTask;
+	bool mFunctionTimerActive = false;
+	bool mSoftwareUpdateEnabled = false;
 };
 
 inline AppTask &GetAppTask()
