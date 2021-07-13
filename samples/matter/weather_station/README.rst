@@ -48,26 +48,30 @@ You can start testing after :ref:`building and running the sample <matter_weathe
 Remote testing in a network
 ===========================
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_remote_testing_start
-    :end-before: matter_door_lock_sample_remote_testing_end
+By default, the Matter accessory device has Thread disabled, and it must be paired with the Matter controller over Bluetooth LE to get configuration from it if you want to use the device within a Thread network.
+To do this, the device must be made discoverable over the Bluetooth LE (that is enabled automatically) and the controller must get the commissioning information from the Matter accessory device and provision the device into the network.
+For details, see the `Commissioning the device`_ section.
+
+Configuration
+*************
+
+|config|
 
 User interface
 **************
 
 Button 1:
-    This button is used during the :ref:`commissioning procedure <matter_weather_station_sample_remote_control_commissioning>`.
-    Depending on how long you press the button:
-
-    * If pressed for 6 seconds, it initiates the factory reset of the device.
-      Releasing the button within the 6-second window cancels the factory reset procedure.
-    * If pressed for less than 3 seconds, it starts the the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time, and makes the device discoverable over Bluetooth LE.
+    This button is used for performing device factory reset.
+    To do so it must be pressed for 6 seconds.
+    Releasing the button within the 6-second window cancels the factory reset procedure.
 
 Serial Wire Debug port:
     Used for getting logs from the device or communicating with it through the command-line interface.
+    It is enabled only for the debug configuration of a sample.
+    See the :ref:`build configuration <matter_weather_station_sample_selecting_build_configuration>` to learn how to select debug configuration.
 
 NFC port with antenna attached:
-    Optionally used for obtaining the commissioning information from the Matter accessory device to start the :ref:`commissioning procedure <matter_weather_station_sample_remote_control_commissioning>`.
+    Used for obtaining the commissioning information from the Matter accessory device to start the :ref:`commissioning procedure <matter_weather_station_sample_remote_control_commissioning>`.
 
 Building and running
 ********************
@@ -75,6 +79,25 @@ Building and running
 .. |sample path| replace:: :file:`samples/matter/weather_station`
 
 .. include:: /includes/build_and_run.txt
+
+.. _matter_weather_station_sample_selecting_build_configuration:
+
+Selecting build configuration
+=============================
+
+This sample supports two types of build configurations:
+
+* Debug - enables additional features allowing to verify application behavior like logs or command-line shell.
+* Release - enables only necessary application functionalities in order to optimize its performance.
+
+You can find configuration options for both build types in the corresponding `prj_debug.conf` and `prj_release.conf` files.
+By default the release configuration is selected.
+If you want to build the target with debug configuration, run the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b thingy53_nrf5340_cpuapp -- -DCMAKE_BUILD_TYPE=debug
 
 Testing
 =======
@@ -100,7 +123,8 @@ Commissioning the device
     :end-before: matter_door_lock_sample_commissioning_end
 
 To start the commissioning procedure, the controller must get the commissioning information from the Matter accessory device.
-The data payload, which includes the device discriminator and setup PIN code, is encoded within a QR code, available through the RTT interface, and can be shared using an NFC tag.
+The data payload, which includes the device discriminator and setup PIN code, is encoded within a QR code and shared using a NFC tag.
+When using debug configuration information can be also obtained through the RTT interface logs.
 
 Dependencies
 ************

@@ -6,6 +6,12 @@
 
 cmake_minimum_required(VERSION 3.13.1)
 
+if (NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE release)
+endif()
+
+set(CONF_FILE "prj_${CMAKE_BUILD_TYPE}.conf")
+
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(matter-weather-station)

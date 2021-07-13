@@ -26,11 +26,8 @@ LOG_MODULE_DECLARE(app);
 
 namespace
 {
-enum class FunctionTimerMode { kDisabled, kFactoryResetTrigger, kFactoryResetComplete };
-
 constexpr size_t kAppEventQueueSize = 10;
-constexpr size_t kFactoryResetTriggerTimeoutMs = 3000;
-constexpr size_t kFactoryResetCompleteTimeoutMs = 3000;
+constexpr size_t kFactoryResetCompleteTimeoutMs = 6000;
 constexpr uint8_t kTemperatureMeasurementEndpointId = 1;
 constexpr int16_t kTemperatureMeasurementAttributeMaxValue = 0x7fff;
 constexpr int16_t kTemperatureMeasurementAttributeMinValue = 0x954d;
@@ -46,7 +43,7 @@ constexpr int16_t kPressureMeasurementAttributeInvalidValue = 0x8000;
 
 K_MSGQ_DEFINE(sAppEventQueue, sizeof(AppEvent), kAppEventQueueSize, alignof(AppEvent));
 k_timer sFunctionTimer;
-FunctionTimerMode sFunctionTimerMode = FunctionTimerMode::kDisabled;
+bool sIsTimerEnabled;
 
 const device *kBme688SensorDev = device_get_binding(DT_LABEL(DT_INST(0, bosch_bme680)));
 } /* namespace */
@@ -80,6 +77,9 @@ int AppTask::Init()
 #ifdef CONFIG_CHIP_NFC_COMMISSIONING
 	PlatformMgr().AddEventHandler(AppTask::ChipEventHandler, 0);
 #endif
+
+	/* Automatically enable BLE advertisment */
+	OpenPairingWindow();
 
 	return 0;
 }
@@ -157,18 +157,16 @@ void AppTask::DispatchEvent(AppEvent *event)
 
 void AppTask::ButtonPushHandler(AppEvent *)
 {
-	sFunctionTimerMode = FunctionTimerMode::kFactoryResetTrigger;
-	k_timer_start(&sFunctionTimer, K_MSEC(kFactoryResetTriggerTimeoutMs), K_NO_WAIT);
+	LOG_INF("Factory Reset triggered. Release button within %ums to cancel.", kFactoryResetCompleteTimeoutMs);
+	sIsTimerEnabled = true;
+	k_timer_start(&sFunctionTimer, K_MSEC(kFactoryResetCompleteTimeoutMs), K_NO_WAIT);
 }
 
 void AppTask::ButtonReleaseHandler(AppEvent *)
 {
-	/* If the button was released within the first kFactoryResetTriggerTimeoutMs, open the BLE pairing window. */
-	if (sFunctionTimerMode == FunctionTimerMode::kFactoryResetTrigger) {
-		GetAppTask().OpenPairingWindow();
-	}
-
-	sFunctionTimerMode = FunctionTimerMode::kDisabled;
+	/* If the button was released within the kFactoryResetCompleteTimeoutMs, . */
+	LOG_INF("Factory Reset has been cancelled");
+	sIsTimerEnabled = false;
 	k_timer_stop(&sFunctionTimer);
 }
 
@@ -184,18 +182,10 @@ void AppTask::ButtonStateHandler(uint32_t buttonState, uint32_t hasChanged)
 
 void AppTask::FunctionTimerHandler(AppEvent *)
 {
-	switch (sFunctionTimerMode) {
-	case FunctionTimerMode::kFactoryResetTrigger:
-		LOG_INF("Factory Reset triggered. Release button within %ums to cancel.",
-			kFactoryResetCompleteTimeoutMs);
-		sFunctionTimerMode = FunctionTimerMode::kFactoryResetComplete;
-		k_timer_start(&sFunctionTimer, K_MSEC(kFactoryResetCompleteTimeoutMs), K_NO_WAIT);
-		break;
-	case FunctionTimerMode::kFactoryResetComplete:
+	if (sIsTimerEnabled) {
 		ConfigurationMgr().InitiateFactoryReset();
-		break;
-	default:
-		break;
+	} else {
+		k_timer_stop(&sFunctionTimer);
 	}
 }
 
