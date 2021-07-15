@@ -244,14 +244,14 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       # Create a signed variant of the network core application.
 
       # Load the shared vars to get the path to the hex file to sign.
-      include(${CMAKE_BINARY_DIR}/hci_rpmsg/shared_vars.cmake)
+      include(${CMAKE_BINARY_DIR}/multiprotocol_rpmsg/shared_vars.cmake)
 
       sign(
         SIGNED_BIN_FILE_IN ${CPUNET_PM_SIGNED_APP_HEX}
         SIGNED_HEX_FILE_NAME_PREFIX ${PROJECT_BINARY_DIR}/net_core_app
         START_ADDRESS_OFFSET $<TARGET_PROPERTY:partition_manager,net_app_TO_SECONDARY>
         SIGNED_HEX_FILE_OUT net_core_app_signed_hex
-        DEPENDS hci_rpmsg_subimage ${hci_rpmsg_BUILD_BYPRODUCTS}
+        DEPENDS multiprotocol_rpmsg_subimage ${multiprotocol_rpmsg_BUILD_BYPRODUCTS}
         )
 
       add_custom_target(
