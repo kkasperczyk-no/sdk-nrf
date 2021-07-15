@@ -57,6 +57,18 @@ Configuration
 
 |config|
 
+Device Firmware Upgrade support
+===============================
+
+This sample by default uses the secure bootloader for performing over-the-air Device Firmware Upgrade using Bluetooth LE.
+To build the sample with DFU support disabled, run the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b thingy53_nrf5340_cpuapp -- -DBUILD_WITH_DFU=0
+
+
 User interface
 **************
 

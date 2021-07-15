@@ -6,6 +6,13 @@
 
 cmake_minimum_required(VERSION 3.13.1)
 
+option(BUILD_WITH_DFU "Build target with Device Firmware Upgrade support" OFF)
+if(BUILD_WITH_DFU)
+    set(OVERLAY_CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/../common/config/overlay-dfu_support.conf)
+    set(mcuboot_CONF_FILE ${CMAKE_CURRENT_SOURCE_DIR}/child_image/mcuboot.conf)
+    set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static.yml)
+endif()
+
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(matter-lock)

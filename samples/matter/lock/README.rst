@@ -84,7 +84,7 @@ To build the sample with configuration that enables the DFU, run the following c
 .. parsed-literal::
    :class: highlight
 
-   west build -b *build_target* -- -DOVERLAY_CONFIG=../common/config/overlay-dfu_support.conf -DPM_STATIC_YML_FILE="configuration/build-target/pm_static.yml"
+   west build -b *build_target* -- -DBUILD_WITH_DFU=1
 
 .. matter_door_lock_sample_build_with_dfu_end
 
