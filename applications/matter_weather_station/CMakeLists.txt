@@ -12,6 +12,7 @@ endif()
 
 set(CONF_FILE           ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/prj_${CMAKE_BUILD_TYPE}.conf)
 set(mcuboot_CONF_FILE   ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/mcuboot_${CMAKE_BUILD_TYPE}.conf)
+set(mcuboot_DTC_OVERLAY_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../../../bootloader/mcuboot/boot/zephyr/boards/nrf5340dk_nrf5340_cpuapp_multi_image_dfu.overlay)
 set(PM_STATIC_YML_FILE  ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static.yml)
 
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})

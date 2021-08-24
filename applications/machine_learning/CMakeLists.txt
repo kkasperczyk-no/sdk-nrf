@@ -31,6 +31,9 @@ endif()
 set(mcuboot_CONF_FILE
   ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/mcuboot_${CMAKE_BUILD_TYPE}.conf
   )
+if(${BOARD} STREQUAL "thingy53_nrf5340_cpuapp")
+  set(mcuboot_DTC_OVERLAY_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../../../bootloader/mcuboot/boot/zephyr/boards/nrf5340dk_nrf5340_cpuapp_multi_image_dfu.overlay)
+endif()
 set(b0_CONF_FILE
   ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/b0_${CMAKE_BUILD_TYPE}.conf
   )
