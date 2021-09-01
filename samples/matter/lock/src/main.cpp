@@ -6,6 +6,8 @@
 
 #include "app_task.h"
 
+#include <usb/usb_device.h>
+
 #include <logging/log.h>
 
 #include <platform/CHIPDeviceLayer.h>
@@ -19,6 +21,11 @@ int main()
 {
 	int ret = 0;
 	CHIP_ERROR err = CHIP_NO_ERROR;
+
+	err = chip::System::MapErrorZephyr(usb_enable(NULL));
+	if (err != CHIP_NO_ERROR) {
+		goto exit;
+	}
 
 	err = chip::Platform::MemoryInit();
 	if (err != CHIP_NO_ERROR) {
