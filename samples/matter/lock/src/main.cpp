@@ -11,9 +11,54 @@
 #include <lib/support/CHIPMem.h>
 #include <platform/CHIPDeviceLayer.h>
 
+#include "drivers/gpio.h"
+#include "mpsl_radio_notification.h"
+
 LOG_MODULE_REGISTER(app);
 
 using namespace ::chip::DeviceLayer;
+
+// TODO: Pin number should be changed to the one connected to the FEM
+const char *kGPIOControllerName = "GPIO_0";
+gpio_pin_t kFemControlPin = 13;
+const struct device *kGPIOController = device_get_binding(kGPIOControllerName);
+static bool sFemPinConfigured;
+static bool sRadioActive;
+
+static void power_management_irq(void)
+{
+	if (sRadioActive) {
+		LOG_INF("Radio goes active");
+	} else {
+		LOG_INF("Radio goes inactive");
+	}
+	sRadioActive = !sRadioActive;
+
+	// Change FEM enabling pin state
+	if (sFemPinConfigured) {
+		gpio_pin_toggle(kGPIOController, kFemControlPin);
+	}
+}
+
+static int power_management_hook_init(const struct device *dev)
+{
+	int res = mpsl_radio_notification_cfg_set(MPSL_RADIO_NOTIFICATION_TYPE_INT_ON_BOTH,
+						  MPSL_RADIO_NOTIFICATION_DISTANCE_200US, SWI2_IRQn);
+
+	if (res) {
+		LOG_ERR("mpsl_radio_notification_cfg_set failed with %d", res);
+		return -1;
+	}
+
+	NVIC_ClearPendingIRQ(SWI2_IRQn);
+	NVIC_SetPriority(SWI2_IRQn, 4);
+	NVIC_EnableIRQ(SWI2_IRQn);
+
+	IRQ_CONNECT(SWI2_IRQn, 4, power_management_irq, NULL, 0);
+
+	return 0;
+}
+
 
 int main()
 {
@@ -24,6 +69,20 @@ int main()
 	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("Platform::MemoryInit() failed");
 		goto exit;
+	}
+
+	if (kGPIOController) {
+		if (gpio_pin_configure(kGPIOController, kFemControlPin, GPIO_OUTPUT_ACTIVE)) {
+			LOG_ERR("Cannot configure kFemControlPin");
+		} else {
+			if (gpio_pin_set(kGPIOController, kFemControlPin, 0)) {
+				LOG_ERR("Cannot set kFemControlPin");
+			} else {
+				sFemPinConfigured = true;
+			}
+		}
+	} else {
+		LOG_ERR("Cannot find kGPIOController");
 	}
 
 	LOG_INF("Init CHIP stack");
@@ -61,3 +120,5 @@ int main()
 exit:
 	return err == CHIP_NO_ERROR ? EXIT_SUCCESS : EXIT_FAILURE;
 }
+
+SYS_INIT(power_management_hook_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
