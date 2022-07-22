@@ -15,6 +15,9 @@
 #include <stdarg.h>
 #include "osal_structs.h"
 
+#include <logging/log.h>
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
+
 /**
  * wifi_nrf_osal_init() - Initialize the OSAL layer.
  *
@@ -324,9 +327,9 @@ void wifi_nrf_osal_spinlock_irq_rel(struct wifi_nrf_osal_priv *opriv,
  *
  * Return: Number of characters of the message logged.
  */
-int wifi_nrf_osal_log_dbg(struct wifi_nrf_osal_priv *opriv,
-			   const char *fmt, ...);
-
+// int wifi_nrf_osal_log_dbg(struct wifi_nrf_osal_priv *opriv,
+// 			   const char *fmt, ...);
+#define wifi_nrf_osal_log_dbg(opriv, fmt, ...) LOG_DBG(fmt, ##__VA_ARGS__)
 
 /**
  * wifi_nrf_osal_log_info() - Log a informational message.
@@ -338,9 +341,9 @@ int wifi_nrf_osal_log_dbg(struct wifi_nrf_osal_priv *opriv,
  *
  * Return: Number of characters of the message logged.
  */
-int wifi_nrf_osal_log_info(struct wifi_nrf_osal_priv *opriv,
-			    const char *fmt, ...);
-
+// int wifi_nrf_osal_log_info(struct wifi_nrf_osal_priv *opriv,
+// 			    const char *fmt, ...);
+#define wifi_nrf_osal_log_info(opriv, fmt, ...) LOG_INF(fmt, ##__VA_ARGS__)
 
 /**
  * wifi_nrf_osal_log_err() - Logs an error message.
@@ -352,9 +355,10 @@ int wifi_nrf_osal_log_info(struct wifi_nrf_osal_priv *opriv,
  *
  * Return: Number of characters of the message logged.
  */
-int wifi_nrf_osal_log_err(struct wifi_nrf_osal_priv *opriv,
-			   const char *fmt, ...);
+// int wifi_nrf_osal_log_err(struct wifi_nrf_osal_priv *opriv,
+			//    const char *fmt, ...);
 
+#define wifi_nrf_osal_log_err(opriv, fmt, ...) LOG_ERR(fmt, ##__VA_ARGS__)
 
 /**
  * wifi_nrf_osal_llist_node_alloc() - Allocate a linked list mode.

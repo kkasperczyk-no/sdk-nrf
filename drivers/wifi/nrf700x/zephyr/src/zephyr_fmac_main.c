@@ -24,7 +24,7 @@
 #include "zephyr_wpa_supp_if.h"
 #endif /* CONFIG_WPA_SUPP */
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
+// LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
 static const unsigned char aggregation = 1;
 static const unsigned char wmm = 1;

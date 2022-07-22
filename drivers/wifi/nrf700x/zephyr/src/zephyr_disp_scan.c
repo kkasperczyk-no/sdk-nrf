@@ -18,7 +18,7 @@
 #include "zephyr_fmac_main.h"
 #include "zephyr_disp_scan.h"
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
+// LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
 int wifi_nrf_disp_scan_zep(const struct device *dev,
 			   scan_result_cb_t cb)

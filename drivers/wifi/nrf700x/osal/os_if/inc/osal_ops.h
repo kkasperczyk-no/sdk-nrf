@@ -196,9 +196,9 @@ struct wifi_nrf_osal_ops {
 	void (*spinlock_irq_take)(void *lock, unsigned long *flags);
 	void (*spinlock_irq_rel)(void *lock, unsigned long *flags);
 
-	int (*log_dbg)(const char *fmt, va_list args);
-	int (*log_info)(const char *fmt, va_list args);
-	int (*log_err)(const char *fmt, va_list args);
+	// int (*log_dbg)(const char *fmt, va_list args);
+	// int (*log_info)(const char *fmt, va_list args);
+	// int (*log_err)(const char *fmt, va_list args);
 
 	void *(*llist_node_alloc)(void);
 	void (*llist_node_free)(void *node);

@@ -151,38 +151,38 @@ static void zep_shim_spinlock_irq_rel(void *lock, unsigned long *flags)
 	k_sem_give(lock);
 }
 
-static int zep_shim_pr_dbg(const char *fmt, va_list args)
-{
-	char buf[80];
+// static int zep_shim_pr_dbg(const char *fmt, va_list args)
+// {
+// 	char buf[80];
 
-	vsnprintf(buf, sizeof(buf), fmt, args);
+// 	vsnprintf(buf, sizeof(buf), fmt, args);
 
-	LOG_DBG("%s", buf);
+// 	LOG_DBG("%s", buf);
 
-	return 0;
-}
+// 	return 0;
+// }
 
-static int zep_shim_pr_info(const char *fmt, va_list args)
-{
-	char buf[80];
+// static int zep_shim_pr_info(const char *fmt, va_list args)
+// {
+// 	char buf[80];
 
-	vsnprintf(buf, sizeof(buf), fmt, args);
+// 	vsnprintf(buf, sizeof(buf), fmt, args);
 
-	LOG_INF("%s", buf);
+// 	LOG_INF("%s", buf);
 
-	return 0;
-}
+// 	return 0;
+// }
 
-static int zep_shim_pr_err(const char *fmt, va_list args)
-{
-	char buf[256];
+// static int zep_shim_pr_err(const char *fmt, va_list args)
+// {
+// 	char buf[256];
 
-	vsnprintf(buf, sizeof(buf), fmt, args);
+// 	vsnprintf(buf, sizeof(buf), fmt, args);
 
-	LOG_ERR("%s", buf);
+// 	LOG_ERR("%s", buf);
 
-	return 0;
-}
+// 	return 0;
+// }
 
 struct nwb {
 	unsigned char *data;
@@ -747,9 +747,9 @@ static const struct wifi_nrf_osal_ops wifi_nrf_os_zep_ops = {
 	.spinlock_irq_take = zep_shim_spinlock_irq_take,
 	.spinlock_irq_rel = zep_shim_spinlock_irq_rel,
 
-	.log_dbg = zep_shim_pr_dbg,
-	.log_info = zep_shim_pr_info,
-	.log_err = zep_shim_pr_err,
+	// .log_dbg = zep_shim_pr_dbg,
+	// .log_info = zep_shim_pr_info,
+	// .log_err = zep_shim_pr_err,
 
 	.llist_node_alloc = zep_shim_llist_node_alloc,
 	.llist_node_free = zep_shim_llist_node_free,

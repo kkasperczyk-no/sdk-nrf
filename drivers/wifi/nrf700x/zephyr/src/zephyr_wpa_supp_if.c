@@ -20,7 +20,7 @@
 #include "wpa_supplicant_i.h"
 #include "bss.h"
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
+// LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
 /* TODO: Move this to driver_zephyr.c */
 extern struct wpa_supplicant *wpa_s_0;

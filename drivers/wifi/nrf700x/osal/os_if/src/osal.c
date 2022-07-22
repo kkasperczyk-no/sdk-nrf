@@ -189,55 +189,57 @@ void wifi_nrf_osal_spinlock_irq_rel(struct wifi_nrf_osal_priv *opriv,
 }
 
 
-int wifi_nrf_osal_log_dbg(struct wifi_nrf_osal_priv *opriv,
-			  const char *fmt,
-			  ...)
-{
-	va_list args;
-	int ret = -1;
+// int wifi_nrf_osal_log_dbg(struct wifi_nrf_osal_priv *opriv,
+// 			  const char *fmt,
+// 			  ...)
+// {
+// 	va_list args;
+// 	int ret = -1;
 
-	va_start(args, fmt);
+// 	va_start(args, fmt);
 
-	ret = opriv->ops->log_dbg(fmt, args);
+// 	ret = opriv->ops->log_dbg(fmt, args);
 
-	va_end(args);
+// 	va_end(args);
 
-	return ret;
-}
-
-
-int wifi_nrf_osal_log_info(struct wifi_nrf_osal_priv *opriv,
-			   const char *fmt,
-			   ...)
-{
-	va_list args;
-	int ret = -1;
-
-	va_start(args, fmt);
-
-	ret = opriv->ops->log_info(fmt, args);
-
-	va_end(args);
-
-	return ret;
-}
+// 	return ret;
+// }
 
 
-int wifi_nrf_osal_log_err(struct wifi_nrf_osal_priv *opriv,
-			  const char *fmt,
-			  ...)
-{
-	va_list args;
-	int ret = -1;
+// int wifi_nrf_osal_log_info(struct wifi_nrf_osal_priv *opriv,
+// 			   const char *fmt,
+// 			   ...)
+// {
+// 	va_list args;
+// 	int ret = -1;
 
-	va_start(args, fmt);
+// 	va_start(args, fmt);
 
-	ret = opriv->ops->log_err(fmt, args);
+// 	ret = opriv->ops->log_info(fmt, args);
 
-	va_end(args);
+// 	va_end(args);
 
-	return ret;
-}
+// 	return ret;
+// }
+
+// #include <zephyr/logging/log.h>
+// LOG_MODULE_REGISTER(WIFI_NRFF, CONFIG_WIFI_NRF_LOG_LEVEL);
+
+// int wifi_nrf_osal_log_err(struct wifi_nrf_osal_priv *opriv,
+// 			  const char *fmt,
+// 			  ...)
+// {
+// 	va_list args;
+// 	int ret = -1;
+
+// 	va_start(args, fmt);
+
+// 	ret = opriv->ops->log_err(fmt, args);
+
+// 	va_end(args);
+
+// 	return 0;
+// }
 
 
 void *wifi_nrf_osal_llist_node_alloc(struct wifi_nrf_osal_priv *opriv)
