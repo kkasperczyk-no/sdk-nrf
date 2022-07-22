@@ -29,13 +29,13 @@ int hex_str_to_val(unsigned char *hex_arr, unsigned int hex_arr_sz, unsigned cha
 	len = strlen(str);
 
 	if (len / 2 > hex_arr_sz) {
-		LOG_ERR("%s: String length (%d) greater than array size (%d)\n", __func__, len,
+		LOG_ERR(": String length (%d) greater than array size (%d)\n", len,
 		       hex_arr_sz);
 		return -1;
 	}
 
 	if (len % 2) {
-		LOG_ERR("%s:String length = %d, is not the multiple of 2\n", __func__, len);
+		LOG_ERR(":String length = %d, is not the multiple of 2\n", len);
 		return -1;
 	}
 
@@ -46,7 +46,7 @@ int hex_str_to_val(unsigned char *hex_arr, unsigned int hex_arr_sz, unsigned cha
 		ch = ((str[i] >= 'A' && str[i] <= 'Z') ? str[i] + 32 : str[i]);
 
 		if ((ch < '0' || ch > '9') && (ch < 'a' || ch > 'f')) {
-			LOG_ERR("%s: Invalid hex character in string %d\n", __func__, ch);
+			LOG_ERR(": Invalid hex character in string %d\n", ch);
 			return -1;
 		}
 

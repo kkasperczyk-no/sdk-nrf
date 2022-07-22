@@ -32,8 +32,7 @@ wifi_nrf_hal_rpu_pktram_buf_map_init(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx)
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: pal_rpu_addr_offset_get failed\n",
-				      __func__);
+				      ": pal_rpu_addr_offset_get failed\n");
 		goto out;
 	}
 
@@ -73,8 +72,7 @@ unsigned long wifi_nrf_hal_buf_map_rx(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 
 	if (rx_buf_info->mapped) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Called for already mapped RX buffer\n",
-				      __func__);
+				      ": Called for already mapped RX buffer\n");
 		goto out;
 	}
 
@@ -83,8 +81,7 @@ unsigned long wifi_nrf_hal_buf_map_rx(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 
 	if (buf_len != hal_dev_ctx->hpriv->cfg_params.rx_buf_pool[pool_id].buf_sz) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Invalid buf_len (%d) for pool_id (%d)\n",
-				      __func__,
+				      ": Invalid buf_len (%d) for pool_id (%d)\n",
 				      buf_len,
 				      pool_id);
 		goto out;
@@ -109,8 +106,7 @@ unsigned long wifi_nrf_hal_buf_map_rx(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 
 	if (!rx_buf_info->phy_addr) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: DMA map failed\n",
-				      __func__);
+				      ": DMA map failed\n");
 		goto out;
 	}
 
@@ -137,8 +133,7 @@ unsigned long wifi_nrf_hal_buf_unmap_rx(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx
 
 	if (!rx_buf_info->mapped) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Called for unmapped RX buffer\n",
-				      __func__);
+				      ": Called for unmapped RX buffer\n");
 		goto out;
 	}
 
@@ -152,8 +147,7 @@ unsigned long wifi_nrf_hal_buf_unmap_rx(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx
 	if (data_len) {
 		if (!unmapped_addr) {
 			wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-					      "%s: DMA unmap failed\n",
-					      __func__);
+					      ": DMA unmap failed\n");
 			goto out;
 		}
 
@@ -189,8 +183,7 @@ unsigned long wifi_nrf_hal_buf_map_tx(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 
 	if (tx_buf_info->mapped) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Called for already mapped TX buffer\n",
-				      __func__);
+				      ": Called for already mapped TX buffer\n");
 		goto out;
 	}
 
@@ -200,8 +193,7 @@ unsigned long wifi_nrf_hal_buf_map_tx(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 	if (buf_len > (hal_dev_ctx->hpriv->cfg_params.max_tx_frm_sz -
 		       hal_dev_ctx->hpriv->cfg_params.tx_buf_headroom_sz)) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Invalid TX buf_len (%d) for (%d)\n",
-				      __func__,
+				      ": Invalid TX buf_len (%d) for (%d)\n",
 				      buf_len,
 				      desc_id);
 		goto out;
@@ -227,8 +219,7 @@ unsigned long wifi_nrf_hal_buf_map_tx(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 
 	if (!tx_buf_info->phy_addr) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: DMA map failed\n",
-				      __func__);
+				      ": DMA map failed\n");
 		goto out;
 	}
 
@@ -252,8 +243,7 @@ unsigned long wifi_nrf_hal_buf_unmap_tx(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx
 
 	if (!tx_buf_info->mapped) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Called for unmapped TX buffer\n",
-				      __func__);
+				      ": Called for unmapped TX buffer\n");
 		goto out;
 	}
 
@@ -264,8 +254,7 @@ unsigned long wifi_nrf_hal_buf_unmap_tx(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx
 
 	if (!unmapped_addr) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: DMA unmap failed\n",
-				      __func__);
+				      ": DMA unmap failed\n");
 		goto out;
 	}
 
@@ -294,8 +283,7 @@ enum wifi_nrf_status hal_rpu_ps_wake(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx)
 
 	if (!hal_dev_ctx) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Invalid parameters\n",
-				      __func__);
+				      ": Invalid parameters\n");
 		return status;
 	}
 
@@ -347,9 +335,8 @@ enum wifi_nrf_status hal_rpu_ps_wake(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx)
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: RPU is not ready for more than %d sec,"
+				      ": RPU is not ready for more than %d sec,"
 				      "reg_val = 0x%X rpu_ps_state_mask = 0x%X\n",
-				      __func__,
 				      RPU_PS_WAKE_TIMEOUT,
 				      reg_val,
 				      rpu_ps_state_mask);
@@ -396,8 +383,7 @@ static enum wifi_nrf_status hal_rpu_ps_init(struct wifi_nrf_hal_dev_ctx *hal_dev
 
 	if (!hal_dev_ctx->rpu_ps_lock) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Unable to allocate lock\n",
-				      __func__);
+				      ": Unable to allocate lock\n");
 		goto out;
 	}
 
@@ -408,8 +394,7 @@ static enum wifi_nrf_status hal_rpu_ps_init(struct wifi_nrf_hal_dev_ctx *hal_dev
 
 	if (!hal_dev_ctx->rpu_ps_timer) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Unable to allocate timer\n",
-				      __func__);
+				      ": Unable to allocate timer\n");
 		wifi_nrf_osal_spinlock_free(hal_dev_ctx->hpriv->opriv,
 					    hal_dev_ctx->rpu_ps_lock);
 		goto out;
@@ -462,8 +447,7 @@ static bool hal_rpu_hpq_is_empty(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Read from dequeue address failed, val (0x%X)\n",
-				      __func__,
+				      ": Read from dequeue address failed, val (0x%X)\n",
 				      val);
 		return true;
 	}
@@ -486,8 +470,7 @@ static enum wifi_nrf_status hal_rpu_ready(struct wifi_nrf_hal_dev_ctx *hal_dev_c
 		avl_buf_q = &hal_dev_ctx->rpu_info.hpqm_info.cmd_avl_queue;
 	} else {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Invalid msg type %d\n",
-				      __func__,
+				      ": Invalid msg type %d\n",
 				      msg_type);
 
 		return WIFI_NRF_STATUS_FAIL;
@@ -517,8 +500,7 @@ static enum wifi_nrf_status hal_rpu_ready_wait(struct wifi_nrf_hal_dev_ctx *hal_
 		if (wifi_nrf_osal_time_elapsed_us(hal_dev_ctx->hpriv->opriv,
 						  start_time_us) >= MAX_HAL_RPU_READY_WAIT) {
 			wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-					      "%s: Timed out waiting (msg_type = %d)\n",
-					      __func__,
+					      ": Timed out waiting (msg_type = %d)\n",
 					      msg_type);
 			goto out;
 		}
@@ -540,8 +522,7 @@ static enum wifi_nrf_status hal_rpu_msg_trigger(struct wifi_nrf_hal_dev_ctx *hal
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Writing to MCU cmd register failed\n",
-				      __func__);
+				      ": Writing to MCU cmd register failed\n");
 		goto out;
 	}
 
@@ -561,8 +542,7 @@ static enum wifi_nrf_status hal_rpu_msg_post(struct wifi_nrf_hal_dev_ctx *hal_de
 
 	if (queue_id >= MAX_NUM_OF_RX_QUEUES) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Invalid queue_id (%d)\n",
-				      __func__,
+				      ": Invalid queue_id (%d)\n",
 				      queue_id);
 		goto out;
 	}
@@ -574,8 +554,7 @@ static enum wifi_nrf_status hal_rpu_msg_post(struct wifi_nrf_hal_dev_ctx *hal_de
 		busy_queue = &hal_dev_ctx->rpu_info.hpqm_info.rx_buf_busy_queue[queue_id];
 	} else {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Invalid msg_type (%d)\n",
-				      __func__,
+				      ": Invalid msg_type (%d)\n",
 				      msg_type);
 		goto out;
 	}
@@ -589,8 +568,7 @@ static enum wifi_nrf_status hal_rpu_msg_post(struct wifi_nrf_hal_dev_ctx *hal_de
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Queueing of message to RPU failed\n",
-				      __func__);
+				      ": Queueing of message to RPU failed\n");
 		goto out;
 	}
 
@@ -600,8 +578,7 @@ static enum wifi_nrf_status hal_rpu_msg_post(struct wifi_nrf_hal_dev_ctx *hal_de
 
 		if (status != WIFI_NRF_STATUS_SUCCESS) {
 			wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-					      "%s: Posting command to RPU failed\n",
-					      __func__);
+					      ": Posting command to RPU failed\n");
 			goto out;
 		}
 	}
@@ -621,8 +598,7 @@ static enum wifi_nrf_status hal_rpu_msg_get_addr(struct wifi_nrf_hal_dev_ctx *ha
 		avl_queue = &hal_dev_ctx->rpu_info.hpqm_info.cmd_avl_queue;
 	} else {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Invalid msg_type (%d)\n",
-				      __func__,
+				      ": Invalid msg_type (%d)\n",
 				      msg_type);
 		goto out;
 	}
@@ -633,8 +609,7 @@ static enum wifi_nrf_status hal_rpu_msg_get_addr(struct wifi_nrf_hal_dev_ctx *ha
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Dequeue of address failed msg_addr 0x%X\n",
-				      __func__,
+				      ": Dequeue of address failed msg_addr 0x%X\n",
 				      *msg_addr);
 		*msg_addr = 0;
 		goto out;
@@ -661,8 +636,7 @@ static enum wifi_nrf_status hal_rpu_msg_write(struct wifi_nrf_hal_dev_ctx *hal_d
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Getting address (0x%X) to post message failed\n",
-				      __func__,
+				      ": Getting address (0x%X) to post message failed\n",
 				      msg_addr);
 		goto out;
 	}
@@ -675,8 +649,7 @@ static enum wifi_nrf_status hal_rpu_msg_write(struct wifi_nrf_hal_dev_ctx *hal_d
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Copying information to RPU failed\n",
-				      __func__);
+				      ": Copying information to RPU failed\n");
 		goto out;
 	}
 
@@ -688,8 +661,7 @@ static enum wifi_nrf_status hal_rpu_msg_write(struct wifi_nrf_hal_dev_ctx *hal_d
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Posting command to RPU failed\n",
-				      __func__);
+				      ": Posting command to RPU failed\n");
 		goto out;
 	}
 
@@ -710,8 +682,7 @@ static enum wifi_nrf_status hal_rpu_cmd_process_queue(struct wifi_nrf_hal_dev_ct
 
 		if (status != WIFI_NRF_STATUS_SUCCESS) {
 			wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-					      "%s: Timeout waiting to get free cmd buff from RPU\n",
-					      __func__);
+					      ": Timeout waiting to get free cmd buff from RPU\n");
 			wifi_nrf_osal_mem_free(hal_dev_ctx->hpriv->opriv,
 					       cmd);
 			cmd = NULL;
@@ -725,8 +696,7 @@ static enum wifi_nrf_status hal_rpu_cmd_process_queue(struct wifi_nrf_hal_dev_ct
 
 		if (status != WIFI_NRF_STATUS_SUCCESS) {
 			wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-					      "%s: Writing command to RPU failed\n",
-					      __func__);
+					      ": Writing command to RPU failed\n");
 			wifi_nrf_osal_mem_free(hal_dev_ctx->hpriv->opriv,
 					       cmd);
 			cmd = NULL;
@@ -769,8 +739,7 @@ static enum wifi_nrf_status hal_rpu_cmd_queue(struct wifi_nrf_hal_dev_ctx *hal_d
 
 			if (!hal_msg) {
 				wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-						      "%s: Unable to alloc buff for frag HAL cmd\n",
-						      __func__);
+						      ": Unable to alloc buff for frag HAL cmd\n");
 				status = WIFI_NRF_STATUS_FAIL;
 				goto out;
 			}
@@ -788,8 +757,7 @@ static enum wifi_nrf_status hal_rpu_cmd_queue(struct wifi_nrf_hal_dev_ctx *hal_d
 
 			if (status != WIFI_NRF_STATUS_SUCCESS) {
 				wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-						      "%s: Unable to queue frag HAL cmd\n",
-						      __func__);
+						      ": Unable to queue frag HAL cmd\n");
 				goto out;
 			}
 
@@ -802,8 +770,7 @@ static enum wifi_nrf_status hal_rpu_cmd_queue(struct wifi_nrf_hal_dev_ctx *hal_d
 
 		if (!hal_msg) {
 			wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-					      "%s: Unable to allocate buffer for HAL command\n",
-					      __func__);
+					      ": Unable to allocate buffer for HAL command\n");
 			status = WIFI_NRF_STATUS_FAIL;
 			goto out;
 		}
@@ -821,8 +788,7 @@ static enum wifi_nrf_status hal_rpu_cmd_queue(struct wifi_nrf_hal_dev_ctx *hal_d
 
 		if (status != WIFI_NRF_STATUS_SUCCESS) {
 			wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-					      "%s: Unable to queue fragmented command\n",
-					      __func__);
+					      ": Unable to queue fragmented command\n");
 			goto out;
 		}
 	}
@@ -851,8 +817,7 @@ enum wifi_nrf_status wifi_nrf_hal_ctrl_cmd_send(struct wifi_nrf_hal_dev_ctx *hal
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Queueing of command failed\n",
-				      __func__);
+				      ": Queueing of command failed\n");
 		goto out;
 	}
 
@@ -890,8 +855,7 @@ enum wifi_nrf_status wifi_nrf_hal_data_cmd_send(struct wifi_nrf_hal_dev_ctx *hal
 		max_cmd_size = RPU_DATA_CMD_SIZE_MAX_TX;
 	} else {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Invalid data command type %d\n",
-				      __func__,
+				      ": Invalid data command type %d\n",
 				      cmd_type);
 	}
 
@@ -906,8 +870,7 @@ enum wifi_nrf_status wifi_nrf_hal_data_cmd_send(struct wifi_nrf_hal_dev_ctx *hal
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Copying data cmd(%d) to RPU failed\n",
-				      __func__,
+				      ": Copying data cmd(%d) to RPU failed\n",
 				      cmd_type);
 		goto out;
 	}
@@ -920,8 +883,7 @@ enum wifi_nrf_status wifi_nrf_hal_data_cmd_send(struct wifi_nrf_hal_dev_ctx *hal
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Posting RX buf info to RPU failed\n",
-				      __func__);
+				      ": Posting RX buf info to RPU failed\n");
 		goto out;
 	}
 out:
@@ -944,8 +906,7 @@ static void rx_tasklet_fn(unsigned long data)
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Event queue processing failed\n",
-				      __func__);
+				      ": Event queue processing failed\n");
 	}
 }
 
@@ -984,8 +945,7 @@ enum wifi_nrf_status hal_rpu_eventq_process(struct wifi_nrf_hal_dev_ctx *hal_dev
 
 		if (status != WIFI_NRF_STATUS_SUCCESS) {
 			wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-					      "%s: Interrupt callback failed\n",
-					      __func__);
+					      ": Interrupt callback failed\n");
 		}
 
 		/* Free up the local buffer */
@@ -1020,8 +980,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 
 	if (!hal_dev_ctx) {
 		wifi_nrf_osal_log_err(hpriv->opriv,
-				      "%s: Unable to allocate hal_dev_ctx\n",
-				      __func__);
+				      ": Unable to allocate hal_dev_ctx\n");
 		goto out;
 	}
 
@@ -1035,8 +994,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 
 	if (!hal_dev_ctx->cmd_q) {
 		wifi_nrf_osal_log_err(hpriv->opriv,
-				      "%s: Unable to allocate command queue\n",
-				      __func__);
+				      ": Unable to allocate command queue\n");
 
 		wifi_nrf_osal_mem_free(hpriv->opriv,
 				       hal_dev_ctx);
@@ -1050,8 +1008,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 
 	if (!hal_dev_ctx->event_q) {
 		wifi_nrf_osal_log_err(hpriv->opriv,
-				      "%s: Unable to allocate event queue\n",
-				      __func__);
+				      ": Unable to allocate event queue\n");
 		wifi_nrf_utils_q_free(hpriv->opriv,
 				      hal_dev_ctx->cmd_q);
 		wifi_nrf_osal_mem_free(hpriv->opriv,
@@ -1064,7 +1021,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 
 	if (!hal_dev_ctx->lock_hal) {
 		wifi_nrf_osal_log_err(hpriv->opriv,
-				      "%s: Unable to allocate HAL lock\n", __func__);
+				      ": Unable to allocate HAL lock\n");
 		wifi_nrf_utils_q_free(hpriv->opriv,
 				      hal_dev_ctx->cmd_q);
 		wifi_nrf_utils_q_free(hpriv->opriv,
@@ -1082,8 +1039,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 
 	if (!hal_dev_ctx->lock_rx) {
 		wifi_nrf_osal_log_err(hpriv->opriv,
-				      "%s: Unable to allocate HAL lock\n",
-				      __func__);
+				      ": Unable to allocate HAL lock\n");
 		wifi_nrf_osal_spinlock_free(hpriv->opriv,
 					    hal_dev_ctx->lock_hal);
 		wifi_nrf_utils_q_free(hpriv->opriv,
@@ -1103,8 +1059,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 
 	if (!hal_dev_ctx->rx_tasklet) {
 		wifi_nrf_osal_log_err(hpriv->opriv,
-				      "%s: Unable to allocate rx_tasklet\n",
-				      __func__);
+				      ": Unable to allocate rx_tasklet\n");
 		wifi_nrf_osal_spinlock_free(hpriv->opriv,
 					    hal_dev_ctx->lock_hal);
 		wifi_nrf_osal_spinlock_free(hpriv->opriv,
@@ -1130,8 +1085,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hpriv->opriv,
-				      "%s: hal_rpu_ps_init failed\n",
-				      __func__);
+				      ": hal_rpu_ps_init failed\n");
 		wifi_nrf_osal_tasklet_free(hpriv->opriv,
 					   hal_dev_ctx->rx_tasklet);
 		wifi_nrf_osal_spinlock_free(hpriv->opriv,
@@ -1154,8 +1108,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 
 	if (!hal_dev_ctx->bal_dev_ctx) {
 		wifi_nrf_osal_log_err(hpriv->opriv,
-				      "%s: wifi_nrf_bal_dev_add failed\n",
-				      __func__);
+				      ": wifi_nrf_bal_dev_add failed\n");
 
 		wifi_nrf_osal_tasklet_free(hpriv->opriv,
 					   hal_dev_ctx->rx_tasklet);
@@ -1179,8 +1132,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hpriv->opriv,
-				      "%s: hal_rpu_irq_enable failed\n",
-				      __func__);
+				      ": hal_rpu_irq_enable failed\n");
 
 		wifi_nrf_bal_dev_rem(hal_dev_ctx->bal_dev_ctx);
 
@@ -1210,8 +1162,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 
 		if (!hal_dev_ctx->rx_buf_info[i]) {
 			wifi_nrf_osal_log_err(hpriv->opriv,
-					      "%s: No space for RX buf info[%d]\n",
-					      __func__,
+					      ": No space for RX buf info[%d]\n",
 					      i);
 
 			wifi_nrf_bal_dev_rem(hal_dev_ctx->bal_dev_ctx);
@@ -1242,8 +1193,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 
 	if (!hal_dev_ctx->tx_buf_info) {
 		wifi_nrf_osal_log_err(hpriv->opriv,
-				      "%s: No space for TX buf info\n",
-				      __func__);
+				      ": No space for TX buf info\n");
 
 		for (i = 0; i < MAX_NUM_OF_RX_QUEUES; i++) {
 			wifi_nrf_osal_mem_free(hpriv->opriv,
@@ -1274,8 +1224,7 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hpriv->opriv,
-				      "%s: Buffer map init failed\n",
-				      __func__);
+				      ": Buffer map init failed\n");
 		wifi_nrf_osal_mem_free(hpriv->opriv,
 				       hal_dev_ctx->tx_buf_info);
 		hal_dev_ctx->tx_buf_info = NULL;
@@ -1379,8 +1328,7 @@ enum wifi_nrf_status wifi_nrf_hal_dev_init(struct wifi_nrf_hal_dev_ctx *hal_dev_
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: wifi_nrf_bal_dev_init failed\n",
-				      __func__);
+				      ": wifi_nrf_bal_dev_init failed\n");
 		goto out;
 	}
 
@@ -1394,8 +1342,7 @@ enum wifi_nrf_status wifi_nrf_hal_dev_init(struct wifi_nrf_hal_dev_ctx *hal_dev_
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Failed to get the HPQ info\n",
-				      __func__);
+				      ": Failed to get the HPQ info\n");
 		goto out;
 	}
 
@@ -1406,8 +1353,7 @@ enum wifi_nrf_status wifi_nrf_hal_dev_init(struct wifi_nrf_hal_dev_ctx *hal_dev_
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Reading the RX cmd base failed\n",
-				      __func__);
+				      ": Reading the RX cmd base failed\n");
 		goto out;
 	}
 
@@ -1490,8 +1436,7 @@ static int wifi_nrf_hal_poll_reg(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 
 		if (status != WIFI_NRF_STATUS_SUCCESS) {
 			wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-					      "%s: Read from address (0x%X) failed, val (0x%X)\n",
-					      __func__,
+					      ": Read from address (0x%X) failed, val (0x%X)\n",
 					      reg_addr,
 					      val);
 		}
@@ -1507,8 +1452,7 @@ static int wifi_nrf_hal_poll_reg(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 
 	if (count == 0) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Timed out polling on (0x%X)\n",
-				      __func__,
+				      ": Timed out polling on (0x%X)\n",
 				      reg_addr);
 
 		status = WIFI_NRF_STATUS_FAIL;
@@ -1528,8 +1472,7 @@ enum wifi_nrf_status wifi_nrf_hal_proc_reset(struct wifi_nrf_hal_dev_ctx *hal_de
 	if ((rpu_proc != RPU_PROC_TYPE_MCU_LMAC) &&
 	    (rpu_proc != RPU_PROC_TYPE_MCU_UMAC)) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Unsupported RPU processor(%d)\n",
-				      __func__,
+				      ": Unsupported RPU processor(%d)\n",
 				      rpu_proc);
 		goto out;
 	}
@@ -1547,8 +1490,7 @@ enum wifi_nrf_status wifi_nrf_hal_proc_reset(struct wifi_nrf_hal_dev_ctx *hal_de
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Pulsed soft reset of MCU failed for (%d) processor\n",
-				      __func__,
+				      ": Pulsed soft reset of MCU failed for (%d) processor\n",
 				      rpu_proc);
 		goto out;
 	}
@@ -1571,8 +1513,7 @@ enum wifi_nrf_status wifi_nrf_hal_proc_reset(struct wifi_nrf_hal_dev_ctx *hal_de
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: MCU (%d) failed to come out of reset\n",
-				      __func__,
+				      ": MCU (%d) failed to come out of reset\n",
 				      rpu_proc);
 		goto out;
 	}
@@ -1615,8 +1556,7 @@ enum wifi_nrf_status wifi_nrf_hal_fw_chk_boot(struct wifi_nrf_hal_dev_ctx *hal_d
 		exp_val = IMG_WLAN_UMAC_BOOT_SIG;
 	} else {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Invalid RPU processor (%d)\n",
-				      __func__,
+				      ": Invalid RPU processor (%d)\n",
 				      rpu_proc);
 	}
 
@@ -1628,8 +1568,7 @@ enum wifi_nrf_status wifi_nrf_hal_fw_chk_boot(struct wifi_nrf_hal_dev_ctx *hal_d
 
 		if (status != WIFI_NRF_STATUS_SUCCESS) {
 			wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-					      "%s: Reading of boot signature failed for RPU(%d)\n",
-					      __func__,
+					      ": Reading of boot signature failed for RPU(%d)\n",
 					      rpu_proc);
 		}
 
@@ -1647,9 +1586,8 @@ enum wifi_nrf_status wifi_nrf_hal_fw_chk_boot(struct wifi_nrf_hal_dev_ctx *hal_d
 
 	if (i == 1000) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Boot_sig check failed for RPU(%d), "
+				      ": Boot_sig check failed for RPU(%d), "
 				      "Expected: 0x%X, Actual: 0x%X\n",
-				      __func__,
 				      rpu_proc,
 				      exp_val,
 				      val);
@@ -1679,8 +1617,7 @@ wifi_nrf_hal_init(struct wifi_nrf_osal_priv *opriv,
 
 	if (!hpriv) {
 		wifi_nrf_osal_log_err(opriv,
-				      "%s: Unable to allocate memory for hpriv\n",
-				      __func__);
+				      ": Unable to allocate memory for hpriv\n");
 		goto out;
 	}
 
@@ -1699,8 +1636,7 @@ wifi_nrf_hal_init(struct wifi_nrf_osal_priv *opriv,
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(opriv,
-				      "%s: pal_rpu_addr_offset_get failed\n",
-				      __func__);
+				      ": pal_rpu_addr_offset_get failed\n");
 		goto out;
 	}
 
@@ -1712,8 +1648,7 @@ wifi_nrf_hal_init(struct wifi_nrf_osal_priv *opriv,
 
 	if (!hpriv->bpriv) {
 		wifi_nrf_osal_log_err(opriv,
-				      "%s: Failed\n",
-				      __func__);
+				      ": Failed\n");
 		wifi_nrf_osal_mem_free(opriv,
 				       hpriv);
 		hpriv = NULL;

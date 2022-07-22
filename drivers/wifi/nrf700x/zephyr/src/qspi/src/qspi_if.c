@@ -1053,7 +1053,7 @@ struct device qspi_perip = {
 
 int qspi_deinit(void)
 {
-	LOG_DBG("TODO : %s\n", __func__);
+	LOG_DBG("TODO : \n");
 
 	return 0;
 }
@@ -1092,7 +1092,7 @@ int qspi_init(struct qspi_config *config)
 			config->enc_enabled = true;
 	}
 #endif
-	LOG_DBG("exiting %s\n", __func__);
+	LOG_DBG("exiting \n");
 	return rc;
 }
 
@@ -1118,7 +1118,7 @@ void qspi_update_nonce(unsigned int addr, int len, int hlread)
 void qspi_addr_check(unsigned int addr, const void *data, unsigned int len)
 {
 	if ((addr % 4 != 0) || (((unsigned int)data) % 4 != 0) || (len % 4 != 0)) {
-		LOG_ERR("%s : Unaligned address %x %x %d %x %x\n", __func__, addr,
+		LOG_ERR(": Unaligned address %x %x %d %x %x\n", addr,
 		       (unsigned int)data, (addr % 4 != 0), (((unsigned int)data) % 4 != 0),
 		       (len % 4 != 0));
 	}
@@ -1173,7 +1173,7 @@ int qspi_hl_readw(unsigned int addr, void *data)
 	rxb = k_malloc(len);
 
 	if (rxb == NULL) {
-		LOG_ERR("%s: ERROR ENOMEM line %d\n", __func__, __LINE__);
+		LOG_ERR(": ERROR ENOMEM line %d\n", __LINE__);
 		return -ENOMEM;
 	}
 

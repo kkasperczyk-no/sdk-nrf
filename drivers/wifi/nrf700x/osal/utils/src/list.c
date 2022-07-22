@@ -20,8 +20,7 @@ void *wifi_nrf_utils_list_alloc(struct wifi_nrf_osal_priv *opriv)
 
 	if (!list) {
 		wifi_nrf_osal_log_err(opriv,
-				      "%s: Unable to allocate list\n",
-				      __func__);
+				      ": Unable to allocate list\n");
 		goto out;
 	}
 
@@ -52,8 +51,7 @@ enum wifi_nrf_status wifi_nrf_utils_list_add_tail(struct wifi_nrf_osal_priv *opr
 
 	if (!list_node) {
 		wifi_nrf_osal_log_err(opriv,
-				      "%s: Unable to allocate list node\n",
-				      __func__);
+				      ": Unable to allocate list node\n");
 		return WIFI_NRF_STATUS_FAIL;
 	}
 

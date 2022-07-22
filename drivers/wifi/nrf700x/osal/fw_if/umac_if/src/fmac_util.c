@@ -301,8 +301,7 @@ int wifi_nrf_util_get_vif_indx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 	if (vif_index == -1) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: Invalid vif_index = %d",
-				      __func__,
+				      ": Invalid vif_index = %d",
 				      vif_index);
 	}
 

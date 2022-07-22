@@ -64,7 +64,7 @@ void wifi_nrf_if_init(struct net_if *iface)
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	if (!rpu_ctx_zep || !vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		LOG_ERR(": vif_ctx_zep is NULL\n");
 		return;
 	}
 
@@ -90,7 +90,7 @@ int wifi_nrf_if_send(const struct device *dev, struct net_pkt *pkt)
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		LOG_ERR(": vif_ctx_zep is NULL\n");
 		net_pkt_unref(pkt);
 		return -1;
 	}

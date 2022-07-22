@@ -86,8 +86,7 @@ int wifi_nrf_fmac_peer_add(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	}
 
 	wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-			      "%s: Failed !! No Space Available",
-			      __func__);
+			      ": Failed !! No Space Available");
 
 	return -1;
 }

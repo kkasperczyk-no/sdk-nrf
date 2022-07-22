@@ -75,7 +75,7 @@ void wifi_nrf_event_proc_scan_done_zep(void *vif_ctx,
 	vif_ctx_zep = vif_ctx;
 
 	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		LOG_ERR(": vif_ctx_zep is NULL\n");
 		return;
 	}
 
@@ -83,7 +83,7 @@ void wifi_nrf_event_proc_scan_done_zep(void *vif_ctx,
 		status = wifi_nrf_disp_scan_res_get_zep(vif_ctx_zep);
 
 		if (status != WIFI_NRF_STATUS_SUCCESS) {
-			LOG_ERR("%s: wifi_nrf_disp_scan_res_get_zep failed\n", __func__);
+			LOG_ERR(": wifi_nrf_disp_scan_res_get_zep failed\n");
 			return;
 		}
 #ifdef CONFIG_WPA_SUPP
@@ -94,7 +94,7 @@ void wifi_nrf_event_proc_scan_done_zep(void *vif_ctx,
 						       0);
 #endif /* CONFIG_WPA_SUPP */
 	} else {
-		LOG_ERR("%s: Scan type = %d not supported yet\n", __func__, vif_ctx_zep->scan_type);
+		LOG_ERR(": Scan type = %d not supported yet\n", vif_ctx_zep->scan_type);
 		return;
 	}
 
@@ -142,7 +142,7 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 	rpu_ctx = wifi_nrf_fmac_dev_add(drv_priv_zep->fmac_priv, rpu_ctx_zep);
 
 	if (!rpu_ctx) {
-		LOG_ERR("%s: wifi_nrf_fmac_dev_add failed\n", __func__);
+		LOG_ERR(": wifi_nrf_fmac_dev_add failed\n");
 		k_free(rpu_ctx_zep);
 		rpu_ctx_zep = NULL;
 		goto out;
@@ -165,14 +165,14 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 	status = wifi_nrf_fmac_fw_load(rpu_ctx, &fw_info);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_fw_load failed\n", __func__);
+		LOG_ERR(": wifi_nrf_fmac_fw_load failed\n");
 		goto out;
 	}
 
 	status = wifi_nrf_fmac_ver_get(rpu_ctx);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_ver_get failed\n", __func__);
+		LOG_ERR(": wifi_nrf_fmac_ver_get failed\n");
 		wifi_nrf_fmac_dev_rem(rpu_ctx);
 		k_free(rpu_ctx_zep);
 		rpu_ctx_zep = NULL;
@@ -182,7 +182,7 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 	status = wifi_nrf_umac_info(&rpu_drv_priv_zep.rpu_ctx_zep);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_umac_info failed\n", __func__);
+		LOG_ERR(": wifi_nrf_umac_info failed\n");
 		wifi_nrf_fmac_dev_rem(rpu_ctx);
 		rpu_ctx_zep = NULL;
 		goto out;
@@ -223,7 +223,7 @@ enum wifi_nrf_status wifi_nrf_fmac_def_vif_add_zep(struct wifi_nrf_ctx_zep *rpu_
 		wifi_nrf_fmac_add_vif(rpu_ctx_zep->rpu_ctx, vif_ctx_zep, &add_vif_info);
 
 	if (vif_ctx_zep->vif_idx != 0) {
-		LOG_ERR("%s: FMAC returned non 0 index for default interface\n", __func__);
+		LOG_ERR(": FMAC returned non 0 index for default interface\n");
 		k_free(vif_ctx_zep);
 		goto out;
 	}
@@ -262,7 +262,7 @@ enum wifi_nrf_status wifi_nrf_fmac_def_vif_state_chg(struct wifi_nrf_vif_ctx_zep
 	status = wifi_nrf_fmac_chg_vif_state(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &vif_info);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_chg_vif_state failed\n", __func__);
+		LOG_ERR(": wifi_nrf_fmac_chg_vif_state failed\n");
 		goto out;
 	}
 out:
@@ -287,7 +287,7 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init_zep(struct wifi_nrf_ctx_zep *rpu_ctx
 		ret = hex_str_to_val(params.rf_params, sizeof(params.rf_params), rf_params);
 
 		if (ret == -1) {
-			LOG_ERR("%s: hex_str_to_val failed\n", __func__);
+			LOG_ERR(": hex_str_to_val failed\n");
 			goto out;
 		}
 
@@ -311,7 +311,7 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init_zep(struct wifi_nrf_ctx_zep *rpu_ctx
 	status = wifi_nrf_fmac_dev_init(rpu_ctx_zep->rpu_ctx, &params);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_dev_init failed\n", __func__);
+		LOG_ERR(": wifi_nrf_fmac_dev_init failed\n");
 		goto out;
 	}
 out:
@@ -385,14 +385,14 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 							&callbk_fns);
 
 	if (rpu_drv_priv_zep.fmac_priv == NULL) {
-		LOG_ERR("%s: wifi_nrf_fmac_init failed\n", __func__);
+		LOG_ERR(": wifi_nrf_fmac_init failed\n");
 		goto out;
 	}
 
 	status = wifi_nrf_fmac_dev_add_zep(&rpu_drv_priv_zep);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_dev_add_zep failed\n", __func__);
+		LOG_ERR(": wifi_nrf_fmac_dev_add_zep failed\n");
 		wifi_nrf_fmac_deinit(rpu_drv_priv_zep.fmac_priv);
 		goto out;
 	}
@@ -400,7 +400,7 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	status = wifi_nrf_fmac_def_vif_add_zep(&rpu_drv_priv_zep.rpu_ctx_zep, 0, dev);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_def_vif_add_zep failed\n", __func__);
+		LOG_ERR(": wifi_nrf_fmac_def_vif_add_zep failed\n");
 		wifi_nrf_fmac_dev_rem_zep(&rpu_drv_priv_zep.rpu_ctx_zep);
 		wifi_nrf_fmac_deinit(rpu_drv_priv_zep.fmac_priv);
 		goto out;
@@ -409,7 +409,7 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	status = wifi_nrf_fmac_dev_init_zep(&rpu_drv_priv_zep.rpu_ctx_zep);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_dev_init_zep failed\n", __func__);
+		LOG_ERR(": wifi_nrf_fmac_dev_init_zep failed\n");
 		wifi_nrf_fmac_def_vif_rem_zep(vif_ctx_zep);
 		wifi_nrf_fmac_dev_rem_zep(vif_ctx_zep->rpu_ctx_zep);
 		wifi_nrf_fmac_deinit(rpu_drv_priv_zep.fmac_priv);
@@ -420,7 +420,7 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	status = wifi_nrf_fmac_def_vif_state_chg(vif_ctx_zep, 1);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_def_vif_state_chg failed\n", __func__);
+		LOG_ERR(": wifi_nrf_fmac_def_vif_state_chg failed\n");
 		wifi_nrf_fmac_dev_deinit_zep(vif_ctx_zep->rpu_ctx_zep);
 		wifi_nrf_fmac_def_vif_rem_zep(vif_ctx_zep);
 		wifi_nrf_fmac_dev_rem_zep(vif_ctx_zep->rpu_ctx_zep);

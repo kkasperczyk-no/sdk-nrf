@@ -24,8 +24,7 @@ struct host_rpu_msg *umac_cmd_alloc(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 	if (!umac_cmd) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: Failed to allocate UMAC cmd\n",
-				      __func__);
+				      ": Failed to allocate UMAC cmd\n");
 		goto out;
 	}
 
@@ -49,8 +48,7 @@ enum wifi_nrf_status umac_cmd_cfg(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 		umac_hdr = (struct img_umac_hdr *)params;
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: UMAC buff config not yet done(%d)\n",
-				      __func__,
+				      ": UMAC buff config not yet done(%d)\n",
 				      umac_hdr->cmd_evnt);
 		goto out;
 	}
@@ -61,8 +59,7 @@ enum wifi_nrf_status umac_cmd_cfg(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 	if (!umac_cmd) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: umac_cmd_alloc failed\n",
-				      __func__);
+				      ": umac_cmd_alloc failed\n");
 		goto out;
 	}
 
@@ -104,8 +101,7 @@ enum wifi_nrf_status umac_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 	if (!umac_cmd) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: umac_cmd_alloc failed\n",
-				      __func__);
+				      ": umac_cmd_alloc failed\n");
 		goto out;
 	}
 
@@ -172,8 +168,7 @@ enum wifi_nrf_status umac_cmd_deinit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 				  len);
 	if (!umac_cmd) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: umac_cmd_alloc failed\n",
-				      __func__);
+				      ": umac_cmd_alloc failed\n");
 		goto out;
 	}
 	umac_cmd_data = (struct img_cmd_sys_deinit *)(umac_cmd->msg);
@@ -203,8 +198,7 @@ enum wifi_nrf_status umac_cmd_btcoex(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 	if (!umac_cmd) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: umac_cmd_alloc failed\n",
-				      __func__);
+				      ": umac_cmd_alloc failed\n");
 		goto out;
 	}
 
@@ -245,8 +239,7 @@ enum wifi_nrf_status umac_cmd_he_ltf_gi(struct wifi_nrf_fmac_dev_ctx *fmac_dev_c
 
 	if (!umac_cmd) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: umac_cmd_alloc failed\n",
-				      __func__);
+				      ": umac_cmd_alloc failed\n");
 		goto out;
 	}
 
@@ -296,8 +289,7 @@ enum wifi_nrf_status umac_cmd_prog_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_
 
 	if (!umac_cmd) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: umac_cmd_alloc failed\n",
-				      __func__);
+				      ": umac_cmd_alloc failed\n");
 		goto out;
 	}
 

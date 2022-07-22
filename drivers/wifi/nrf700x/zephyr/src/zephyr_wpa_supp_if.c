@@ -77,11 +77,11 @@ static unsigned int wpa_alg_to_cipher_suite(enum wpa_alg alg, size_t key_len)
 	case WPA_ALG_KRK:
 		return RSN_CIPHER_SUITE_KRK;
 	case WPA_ALG_NONE:
-		LOG_ERR("%s: Unexpected encryption algorithm %d", __func__, alg);
+		LOG_ERR(": Unexpected encryption algorithm %d", alg);
 		return 0;
 	}
 
-	LOG_ERR("%s: Unsupported encryption algorithm %d", __func__, alg);
+	LOG_ERR(": Unsupported encryption algorithm %d", alg);
 	return 0;
 }
 
@@ -118,7 +118,7 @@ void wifi_nrf_wpa_supp_event_proc_scan_done(void *if_priv,
 	event = k_calloc(sizeof(*event), sizeof(char));
 
 	if (!event) {
-		LOG_ERR("%s: Unable to allocate memory\n", __func__);
+		LOG_ERR(": Unable to allocate memory\n");
 		return;
 	}
 
@@ -158,7 +158,7 @@ void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
 	r = k_calloc(sizeof(*r) + ie_len + beacon_ie_len, sizeof(char));
 
 	if (!r) {
-		LOG_ERR("%s: Unable to allocate memory for scan result\n", __func__);
+		LOG_ERR(": Unable to allocate memory for scan result\n");
 		return;
 	}
 
@@ -247,13 +247,13 @@ void wifi_nrf_wpa_supp_event_proc_auth_resp(void *if_priv,
 	mgmt = (const struct ieee80211_mgmt *)frame;
 
 	if (frame_len < 4 + (2 * IMG_ETH_ALEN)) {
-		LOG_ERR("%s: MLME event too short\n", __func__);
+		LOG_ERR(": MLME event too short\n");
 		return;
 	}
 
 
 	if (frame_len < 24 + sizeof(mgmt->u.auth)) {
-		LOG_ERR("%s: Authentication response frame too short\n", __func__);
+		LOG_ERR(": Authentication response frame too short\n");
 		return;
 	}
 
@@ -293,7 +293,7 @@ void wifi_nrf_wpa_supp_event_proc_assoc_resp(void *if_priv,
 	mgmt = (const struct ieee80211_mgmt *)frame;
 
 	if (frame_len < 24 + sizeof(mgmt->u.assoc_resp)) {
-		LOG_ERR("%s: Association response frame too short\n", __func__);
+		LOG_ERR(": Association response frame too short\n");
 		return;
 	}
 
@@ -344,7 +344,7 @@ void wifi_nrf_wpa_supp_event_proc_deauth(void *if_priv,
 	mgmt = (const struct ieee80211_mgmt *)frame;
 
 	if (frame_len < 24 + sizeof(mgmt->u.deauth)) {
-		LOG_ERR("%s: Association response frame too short\n", __func__);
+		LOG_ERR(": Association response frame too short\n");
 		return;
 	}
 
@@ -377,7 +377,7 @@ void wifi_nrf_wpa_supp_event_proc_disassoc(void *if_priv,
 	mgmt = (const struct ieee80211_mgmt *)frame;
 
 	if (frame_len < 24 + sizeof(mgmt->u.disassoc)) {
-		LOG_ERR("%s: Association response frame too short\n", __func__);
+		LOG_ERR(": Association response frame too short\n");
 		return;
 	}
 
@@ -400,14 +400,14 @@ void *wifi_nrf_wpa_supp_dev_init(void *supp_drv_if_ctx, const char *iface_name,
 	const struct device *device = device_get_binding(iface_name);
 
 	if (!device) {
-		LOG_ERR("%s: Interface %s not found\n", __func__, iface_name);
+		LOG_ERR(": Interface %s not found\n", iface_name);
 		return NULL;
 	}
 
 	vif_ctx_zep = device->data;
 
 	if (!vif_ctx_zep || !vif_ctx_zep->rpu_ctx_zep) {
-		LOG_ERR("%s: Interface %s not properly initialized\n", __func__, iface_name);
+		LOG_ERR(": Interface %s not properly initialized\n", iface_name);
 		return NULL;
 	}
 
@@ -438,7 +438,7 @@ int wifi_nrf_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 	int ret = -1;
 
 	if (!if_priv || !params) {
-		LOG_ERR("%s: Invalid params\n", __func__);
+		LOG_ERR(": Invalid params\n");
 		goto out;
 	}
 
@@ -467,7 +467,7 @@ int wifi_nrf_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 	status = wifi_nrf_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &scan_info);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: Scan trigger failed\n", __func__);
+		LOG_ERR(": Scan trigger failed\n");
 		goto out;
 	}
 
@@ -486,7 +486,7 @@ int wifi_nrf_wpa_supp_scan_abort(void *if_priv)
 	vif_ctx_zep = if_priv;
 
 	/* TODO: No support in UMAC for scan abort yet */
-	LOG_ERR("%s: Scan abort not supported yet\n", __func__);
+	LOG_ERR(": Scan abort not supported yet\n");
 
 	return 0;
 }
@@ -499,7 +499,7 @@ int wifi_nrf_wpa_supp_scan_results_get(void *if_priv)
 	int ret = -1;
 
 	if (!if_priv) {
-		LOG_ERR("%s: Invalid params\n", __func__);
+		LOG_ERR(": Invalid params\n");
 		goto out;
 	}
 
@@ -510,7 +510,7 @@ int wifi_nrf_wpa_supp_scan_results_get(void *if_priv)
 					    SCAN_CONNECT);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_scan_res_get failed\n", __func__);
+		LOG_ERR(": wifi_nrf_fmac_scan_res_get failed\n");
 		goto out;
 	}
 
@@ -528,7 +528,7 @@ int wifi_nrf_wpa_supp_deauthenticate(void *if_priv, const char *addr, unsigned s
 	int ret = -1;
 
 	if ((!if_priv) || (!addr)) {
-		LOG_ERR("%s: Invalid params\n", __func__);
+		LOG_ERR(": Invalid params\n");
 		goto out;
 	}
 
@@ -544,7 +544,7 @@ int wifi_nrf_wpa_supp_deauthenticate(void *if_priv, const char *addr, unsigned s
 	status = wifi_nrf_fmac_deauth(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &deauth_info);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_scan_res_get failed\n", __func__);
+		LOG_ERR(": wifi_nrf_fmac_scan_res_get failed\n");
 		goto out;
 	}
 
@@ -598,7 +598,7 @@ int wifi_nrf_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 	int count = 0;
 
 	if ((!if_priv) || (!params)) {
-		LOG_ERR("%s: Invalid params\n", __func__);
+		LOG_ERR(": Invalid params\n");
 		goto out;
 	}
 
@@ -661,11 +661,11 @@ int wifi_nrf_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 	status = wifi_nrf_fmac_auth(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &auth_info);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: MLME command failed (auth): count=%d ret=%d\n", __func__, count, ret);
+		LOG_ERR(": MLME command failed (auth): count=%d ret=%d\n", count, ret);
 		count++;
 		ret = -1;
 	} else {
-		LOG_INF("%s:Authentication request sent successfully\n", __func__);
+		LOG_INF(":Authentication request sent successfully\n");
 		ret = 0;
 	}
 out:
@@ -681,7 +681,7 @@ int wifi_nrf_wpa_supp_associate(void *if_priv, struct wpa_driver_associate_param
 	int ret = -1;
 
 	if ((!if_priv) || (!params)) {
-		LOG_ERR("%s: Invalid params\n", __func__);
+		LOG_ERR(": Invalid params\n");
 		goto out;
 	}
 
@@ -722,9 +722,9 @@ int wifi_nrf_wpa_supp_associate(void *if_priv, struct wpa_driver_associate_param
 	status = wifi_nrf_fmac_assoc(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &assoc_info);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: MLME command failed (assoc)\n", __func__);
+		LOG_ERR(": MLME command failed (assoc)\n");
 	} else {
-		LOG_INF("%s: Association request sent successfully\n", __func__);
+		LOG_INF(": Association request sent successfully\n");
 		ret = 0;
 	}
 
@@ -747,7 +747,7 @@ int wifi_nrf_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 
 
 	if ((!if_priv) || (!ifname)) {
-		LOG_ERR("%s: Invalid params\n", __func__);
+		LOG_ERR(": Invalid params\n");
 		goto out;
 	}
 
@@ -799,7 +799,7 @@ int wifi_nrf_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 					       &key_info, mac_addr);
 
 		if (status != WIFI_NRF_STATUS_SUCCESS) {
-			LOG_ERR("%s: wifi_nrf_fmac_del_key failed\n", __func__);
+			LOG_ERR(": wifi_nrf_fmac_del_key failed\n");
 		} else {
 			ret = 0;
 		}
@@ -808,7 +808,7 @@ int wifi_nrf_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 					       &key_info, mac_addr);
 
 		if (status != WIFI_NRF_STATUS_SUCCESS) {
-			LOG_ERR("%s: wifi_nrf_fmac_add_key failed\n", __func__);
+			LOG_ERR(": wifi_nrf_fmac_add_key failed\n");
 		} else {
 			ret = 0;
 		}
@@ -844,7 +844,7 @@ int wifi_nrf_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 	status = wifi_nrf_fmac_set_key(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &key_info);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_set_key failed\n", __func__);
+		LOG_ERR(": wifi_nrf_fmac_set_key failed\n");
 		ret = -1;
 	} else {
 		ret = 0;

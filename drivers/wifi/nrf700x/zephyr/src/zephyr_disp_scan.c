@@ -33,7 +33,7 @@ int wifi_nrf_disp_scan_zep(const struct device *dev,
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		LOG_ERR(": vif_ctx_zep is NULL\n");
 		goto out;
 	}
 
@@ -47,7 +47,7 @@ int wifi_nrf_disp_scan_zep(const struct device *dev,
 	status = wifi_nrf_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &scan_info);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_scan failed\n", __func__);
+		LOG_ERR(": wifi_nrf_fmac_scan failed\n");
 		goto out;
 	}
 
@@ -71,7 +71,7 @@ enum wifi_nrf_status wifi_nrf_disp_scan_res_get_zep(struct wifi_nrf_vif_ctx_zep 
 					    SCAN_DISPLAY);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_scan failed\n", __func__);
+		LOG_ERR(": wifi_nrf_fmac_scan failed\n");
 		goto out;
 	}
 

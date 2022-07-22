@@ -31,8 +31,7 @@ enum wifi_nrf_status pal_rpu_addr_offset_get(struct wifi_nrf_osal_priv *opriv,
 		region_offset = SOC_MMAP_ADDR_OFFSET_PKTRAM_HOST_VIEW;
 	} else {
 		wifi_nrf_osal_log_err(opriv,
-				      "%s: Invalid rpu_addr 0x%X\n",
-				      __func__,
+				      ": Invalid rpu_addr 0x%X\n",
 				      rpu_addr);
 		goto out;
 	}
@@ -67,8 +66,7 @@ char *pal_ops_get_fw_loc(struct wifi_nrf_osal_priv *opriv,
 			fw_loc = WIFI_NRF_FW_LMAC_PATCH_LOC_SEC;
 		} else {
 			wifi_nrf_osal_log_err(opriv,
-					      "%s: Invalid LMAC FW sub-type = %d\n",
-					      __func__,
+					      ": Invalid LMAC FW sub-type = %d\n",
 					      fw_subtype);
 			goto out;
 		}
@@ -80,16 +78,14 @@ char *pal_ops_get_fw_loc(struct wifi_nrf_osal_priv *opriv,
 			fw_loc = WIFI_NRF_FW_UMAC_PATCH_LOC_SEC;
 		} else {
 			wifi_nrf_osal_log_err(opriv,
-					      "%s: Invalid UMAC FW sub-type = %d\n",
-					      __func__,
+					      ": Invalid UMAC FW sub-type = %d\n",
 					      fw_subtype);
 			goto out;
 		}
 		break;
 	default:
 		wifi_nrf_osal_log_err(opriv,
-				      "%s: Invalid FW type = %d\n",
-				      __func__,
+				      ": Invalid FW type = %d\n",
 				      fw_type);
 		goto out;
 	}

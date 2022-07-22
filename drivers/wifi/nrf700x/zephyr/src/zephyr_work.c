@@ -51,7 +51,7 @@ struct zep_work_item *work_alloc(void)
 	unsigned int free_work_index = get_free_work_item_index();
 
 	if (free_work_index < 0) {
-		LOG_ERR("%s: Reached maximum work items", __func__);
+		LOG_ERR(": Reached maximum work items");
 		return NULL;
 	}
 

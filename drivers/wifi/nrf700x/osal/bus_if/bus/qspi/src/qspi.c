@@ -44,7 +44,7 @@ static void *wifi_nrf_bus_qspi_dev_add(void *bus_priv,
 
 	if (!qspi_dev_ctx) {
 		wifi_nrf_osal_log_err(qspi_priv->opriv,
-				      "%s: Unable to allocate qspi_dev_ctx\n", __func__);
+				      ": Unable to allocate qspi_dev_ctx\n");
 		goto out;
 	}
 
@@ -58,7 +58,7 @@ static void *wifi_nrf_bus_qspi_dev_add(void *bus_priv,
 
 	if (!qspi_dev_ctx->os_qspi_dev_ctx) {
 		wifi_nrf_osal_log_err(qspi_priv->opriv,
-				      "%s: wifi_nrf_osal_bus_qspi_dev_add failed\n", __func__);
+				      ": wifi_nrf_osal_bus_qspi_dev_add failed\n");
 
 		wifi_nrf_osal_mem_free(qspi_priv->opriv,
 				       qspi_dev_ctx);
@@ -84,8 +84,7 @@ static void *wifi_nrf_bus_qspi_dev_add(void *bus_priv,
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(qspi_dev_ctx->qspi_priv->opriv,
-				      "%s: Unable to register interrupt to the OS\n",
-				      __func__);
+				      ": Unable to register interrupt to the OS\n");
 
 		wifi_nrf_osal_bus_qspi_dev_intr_unreg(qspi_dev_ctx->qspi_priv->opriv,
 						      qspi_dev_ctx->os_qspi_dev_ctx);
@@ -132,7 +131,7 @@ static enum wifi_nrf_status wifi_nrf_bus_qspi_dev_init(void *bus_dev_ctx)
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(qspi_dev_ctx->qspi_priv->opriv,
-				      "%s: wifi_nrf_osal_qspi_dev_init failed\n", __func__);
+				      ": wifi_nrf_osal_qspi_dev_init failed\n");
 
 		goto out;
 	}
@@ -163,8 +162,7 @@ static void *wifi_nrf_bus_qspi_init(struct wifi_nrf_osal_priv *opriv,
 
 	if (!qspi_priv) {
 		wifi_nrf_osal_log_err(opriv,
-				      "%s: Unable to allocate memory for qspi_priv\n",
-				      __func__);
+				      ": Unable to allocate memory for qspi_priv\n");
 		goto out;
 	}
 
@@ -181,8 +179,7 @@ static void *wifi_nrf_bus_qspi_init(struct wifi_nrf_osal_priv *opriv,
 
 	if (!qspi_priv->os_qspi_priv) {
 		wifi_nrf_osal_log_err(opriv,
-				      "%s: Unable to register QSPI driver\n",
-				      __func__);
+				      ": Unable to register QSPI driver\n");
 
 		wifi_nrf_osal_mem_free(opriv,
 				       qspi_priv);

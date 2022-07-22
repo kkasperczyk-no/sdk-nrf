@@ -21,8 +21,7 @@ int wifi_nrf_fmac_vif_check_if_limit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	case IMG_IFTYPE_P2P_CLIENT:
 		if (fmac_dev_ctx->num_sta >= MAX_NUM_STAS) {
 			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-					      "%s: Maximum STA Interface type exceeded\n",
-					      __func__);
+					      ": Maximum STA Interface type exceeded\n");
 			return -1;
 		}
 		break;
@@ -30,15 +29,13 @@ int wifi_nrf_fmac_vif_check_if_limit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	case IMG_IFTYPE_P2P_GO:
 		if (fmac_dev_ctx->num_ap >= MAX_NUM_APS) {
 			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-					      "%s: Maximum AP Interface type exceeded\n",
-					      __func__);
+					      ": Maximum AP Interface type exceeded\n");
 			return -1;
 		}
 		break;
 	default:
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: Interface type not supported\n",
-				      __func__);
+				      ": Interface type not supported\n");
 		return -1;
 	}
 
@@ -60,8 +57,7 @@ void wifi_nrf_fmac_vif_incr_if_type(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 		break;
 	default:
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s:Unsupported VIF type\n",
-				      __func__);
+				      ":Unsupported VIF type\n");
 	}
 }
 
@@ -80,8 +76,7 @@ void wifi_nrf_fmac_vif_decr_if_type(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 		break;
 	default:
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s:Unsupported VIF type\n",
-				      __func__);
+				      ":Unsupported VIF type\n");
 	}
 }
 

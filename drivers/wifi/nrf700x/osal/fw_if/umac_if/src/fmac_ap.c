@@ -26,8 +26,7 @@ enum wifi_nrf_status sap_client_ps_get_frames(struct wifi_nrf_fmac_dev_ctx *fmac
 
 	if (!fmac_dev_ctx || !config) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: Invalid params\n",
-				      __func__);
+				      ": Invalid params\n");
 		goto out;
 	}
 
@@ -38,8 +37,7 @@ enum wifi_nrf_status sap_client_ps_get_frames(struct wifi_nrf_fmac_dev_ctx *fmac
 
 	if (id == -1) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: Invalid Peer_ID, Mac Addr =%pM\n",
-				      __func__,
+				      ": Invalid Peer_ID, Mac Addr =%pM\n",
 				      config->mac_addr);
 
 		wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
@@ -88,8 +86,7 @@ enum wifi_nrf_status sap_client_update_pmmode(struct wifi_nrf_fmac_dev_ctx *fmac
 
 	if (!fmac_dev_ctx || !config) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: Invalid params\n",
-				      __func__);
+				      ": Invalid params\n");
 		goto out;
 	}
 
@@ -101,8 +98,7 @@ enum wifi_nrf_status sap_client_update_pmmode(struct wifi_nrf_fmac_dev_ctx *fmac
 
 	if (id == -1) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: Invalid Peer_ID, Mac address = %pM\n",
-				      __func__,
+				      ": Invalid Peer_ID, Mac address = %pM\n",
 				      config->mac_addr);
 
 		wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
