@@ -66,8 +66,8 @@ Remote testing in a network
 ---------------------------
 
 .. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_remote_testing_start
-    :end-before: matter_door_lock_sample_remote_testing_end
+    :start-after: matter_light_bulb_sample_remote_testing_start
+    :end-before: matter_light_bulb_sample_remote_testing_end
 
 Configuration
 *************

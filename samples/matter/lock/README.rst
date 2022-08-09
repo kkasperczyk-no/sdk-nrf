@@ -9,8 +9,8 @@ Matter: Door lock
    :depth: 2
 
 This door lock sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a door lock device with one basic bolt.
-This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread network.
-Additionally, this device works as a Thread :ref:`Router <thread_ot_device_types>`.
+This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread or Wi-Fi network.
+Support for Thread or Wi-Fi is exclusive, so only one protocol can be selected for a specific lock device.
 You can use this sample as a reference for creating your application.
 
 Requirements
@@ -20,8 +20,10 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-If you want to commission the lock device and :ref:`control it remotely <matter_lock_sample_network_mode>` through a Thread network, you also need a Matter controller device :ref:`configured on PC or mobile <ug_matter_configuring>`.
+If you want to commission the lock device and :ref:`control it remotely <matter_lock_sample_network_mode>` through a IP network, you also need a Matter controller device :ref:`configured on PC or mobile <ug_matter_configuring>`.
 This requires additional hardware depending on the setup you choose.
+The Matter over Thread is supported for a `nrf52840dk_nrf52840`, `nrf5340dk_nrf5340` and `nrf21540dk_nrf52840`.
+The Matter over Wi-Fi is supported for a `nrf5340dk_nrf5340` with `nrf7002_ek` shield attached or `nrf7002dk_nrf5340`.
 
 .. note::
     |matter_gn_required_note|
@@ -33,7 +35,7 @@ The sample uses buttons for changing the lock and device states, and LEDs to sho
 You can test it in the following ways:
 
 * Standalone, using a single DK that runs the door lock application.
-* Remotely over the Thread protocol, which requires more devices.
+* Remotely over the Thread or Wi-Fi protocol, which requires more devices.
 
 The remote control testing requires a Matter controller that you can configure either on a PC or a mobile device (for remote testing in a network).
 You can enable both methods after :ref:`building and running the sample <matter_lock_sample_remote_control>`.
@@ -45,8 +47,8 @@ Remote testing in a network
 
 .. matter_door_lock_sample_remote_testing_start
 
-By default, the Matter accessory device has Thread disabled.
-You must pair it with the Matter controller over Bluetooth® LE to get the configuration from the controller to use the device within a Thread network.
+By default, the Matter accessory device has networking disabled.
+You must pair it with the Matter controller over Bluetooth® LE to get the configuration from the controller to use the device within a Thread or Wi-Fi network.
 You have to make the device discoverable manually (for security reasons).
 The controller must get the commissioning information from the Matter accessory device and provision the device into the network.
 For details, see the `Commissioning the device`_ section.
@@ -163,13 +165,22 @@ Button 1:
 .. matter_door_lock_sample_button1_end
 
 Button 2:
-    Changes the lock state to the opposite one.
+    For nRF52840dk, nRF5340dk and nRF21540DK:
+       Changes the lock state to the opposite one.
+
+    For nRF7002dk:
+    * If pressed for less than three seconds, it changes the lock state to the opposite one.
+    * If pressed for more than three seconds, it starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
 
 .. matter_door_lock_sample_button4_start
 
 Button 4:
-    Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
-    This button is used during the :ref:`commissioning procedure <matter_lock_sample_remote_control_commissioning>`.
+    For nRF52840dk, nRF5340dk and nRF21540DK:
+       Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
+       This button is used during the :ref:`commissioning procedure <matter_lock_sample_remote_control_commissioning>`.
+
+    For nRF7002dk:
+       It is not available.
 
 .. matter_door_lock_sample_button4_end
 
