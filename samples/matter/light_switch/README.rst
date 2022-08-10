@@ -9,8 +9,9 @@ Matter: Light switch
    :depth: 2
 
 This light switch sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a switch device that binds with lighting devices and changes the state of their LEDs.
-When configured together with the :ref:`Matter light bulb <matter_light_bulb_sample>` sample (or other lighting sample) and when using a Matter controller, the light switch can control one light bulb directly or a group of light bulbs remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
-This device works as a Thread :ref:`Sleepy End Device <thread_ot_device_types>`.
+When configured together with the :ref:`Matter light bulb <matter_light_bulb_sample>` sample (or other lighting sample) and when using a Matter controller, the light switch can control one light bulb directly or a group of light bulbs remotely over a Matter network built on top of a low-power, 802.15.4 Thread or Wi-Fi network.
+Support for Thread or Wi-Fi is exclusive and depends on the used hardware platform, so only one protocol can be supported for a specific light switch device.
+In case of supporting Thread, this device works as a Thread :ref:`Sleepy End Device <thread_ot_device_types>`.
 You can use this sample as a reference for creating your own application.
 
 Requirements
@@ -41,7 +42,7 @@ Then, the light switch device prepares a new binding table to be able to discove
 After the binding is complete, the application can control the state of the connected lighting devices in one of the following ways:
 
 * With a single light bulb, it uses a Certificate-Authenticated Session Establishment session (CASE session) for direct communication with the single light bulb.
-* With a group of light bulbs, it uses multicast messages sent through the Thread network using :ref:`matter_light_switch_sample_groupcast` with all light bulbs in the group.
+* With a group of light bulbs, it uses multicast messages sent through the IPv6 network using :ref:`matter_light_switch_sample_groupcast` with all light bulbs in the group.
 
 .. _matter_light_switch_sample_acl:
 
@@ -62,9 +63,9 @@ Group communication
 Group communication (groupcast or multicast) refers to messages and commands sent to the address of a group that includes multiple devices with the same Groups cluster.
 The cluster manages the content of a node-wide Group Table that is part of the underlying interaction layer.
 This is done on per endpoint basis.
-After creating the Group cluster with specific ``ID`` and ``Name``, a device gets its own IPv6 multicast Thread address and is ready to receive groupcast commands.
+After creating the Group cluster with specific ``ID`` and ``Name``, a device gets its own IPv6 multicast address and is ready to receive groupcast commands.
 
-In this sample, the light switch device is able to create a groupcast message and send it to the chosen IPv6 multicast Thread address.
+In this sample, the light switch device is able to create a groupcast message and send it to the chosen IPv6 multicast address.
 This allows the light switch more than one lighting devices at the same time.
 
 .. note::
@@ -82,7 +83,7 @@ Both must belong to the same cluster type.
 Binding lets the local endpoint know which endpoints are going to be the target for the client-generated actions on one or more remote nodes.
 
 In this sample, the light switch controls one or more lighting devices, but does not know the remote endpoints of the lights (on remote nodes).
-Using binding, the light switch device updates its Binding cluster with all relevant information about the lighting devices, such as their IPv6 Thread address, node ID, and the IDs of the remote endpoints that contains the On/Off cluster and the LevelControl cluster, respectively.
+Using binding, the light switch device updates its Binding cluster with all relevant information about the lighting devices, such as their IPv6 address, node ID, and the IDs of the remote endpoints that contains the On/Off cluster and the LevelControl cluster, respectively.
 
 Configuration
 *************
@@ -140,17 +141,11 @@ User interface
     :end-before: matter_door_lock_sample_led1_end
 
 LED 2:
-   Shows the state of the Bluetooth LE Direct Firmware Update (DFU) process.
-
-   * Off - Bluetooth LE is not advertising and DFU is not ready.
-   * Rapid Even Flashing (30 ms off / 170 ms on) - Bluetooth LE is advertising and the DFU process can be started.
-
-LED 3:
    Identifies the device after sending the ``identify`` command to the endpoint ``0`` from the Matter controller device.
    The LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received.
    The command's argument can be used to specify the duration of the effect.
 
-LED 1-4:
+LED 1-4 for nRF52840dk, nRF5340dk and nRF21540dk, or LED 1-2 for nRF7002dk:
    Blink in unison when the factory reset procedure is initiated.
 
 .. include:: ../lock/README.rst
@@ -158,16 +153,29 @@ LED 1-4:
    :end-before: matter_door_lock_sample_button1_end
 
 Button 2:
-   Controls the light on the bound lighting device.
-   Depending on how long you press the button:
+    For nRF52840dk, nRF5340dk and nRF21540dk:
+       Controls the light on the bound lighting device.
+       Depending on how long you press the button:
+       * If pressed for less than 0.5 seconds, it changes the light state to the opposite one on the bound lighting device (:ref:`light bulb <matter_light_bulb_sample>`).
+       * If pressed for more than 0.5 seconds, it changes the brightness of the light on the bound lighting bulb device (:ref:`light bulb <matter_light_bulb_sample>`).
+         The brightness is changing from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 2** is pressed.
 
-   * If pressed for less than 0.5 seconds, it changes the light state to the opposite one on the bound lighting device (:ref:`light bulb <matter_light_bulb_sample>`).
-   * If pressed for more than 0.5 seconds, it changes the brightness of the light on the bound lighting bulb device (:ref:`light bulb <matter_light_bulb_sample>`).
-     The brightness is changing from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 2** is pressed.
+    For nRF7002dk:
+    * If the device is not commissioned to a Matter network, it starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
+      This button is used during the :ref:`commissioning procedure <matter_light_switch_sample_remote_control_commissioning>`.
+    * If the device is commissioned to a Matter network, it controls the light on the bound lighting device.
+      Depending on how long you press the button:
+      * If pressed for less than 0.5 seconds, it changes the light state to the opposite one on the bound lighting device (:ref:`light bulb <matter_light_bulb_sample>`).
+      * If pressed for more than 0.5 seconds, it changes the brightness of the light on the bound lighting bulb device (:ref:`light bulb <matter_light_bulb_sample>`).
+         The brightness is changing from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 2** is pressed.
 
 Button 4:
-    Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
-    This button is used during the :ref:`commissioning procedure <matter_light_switch_sample_remote_control_commissioning>`.
+    For nRF52840dk, nRF5340dk and nRF21540dk:
+       Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
+       This button is used during the :ref:`commissioning procedure <matter_light_switch_sample_remote_control_commissioning>`.
+
+    For nRF7002dk:
+       It is not available.
 
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_jlink_start
@@ -427,7 +435,9 @@ Commissioning the device
     :end-before: matter_light_bulb_sample_commissioning_end
 
 Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE.
-By default, the device is not discoverable automatically upon startup and **Button 4** must be used to enable the Bluetooth LE advertising.
+By default, the device is not discoverable automatically upon startup and the proper button must be used to enable the Bluetooth LE advertising:
+* For nRF52840dk, nRF5340dk and nRF21540dk use the **Button 4**
+* For nRF7002dk use the **Button 2**.
 
 When you start the commissioning procedure, the controller must get the commissioning information from the Matter accessory device.
 The data payload includes the device discriminator and setup PIN code.
