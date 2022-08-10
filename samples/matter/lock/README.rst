@@ -10,8 +10,8 @@ Matter: Door lock
 
 This door lock sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a door lock device with one basic bolt.
 This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread or Wi-Fi network.
-Support for Thread or Wi-Fi is exclusive, so only one protocol can be selected for a specific lock device.
-In case of selecting Thread, this device works as a Thread :ref:`Sleepy End Device <thread_ot_device_types>`.
+Support for Thread or Wi-Fi is exclusive and depends on the used hardware platform, so only one protocol can be supported for a specific lock device.
+In case of supporting Thread, this device works as a Thread :ref:`Sleepy End Device <thread_ot_device_types>`.
 You can use this sample as a reference for creating your application.
 
 Requirements
@@ -21,7 +21,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-If you want to commission the lock device and :ref:`control it remotely <matter_lock_sample_network_mode>` through a IP network, you also need a Matter controller device :ref:`configured on PC or mobile <ug_matter_configuring>`.
+If you want to commission the lock device and :ref:`control it remotely <matter_lock_sample_network_mode>` through an IPv6 network, you also need a Matter controller device :ref:`configured on PC or mobile <ug_matter_configuring>`.
 This requires additional hardware depending on the setup you choose.
 The Matter over Thread is supported for a `nrf52840dk_nrf52840`, `nrf5340dk_nrf5340` and `nrf21540dk_nrf52840`.
 The Matter over Wi-Fi is supported for a `nrf5340dk_nrf5340` with `nrf7002_ek` shield attached or `nrf7002dk_nrf5340`.
@@ -48,7 +48,7 @@ Remote testing in a network
 
 .. matter_door_lock_sample_remote_testing_start
 
-By default, the Matter accessory device has networking disabled.
+By default, the Matter accessory device has IPv6 networking disabled.
 You must pair it with the Matter controller over Bluetooth® LE to get the configuration from the controller to use the device within a Thread or Wi-Fi network.
 You have to make the device discoverable manually (for security reasons).
 The controller must get the commissioning information from the Matter accessory device and provision the device into the network.

@@ -480,10 +480,11 @@ void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 		break;
 	case DeviceEventType::kThreadStateChange:
 	case DeviceEventType::kWiFiConnectivityChange:
-		sIsNetworkProvisioned = ConfigurationMgr().IsFullyProvisioned();
 #if defined(CONFIG_NET_L2_OPENTHREAD)
+		sIsNetworkProvisioned = ConnectivityMgr().IsThreadProvisioned();
 		sIsNetworkEnabled = ConnectivityMgr().IsThreadEnabled();
 #elif defined(CONFIG_CHIP_WIFI)
+		sIsNetworkProvisioned = ConnectivityMgr().IsWiFiStationProvisioned();
 		sIsNetworkEnabled = ConnectivityMgr().IsWiFiStationEnabled();
 #endif
 		UpdateStatusLED();
