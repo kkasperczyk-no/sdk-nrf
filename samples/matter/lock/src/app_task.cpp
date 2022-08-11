@@ -56,7 +56,7 @@ constexpr size_t kAppEventQueueSize = 10;
 constexpr uint32_t kFactoryResetTriggerTimeout = 3000;
 constexpr uint32_t kFactoryResetCancelWindow = 3000;
 #if CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP
-constexpr uint32_t kAdvertisingStartTimeout = 3000;
+constexpr uint32_t kAdvertisingTriggerTimeout = 3000;
 #endif
 constexpr EndpointId kLockEndpointId = 1;
 
@@ -307,7 +307,7 @@ void AppTask::FunctionPressHandler(uint8_t buttonNumber)
 	}
 #if CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP
 	else if (buttonNumber == 2) {
-		sAppTask.StartFunctionTimer(kAdvertisingStartTimeout);
+		sAppTask.StartFunctionTimer(kAdvertisingTriggerTimeout);
 		sAppTask.mFunction = TimerFunction::AdvertisingStart;
 	}
 #endif

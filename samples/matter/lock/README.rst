@@ -166,7 +166,7 @@ Button 1:
 .. matter_door_lock_sample_button1_end
 
 Button 2:
-    For nRF52840dk, nRF5340dk and nRF21540DK:
+    For nRF52840dk, nRF5340dk and nRF21540dk:
        Changes the lock state to the opposite one.
 
     For nRF7002dk:
@@ -176,7 +176,7 @@ Button 2:
 .. matter_door_lock_sample_button4_start
 
 Button 4:
-    For nRF52840dk, nRF5340dk and nRF21540DK:
+    For nRF52840dk, nRF5340dk and nRF21540dk:
        Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
        This button is used during the :ref:`commissioning procedure <matter_lock_sample_remote_control_commissioning>`.
 
