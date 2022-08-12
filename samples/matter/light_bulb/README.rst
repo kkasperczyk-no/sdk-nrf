@@ -50,7 +50,6 @@ Remote testing in a network
 
 By default, the Matter accessory device has Thread disabled.
 You must pair it with the Matter controller over Bluetooth® LE to get the configuration from the controller to use the device within a Thread network.
-You have to make the device discoverable manually (for security reasons).
 The controller must get the commissioning information from the Matter accessory device and provision the device into the network.
 For details, see the `Commissioning the device`_ section.
 
