@@ -23,8 +23,6 @@ The sample supports the following development kits:
 
 If you want to commission the lock device and :ref:`control it remotely <matter_lock_sample_network_mode>` through an IPv6 network, you also need a Matter controller device :ref:`configured on PC or mobile <ug_matter_configuring>`.
 This requires additional hardware depending on the setup you choose.
-The Matter over Thread is supported for a `nrf52840dk_nrf52840`, `nrf5340dk_nrf5340` and `nrf21540dk_nrf52840`.
-The Matter over Wi-Fi is supported for a `nrf5340dk_nrf5340` with `nrf7002_ek` shield attached or `nrf7002dk_nrf5340`.
 
 .. note::
     |matter_gn_required_note|
