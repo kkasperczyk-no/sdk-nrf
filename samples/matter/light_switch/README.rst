@@ -93,9 +93,9 @@ Configuration
 Matter light switch build types
 ===============================
 
-.. include:: ../light_bulb/README.rst
-    :start-after: matter_light_bulb_sample_configuration_file_types_start
-    :end-before: matter_light_bulb_sample_configuration_file_types_end
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_configuration_file_types_start
+    :end-before: matter_door_lock_sample_configuration_file_types_end
 
 FEM support
 ===========
@@ -127,9 +127,9 @@ For example:
 Device Firmware Upgrade support
 ===============================
 
-.. include:: ../light_bulb/README.rst
-    :start-after: matter_light_bulb_sample_build_with_dfu_start
-    :end-before: matter_light_bulb_sample_build_with_dfu_end
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_build_with_dfu_start
+    :end-before: matter_door_lock_sample_build_with_dfu_end
 
 .. _matter_light_switch_sample_ui:
 
@@ -430,9 +430,9 @@ Complete the following steps:
 Commissioning the device
 ========================
 
-.. include:: ../light_bulb/README.rst
-    :start-after: matter_light_bulb_sample_commissioning_start
-    :end-before: matter_light_bulb_sample_commissioning_end
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_commissioning_start
+    :end-before: matter_door_lock_sample_commissioning_end
 
 Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE.
 By default, the device is not discoverable automatically upon startup and the proper button must be used to enable the Bluetooth LE advertising:

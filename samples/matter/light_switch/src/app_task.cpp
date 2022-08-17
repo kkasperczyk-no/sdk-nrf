@@ -420,12 +420,12 @@ void AppTask::UpdateStatusLED()
 
 	/* Update the status LED.
 	 *
-	 * If thread and service provisioned, keep the LED On constantly.
+	 * If Thread and service provisioned, keep the LED on constantly.
 	 *
-	 * If the system has ble connection(s) uptill the stage above, THEN blink the LED at an even
+	 * If the system has BLE connection(s) up till the stage above, THEN blink the LED at an even
 	 * rate of 100ms.
 	 *
-	 * Otherwise, blink the LED On for a very short time. */
+	 * Otherwise, blink the LED for a very short time. */
 	if (sIsNetworkProvisioned && sIsNetworkEnabled) {
 		sStatusLED.Set(true);
 	} else if (sHaveBLEConnections) {
@@ -462,12 +462,10 @@ void AppTask::ButtonEventHandler(uint32_t aButtonState, uint32_t aHasChanged)
 #endif /* CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP */
 
 	if (buttonMask & aButtonState & aHasChanged) {
-		// buttonEvent.ButtonEvent.PinNo = SWITCH_BUTTON;
 		buttonEvent.ButtonEvent.Action = AppEvent::kButtonPushEvent;
 		buttonEvent.Handler = ButtonPushHandler;
 		sAppTask.PostEvent(&buttonEvent);
 	} else if (buttonMask & aHasChanged) {
-		// buttonEvent.ButtonEvent.PinNo = SWITCH_BUTTON;
 		buttonEvent.ButtonEvent.Action = AppEvent::kButtonReleaseEvent;
 		buttonEvent.Handler = ButtonReleaseHandler;
 		sAppTask.PostEvent(&buttonEvent);
