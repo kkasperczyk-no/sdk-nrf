@@ -8,7 +8,7 @@
 
 #include "app_event.h"
 #include "led_widget.h"
-#include "lighting_manager.h"
+#include "pwm_device.h"
 
 #include <platform/CHIPDeviceLayer.h>
 
@@ -24,47 +24,46 @@ struct k_timer;
 
 class AppTask {
 public:
-	static constexpr size_t APP_EVENT_QUEUE_SIZE = 10;
-
 	CHIP_ERROR StartApp();
 
-	void PostEvent(const AppEvent &aEvent);
+	void PostEvent(const AppEvent &event);
 	void UpdateClusterState();
+	PWMDevice &GetLightingDevice() { return mPWMDevice; }
 
 private:
+	friend AppTask &GetAppTask();
 	CHIP_ERROR Init();
 
-	void CancelFunctionTimer();
-	void StartFunctionTimer(uint32_t timeoutInMs);
-
+	void CancelTimer();
+	void StartTimer(uint32_t timeoutInMs);
 	void DispatchEvent(const AppEvent &event);
-	void FunctionPressHandler();
-	void FunctionReleaseHandler();
-	void FunctionTimerEventHandler();
-	void StartBLEAdvertisingHandler();
 
-	static void ActionInitiated(LightingManager::Action aAction);
-	static void ActionCompleted(LightingManager::Action aAction);
+	static void ActionInitiated(PWMDevice::Action_t action, int32_t actor);
+	static void ActionCompleted(PWMDevice::Action_t action, int32_t actor);
 	static void UpdateStatusLED();
+	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
+	static void UpdateLedStateEventHandler(const AppEvent &event);
+	static void FunctionTimerEventHandler(const AppEvent &event);
+	static void FunctionHandler(const AppEvent &event);
+	static void LightingActionEventHandler(const AppEvent &event);
+	static void StartBLEAdvertisementHandler(const AppEvent &event);
+	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 	static void ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged);
 	static void TimerEventHandler(k_timer *timer);
-	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
-	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 #ifdef CONFIG_MCUMGR_SMP_BT
 	static void RequestSMPAdvertisingStart(void);
 #endif
 
-	friend AppTask &GetAppTask();
+	enum class Function : uint8_t { NoneSelected = 0, SoftwareUpdate = 0, FactoryReset, Invalid };
 
-	enum class TimerFunction { NoneSelected = 0, SoftwareUpdate, FactoryReset };
-
-	TimerFunction mFunction = TimerFunction::NoneSelected;
-
-	static AppTask sAppTask;
-
+	Function mFunction = Function::NoneSelected;
+	bool mFunctionTimerActive = false;
+	PWMDevice mPWMDevice;
 #if CONFIG_CHIP_FACTORY_DATA
 	chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData> mFactoryDataProvider;
 #endif
+
+	static AppTask sAppTask;
 };
 
 inline AppTask &GetAppTask()
