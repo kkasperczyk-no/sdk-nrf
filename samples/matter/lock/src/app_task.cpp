@@ -83,6 +83,42 @@ app::Clusters::NetworkCommissioning::Instance
 	sWiFiCommissioningInstance(0, &(NetworkCommissioning::NrfWiFiDriver::Instance()));
 #endif
 
+#include <bluetooth/bluetooth.h>
+
+#include <bluetooth/hci.h>
+
+#include <sdc_hci_vs.h>
+
+void set_bt_power(int8_t tx_power)
+
+{
+	struct net_buf *buf = NULL;
+	struct net_buf *rsp = NULL;
+	sdc_hci_cmd_vs_zephyr_write_tx_power_t *cmd_tx_power;
+	buf = bt_hci_cmd_create(SDC_HCI_OPCODE_CMD_VS_ZEPHYR_WRITE_TX_POWER,
+				sizeof(sdc_hci_cmd_vs_zephyr_write_tx_power_t));
+
+	cmd_tx_power = (sdc_hci_cmd_vs_zephyr_write_tx_power_t *)net_buf_add(buf, sizeof(*cmd_tx_power));
+
+	// handle_type and handle are ignored, because we are not setting power for connection/extended advertising
+	cmd_tx_power->handle_type = 0;
+	cmd_tx_power->handle = 0;
+	cmd_tx_power->tx_power_level = tx_power; // p_data->tx_power;
+	int err = bt_hci_cmd_send_sync(SDC_HCI_OPCODE_CMD_VS_ZEPHYR_WRITE_TX_POWER, buf, &rsp);
+
+	if (err) {
+		LOG_INF("=============================== Could not send command buffer (err %d)", err);
+	}
+
+	sdc_hci_cmd_vs_zephyr_write_tx_power_return_t *result_data =
+		(sdc_hci_cmd_vs_zephyr_write_tx_power_return_t *)rsp->data;
+	int selected_tx_power = result_data->selected_tx_power;
+	LOG_INF("=============================== Power %d", selected_tx_power);
+	if (rsp) {
+		net_buf_unref(rsp);
+	}
+}
+
 CHIP_ERROR AppTask::Init()
 {
 	/* Initialize CHIP stack */
@@ -192,6 +228,8 @@ CHIP_ERROR AppTask::Init()
 		LOG_ERR("PlatformMgr().StartEventLoopTask() failed");
 		return err;
 	}
+
+	set_bt_power(20);
 
 	return CHIP_NO_ERROR;
 }
