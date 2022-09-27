@@ -31,6 +31,10 @@ manifest:
       url-base: https://github.com/NordicSemiconductor
     - name: memfault
       url-base: https://github.com/memfault
+    - name: sdk-zephyr-Kamil-fork
+      url-base: https://github.com/kkasperczyk-no/sdk-zephyr
+    - name: sdk-connectedhomeip-Kamil-fork
+      url-base: https://github.com/kkasperczyk-no/sdk-connectedhomeip
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -49,8 +53,8 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/introduction/index.html
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
-      repo-path: sdk-zephyr
-      revision: v3.1.99-ncs1
+      remote: sdk-zephyr-Kamil-fork
+      revision: bba8fdfbf6a8e8bd94eb3e638975a6e886462f31
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -122,9 +126,9 @@ manifest:
       path: modules/tee/tfm-mcuboot
       revision: v1.7.2-ncs2
     - name: matter
-      repo-path: sdk-connectedhomeip
+      remote: sdk-connectedhomeip-Kamil-fork
       path: modules/lib/matter
-      revision: v2.1.0
+      revision: 88b4afce4ea38fa9847136fcfe662f25638acb0f
       submodules:
         - name: nlio
           path: third_party/nlio/repo
