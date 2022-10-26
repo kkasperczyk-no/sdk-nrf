@@ -20,7 +20,7 @@ endif()
 set(APPLICATION_CONFIG_DIR "configuration/\${BOARD}")
 
 
-find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})a
 project(matter-weather-station)
 
 ################################################################################
