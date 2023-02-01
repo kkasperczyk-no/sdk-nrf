@@ -33,6 +33,8 @@ manifest:
       url-base: https://github.com/memfault
     - name: ant-nrfconnect
       url-base: https://github.com/ant-nrfconnect
+    - name: matter-te
+      url-base: https://github.com/kkasperczyk-no/sdk-connectedhomeip
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -126,9 +128,10 @@ manifest:
       path: modules/tee/tfm-mcuboot
       revision: v1.7.2-ncs3
     - name: matter
+      remote: matter-te
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: v2.2.0
+      revision: 7e69c66bb44c91fe0b9bed7c7b8d272d3208c8dd
       submodules:
         - name: nlio
           path: third_party/nlio/repo
