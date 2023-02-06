@@ -46,8 +46,8 @@ using namespace ::chip::DeviceLayer;
 
 namespace
 {
-constexpr uint32_t kFactoryResetTriggerTimeout = 3000;
-constexpr uint32_t kFactoryResetCancelWindowTimeout = 3000;
+constexpr uint32_t kFactoryResetTriggerTimeout = 15000;
+constexpr uint32_t kFactoryResetCancelWindowTimeout = 15000;
 constexpr uint32_t kDimmerTriggeredTimeout = 500;
 constexpr uint32_t kDimmerInterval = 300;
 constexpr size_t kAppEventQueueSize = 10;
