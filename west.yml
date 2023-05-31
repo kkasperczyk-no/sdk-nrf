@@ -37,6 +37,8 @@ manifest:
       url-base: https://github.com/ant-nrfconnect
     - name: babblesim
       url-base: https://github.com/BabbleSim
+    - name: matter-te-branch
+      url-base: https://github.com/kkasperczyk-no/sdk-connectedhomeip
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -137,9 +139,10 @@ manifest:
       path: modules/tee/tf-m/trusted-firmware-m
       revision: v1.7.0-ncs1-rc2
     - name: matter
-      repo-path: sdk-connectedhomeip
+      remote: matter-te-branch
+      revision: e866fd1b4cedab99c8a1fdedd9506a7ba520204a
+      #repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: v2.4.0-rc2
       submodules:
         - name: nlio
           path: third_party/nlio/repo
