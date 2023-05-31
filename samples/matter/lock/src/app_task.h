@@ -26,6 +26,8 @@
 #include "icd_util.h"
 #endif
 
+#include <app/TestEventTriggerDelegate.h>
+
 struct k_timer;
 struct Identify;
 
@@ -92,3 +94,19 @@ private:
 	chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData> mFactoryDataProvider;
 #endif
 };
+
+namespace chip
+{
+class DoorLockAlarmEventTriggerDelegate : public TestEventTriggerDelegate {
+public:
+	static constexpr uint64_t kDoorLockAlarmTrigger = 0xdeadbeef;
+
+	explicit DoorLockAlarmEventTriggerDelegate(const ByteSpan &enableKey) : mEnableKey(enableKey) {}
+
+	bool DoesEnableKeyMatch(const ByteSpan &enableKey) const override;
+	CHIP_ERROR HandleEventTrigger(uint64_t eventTrigger) override;
+
+private:
+	ByteSpan mEnableKey;
+};
+} // namespace chip

@@ -479,7 +479,7 @@
 	}
 
 // clang-format off
-#define GENERATED_EVENT_COUNT 6
+#define GENERATED_EVENT_COUNT 10
 #define GENERATED_EVENTS { \
   /* Endpoint: 0, Cluster: Basic Information (server) */ \
   /* EventList (index=0) */ \
@@ -491,6 +491,12 @@
   0x00000000, /* StateTransition */ \
   0x00000001, /* VersionApplied */ \
   0x00000002, /* DownloadError */ \
+  /* Endpoint: 1, Cluster: Door Lock (server) */ \
+  /* EventList (index=6) */ \
+  0x00000000, /* DoorLockAlarm */ \
+  0x00000002, /* LockOperation */ \
+  0x00000003, /* LockOperationError */ \
+  0x00000004, /* LockUserChange */ \
 }
 
 // clang-format on
@@ -827,8 +833,8 @@
       .functions = chipFuncArrayDoorLockServer, \
       .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 53 ), \
       .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 63 ), \
-      .eventList = nullptr, \
-      .eventCount = 0, \
+      .eventList = ZAP_GENERATED_EVENTS_INDEX( 6 ), \
+      .eventCount = 4, \
     },\
 }
 

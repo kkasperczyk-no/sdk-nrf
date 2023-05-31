@@ -1770,7 +1770,7 @@ endpoint 0 {
     callback attribute upTime default = 0x0000000000000000;
     callback attribute totalOperationalHours default = 0x00000000;
     callback attribute bootReason default = 0;
-    callback attribute testEventTriggersEnabled default = 0;
+    callback attribute testEventTriggersEnabled default = 1;
     callback attribute generatedCommandList;
     callback attribute acceptedCommandList;
     callback attribute attributeList;
@@ -1940,6 +1940,10 @@ endpoint 1 {
   }
 
   server cluster DoorLock {
+    emits event DoorLockAlarm;
+    emits event LockOperation;
+    emits event LockOperationError;
+    emits event LockUserChange;
     ram      attribute lockState default = 0;
     ram      attribute lockType default = 0;
     ram      attribute actuatorEnabled;

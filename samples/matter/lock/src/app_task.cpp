@@ -93,7 +93,7 @@ constexpr uint32_t kSwitchImagesTimeout = 10000;
 #endif
 
 Identify sIdentify = { kLockEndpointId, AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
-		       EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_VISIBLE_LED };
+		       Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator };
 
 LEDWidget sStatusLED;
 LEDWidget sLockLED;
@@ -104,6 +104,11 @@ FactoryResetLEDsWrapper<2> sFactoryResetLEDs{ { FACTORY_RESET_SIGNAL_LED, FACTOR
 bool sIsNetworkProvisioned = false;
 bool sIsNetworkEnabled = false;
 bool sHaveBLEConnections = false;
+
+uint8_t sTestEventTriggerEnableKey[TestEventTriggerDelegate::kEnableKeyLength] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55,
+										   0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb,
+										   0xcc, 0xdd, 0xee, 0xff };
+
 } /* namespace */
 
 namespace LedConsts
@@ -209,7 +214,7 @@ CHIP_ERROR AppTask::Init()
 	}
 	GetNUSService().RegisterCommand("Lock", sizeof("Lock"), NUSLockCallback, nullptr);
 	GetNUSService().RegisterCommand("Unlock", sizeof("Unlock"), NUSUnlockCallback, nullptr);
-	if(!GetNUSService().StartServer()){
+	if (!GetNUSService().StartServer()) {
 		LOG_ERR("GetNUSService().StartServer() failed");
 	}
 #endif
@@ -223,14 +228,23 @@ CHIP_ERROR AppTask::Init()
 	SetDeviceInstanceInfoProvider(&mFactoryDataProvider);
 	SetDeviceAttestationCredentialsProvider(&mFactoryDataProvider);
 	SetCommissionableDataProvider(&mFactoryDataProvider);
+	/* Read EnableKey from the factory data. */
+	MutableByteSpan enableKey(sTestEventTriggerEnableKey);
+	err = mFactoryDataProvider.GetEnableKey(enableKey);
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("mFactoryDataProvider.GetEnableKey() failed. Could not delegate a test event trigger");
+		memset(sTestEventTriggerEnableKey, 0, sizeof(sTestEventTriggerEnableKey));
+	}
 #else
 	SetDeviceInstanceInfoProvider(&DeviceInstanceInfoProviderMgrImpl());
 	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
 #endif
 
 	static chip::CommonCaseDeviceServerInitParams initParams;
+	static DoorLockAlarmEventTriggerDelegate testEventTriggerDelegate{ ByteSpan(sTestEventTriggerEnableKey) };
 	(void)initParams.InitializeStaticResourcesBeforeServerInit();
 
+	initParams.testEventTriggerDelegate = &testEventTriggerDelegate;
 	ReturnErrorOnFailure(chip::Server::GetInstance().Init(initParams));
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
@@ -761,3 +775,19 @@ void AppTask::NUSUnlockCallback(void *context)
 	}
 }
 #endif
+
+bool DoorLockAlarmEventTriggerDelegate::DoesEnableKeyMatch(const ByteSpan &enableKey) const
+{
+	return !mEnableKey.empty() && mEnableKey.data_equal(enableKey);
+}
+
+CHIP_ERROR DoorLockAlarmEventTriggerDelegate::HandleEventTrigger(uint64_t eventTrigger)
+{
+	if (eventTrigger == kDoorLockAlarmTrigger) {
+		LOG_INF("Generating DoorLockAlarm triggered by test event trigger");
+		DoorLockServer::Instance().SendLockAlarmEvent(kLockEndpointId, AlarmCodeEnum::kLockJammed);
+		return CHIP_NO_ERROR;
+	}
+
+	return CHIP_ERROR_INVALID_ARGUMENT;
+}
