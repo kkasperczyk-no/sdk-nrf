@@ -45,6 +45,8 @@
     0x00000031, /* Cluster: Network Commissioning, Attribute: LastConnectErrorValue, Privilege: administer */ \
     0x0000003E, /* Cluster: Operational Credentials, Attribute: NOCs, Privilege: administer */ \
     /* Cluster: Group Key Management, Attribute: GroupKeyMap, Privilege: view */ \
+    0x00000046, /* Cluster: ICD Management, Attribute: RegisteredClients, Privilege: administer */ \
+    0x00000046, /* Cluster: ICD Management, Attribute: ICDCounter, Privilege: administer */ \
     /* Cluster: Door Lock, Attribute: Language, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: AutoRelockTime, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: SoundVolume, Privilege: view */ \
@@ -74,6 +76,8 @@
     0x00000007, /* Cluster: Network Commissioning, Attribute: LastConnectErrorValue, Privilege: administer */ \
     0x00000000, /* Cluster: Operational Credentials, Attribute: NOCs, Privilege: administer */ \
     /* Cluster: Group Key Management, Attribute: GroupKeyMap, Privilege: view */ \
+    0x00000003, /* Cluster: ICD Management, Attribute: RegisteredClients, Privilege: administer */ \
+    0x00000004, /* Cluster: ICD Management, Attribute: ICDCounter, Privilege: administer */ \
     /* Cluster: Door Lock, Attribute: Language, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: AutoRelockTime, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: SoundVolume, Privilege: view */ \
@@ -103,6 +107,8 @@
     kMatterAccessPrivilegeAdminister, /* Cluster: Network Commissioning, Attribute: LastConnectErrorValue, Privilege: administer */ \
     kMatterAccessPrivilegeAdminister, /* Cluster: Operational Credentials, Attribute: NOCs, Privilege: administer */ \
     /* Cluster: Group Key Management, Attribute: GroupKeyMap, Privilege: view */ \
+    kMatterAccessPrivilegeAdminister, /* Cluster: ICD Management, Attribute: RegisteredClients, Privilege: administer */ \
+    kMatterAccessPrivilegeAdminister, /* Cluster: ICD Management, Attribute: ICDCounter, Privilege: administer */ \
     /* Cluster: Door Lock, Attribute: Language, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: AutoRelockTime, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: SoundVolume, Privilege: view */ \
@@ -206,6 +212,9 @@
     0x0000003F, /* Cluster: Group Key Management, Command: KeySetRead, Privilege: administer */ \
     0x0000003F, /* Cluster: Group Key Management, Command: KeySetRemove, Privilege: administer */ \
     0x0000003F, /* Cluster: Group Key Management, Command: KeySetReadAllIndices, Privilege: administer */ \
+    0x00000046, /* Cluster: ICD Management, Command: RegisterClient, Privilege: manage */ \
+    0x00000046, /* Cluster: ICD Management, Command: UnregisterClient, Privilege: manage */ \
+    0x00000046, /* Cluster: ICD Management, Command: StayActiveRequest, Privilege: manage */ \
     0x00000101, /* Cluster: Door Lock, Command: SetUser, Privilege: administer */ \
     0x00000101, /* Cluster: Door Lock, Command: GetUser, Privilege: administer */ \
     0x00000101, /* Cluster: Door Lock, Command: ClearUser, Privilege: administer */ \
@@ -242,6 +251,9 @@
     0x00000001, /* Cluster: Group Key Management, Command: KeySetRead, Privilege: administer */ \
     0x00000003, /* Cluster: Group Key Management, Command: KeySetRemove, Privilege: administer */ \
     0x00000004, /* Cluster: Group Key Management, Command: KeySetReadAllIndices, Privilege: administer */ \
+    0x00000000, /* Cluster: ICD Management, Command: RegisterClient, Privilege: manage */ \
+    0x00000002, /* Cluster: ICD Management, Command: UnregisterClient, Privilege: manage */ \
+    0x00000003, /* Cluster: ICD Management, Command: StayActiveRequest, Privilege: manage */ \
     0x0000001A, /* Cluster: Door Lock, Command: SetUser, Privilege: administer */ \
     0x0000001B, /* Cluster: Door Lock, Command: GetUser, Privilege: administer */ \
     0x0000001D, /* Cluster: Door Lock, Command: ClearUser, Privilege: administer */ \
@@ -278,6 +290,9 @@
     kMatterAccessPrivilegeAdminister, /* Cluster: Group Key Management, Command: KeySetRead, Privilege: administer */ \
     kMatterAccessPrivilegeAdminister, /* Cluster: Group Key Management, Command: KeySetRemove, Privilege: administer */ \
     kMatterAccessPrivilegeAdminister, /* Cluster: Group Key Management, Command: KeySetReadAllIndices, Privilege: administer */ \
+    kMatterAccessPrivilegeManage, /* Cluster: ICD Management, Command: RegisterClient, Privilege: manage */ \
+    kMatterAccessPrivilegeManage, /* Cluster: ICD Management, Command: UnregisterClient, Privilege: manage */ \
+    kMatterAccessPrivilegeManage, /* Cluster: ICD Management, Command: StayActiveRequest, Privilege: manage */ \
     kMatterAccessPrivilegeAdminister, /* Cluster: Door Lock, Command: SetUser, Privilege: administer */ \
     kMatterAccessPrivilegeAdminister, /* Cluster: Door Lock, Command: GetUser, Privilege: administer */ \
     kMatterAccessPrivilegeAdminister, /* Cluster: Door Lock, Command: ClearUser, Privilege: administer */ \
