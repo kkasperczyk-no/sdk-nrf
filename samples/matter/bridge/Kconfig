@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+mainmenu "Matter nRF Connect Bridge Example Application"
+
+config BRIDGE_MAX_DYNAMIC_ENDPOINTS_NUMBER
+	int "Maximum number of dynamic endpoints supported by the Bridge"
+	default 16
+
+config BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
+	bool "OnOff Light Bridged Device support"
+	default y
+
+config BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
+	bool "Temperature Sensor Bridged Device support"
+	default y
+
+config BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
+	bool "Humidity Sensor Bridged Device support"
+	default y
+
+source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.features"
+source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.defaults"
+source "Kconfig.zephyr"
