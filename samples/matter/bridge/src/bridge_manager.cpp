@@ -6,7 +6,23 @@
 
 #include "bridge_manager.h"
 
+#if CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
+#include "onoff_light.h"
+#include "onoff_light_data_provider.h"
+#endif
+
+#if CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
+#include "temperature_sensor.h"
+#include "temperature_sensor_data_provider.h"
+#endif
+
+#if CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
+#include "humidity_sensor.h"
+#include "humidity_sensor_data_provider.h"
+#endif
+
 #include <app-common/zap-generated/ids/Clusters.h>
+#include <app/reporting/reporting.h>
 #include <app/util/generic-callbacks.h>
 #include <lib/support/Span.h>
 
@@ -35,6 +51,7 @@ void BridgeManager::Init()
 CHIP_ERROR BridgeManager::AddBridgedDevice(BridgedDevice::DeviceType bridgedDeviceType, const char *nodeLabel)
 {
 	Platform::UniquePtr<BridgedDevice> device(nullptr);
+	Platform::UniquePtr<BridgedDeviceDataProvider> dataProvider(nullptr);
 
 	if (nodeLabel && (strlen(nodeLabel) >= BridgedDevice::kNodeLabelSize)) {
 		return CHIP_ERROR_INVALID_STRING_LENGTH;
@@ -44,6 +61,7 @@ CHIP_ERROR BridgeManager::AddBridgedDevice(BridgedDevice::DeviceType bridgedDevi
 #if CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 	case BridgedDevice::DeviceType::OnOffLight: {
 		LOG_INF("Adding OnOff Light bridged device");
+		dataProvider.reset(Platform::New<OnOffLightDataProvider>(BridgeManager::HandleUpdate));
 		device.reset(Platform::New<OnOffLightDevice>(nodeLabel));
 		break;
 	}
@@ -51,6 +69,7 @@ CHIP_ERROR BridgeManager::AddBridgedDevice(BridgedDevice::DeviceType bridgedDevi
 #if CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 	case BridgedDevice::DeviceType::TemperatureSensor: {
 		LOG_INF("Adding TemperatureSensor bridged device");
+		dataProvider.reset(Platform::New<TemperatureSensorDataProvider>(BridgeManager::HandleUpdate));
 		device.reset(Platform::New<TemperatureSensorDevice>(nodeLabel));
 		break;
 	}
@@ -58,6 +77,7 @@ CHIP_ERROR BridgeManager::AddBridgedDevice(BridgedDevice::DeviceType bridgedDevi
 #if CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 	case BridgedDevice::DeviceType::HumiditySensor: {
 		LOG_INF("Adding HumiditySensor bridged device");
+		dataProvider.reset(Platform::New<HumiditySensorDataProvider>(BridgeManager::HandleUpdate));
 		device.reset(Platform::New<HumiditySensorDevice>(nodeLabel));
 		break;
 	}
@@ -70,11 +90,14 @@ CHIP_ERROR BridgeManager::AddBridgedDevice(BridgedDevice::DeviceType bridgedDevi
 		return CHIP_ERROR_NO_MEMORY;
 	}
 
+	dataProvider->Init();
 	CHIP_ERROR err = AddDevice(device.get());
 
-	/* In case adding succedeed, release the ownership. */
+	/* In case adding succedeed map the objects relationship and release the ownership. */
 	if (err == CHIP_NO_ERROR) {
+		mDevicesMap[device.get()] = dataProvider.get();
 		device.release();
+		dataProvider.release();
 	}
 
 	return err;
@@ -90,6 +113,7 @@ CHIP_ERROR BridgeManager::RemoveBridgedDevice(uint16_t endpoint)
 				LOG_INF("Removed dynamic endpoint %d (index=%d)", endpoint, index);
 				/* Free dynamically allocated memory */
 				emberAfClearDynamicEndpoint(index);
+				Platform::Delete(mDevicesMap[mBridgedDevices[index]]);
 				Platform::Delete(mBridgedDevices[index]);
 				mBridgedDevices[index] = nullptr;
 				return CHIP_NO_ERROR;
@@ -177,7 +201,35 @@ CHIP_ERROR BridgeManager::HandleWrite(uint16_t endpoint, ClusterId clusterId,
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
 
-	return device->HandleWrite(clusterId, attributeMetadata->attributeId, buffer);
+	CHIP_ERROR err = device->HandleWrite(clusterId, attributeMetadata->attributeId, buffer);
+
+	/* After updating Matter BridgedDevice state, forward request to the non-Matter device. */
+	if (err == CHIP_NO_ERROR) {
+		return sBridgeManager.mDevicesMap[device]->UpdateState(clusterId, attributeMetadata->attributeId,
+								       buffer);
+	}
+	return err;
+}
+
+void BridgeManager::HandleUpdate(BridgedDeviceDataProvider &dataProvider, chip::ClusterId clusterId,
+				 chip::AttributeId attributeId, void *data, size_t dataSize)
+{
+	if (!data) {
+		return;
+	}
+
+	/* The state update was triggered by non-Matter device, find related Matter Bridged Device to update it as well.
+	 */
+	for (auto &item : sBridgeManager.mDevicesMap) {
+		if (item.second == &dataProvider) {
+			/* If the Bridged Device state was updated successfully, schedule sending Matter data report. */
+			if (CHIP_NO_ERROR ==
+			    item.first->HandleAttributeChange(clusterId, attributeId, data, dataSize)) {
+				MatterReportingAttributeChangeCallback(item.first->GetEndpointId(), clusterId,
+								       attributeId);
+			}
+		}
+	}
 }
 
 EmberAfStatus emberAfExternalAttributeReadCallback(EndpointId endpoint, ClusterId clusterId,

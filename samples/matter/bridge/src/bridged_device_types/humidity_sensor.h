@@ -10,6 +10,9 @@
 
 class HumiditySensorDevice : public BridgedDevice {
 public:
+	static constexpr uint16_t kRelativeHumidityMeasurementClusterRevision = 1;
+	static constexpr uint32_t kRelativeHumidityMeasurementFeatureMap = 0;
+
 	HumiditySensorDevice(const char *nodeLabel);
 
 	uint16_t GetMeasuredValue() { return mMeasuredValue; }
@@ -26,12 +29,15 @@ public:
 	{
 		return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
 	}
+	CHIP_ERROR HandleAttributeChange(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
+					 size_t dataSize) override;
 
 private:
-	static constexpr uint16_t kRelativeHumidityMeasurementClusterRevision = 1;
-	static constexpr uint32_t kRelativeHumidityMeasurementFeatureMap = 0;
+	void SetMeasuredValue(int16_t value) { mMeasuredValue = value; }
+	void SetMinMeasuredValue(int16_t value) { mMinMeasuredValue = value; }
+	void SetMaxMeasuredValue(int16_t value) { mMaxMeasuredValue = value; }
 
-	uint16_t mMeasuredValue = 50;
-	uint16_t mMinMeasuredValue = 0;
-	uint16_t mMaxMeasuredValue = 100;
+	uint16_t mMeasuredValue = 0;
+	uint16_t mMinMeasuredValue = CONFIG_BRIDGE_HUMIDITY_SENSOR_MIN_MEASURED_VALUE;
+	uint16_t mMaxMeasuredValue = CONFIG_BRIDGE_HUMIDITY_SENSOR_MAX_MEASURED_VALUE;
 };

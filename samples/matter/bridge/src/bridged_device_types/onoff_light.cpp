@@ -6,11 +6,15 @@
 
 #include "onoff_light.h"
 
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
+
 namespace
 {
 DESCRIPTOR_CLUSTER_ATTRIBUTES(descriptorAttrs);
 BRIDGED_DEVICE_BASIC_INFORMATION_CLUSTER_ATTRIBUTES(bridgedDeviceBasicAttrs);
-}; // namespace
+}; /* namespace */
 
 using namespace ::chip;
 using namespace ::chip::app;
@@ -74,15 +78,15 @@ CHIP_ERROR OnOffLightDevice::HandleReadOnOff(AttributeId attributeId, uint8_t *b
 	switch (attributeId) {
 	case Clusters::OnOff::Attributes::OnOff::Id: {
 		bool onOff = GetOnOff();
-		return HandleReadAttribute(&onOff, sizeof(onOff), buffer, maxReadLength);
+		return CopyAttribute(&onOff, sizeof(onOff), buffer, maxReadLength);
 	}
 	case Clusters::OnOff::Attributes::ClusterRevision::Id: {
 		uint16_t clusterRevision = GetOnOffClusterRevision();
-		return HandleReadAttribute(&clusterRevision, sizeof(clusterRevision), buffer, maxReadLength);
+		return CopyAttribute(&clusterRevision, sizeof(clusterRevision), buffer, maxReadLength);
 	}
 	case Clusters::OnOff::Attributes::FeatureMap::Id: {
 		uint32_t featureMap = GetOnOffFeatureMap();
-		return HandleReadAttribute(&featureMap, sizeof(featureMap), buffer, maxReadLength);
+		return CopyAttribute(&featureMap, sizeof(featureMap), buffer, maxReadLength);
 	}
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
@@ -97,10 +101,39 @@ CHIP_ERROR OnOffLightDevice::HandleWrite(ClusterId clusterId, AttributeId attrib
 
 	switch (attributeId) {
 	case Clusters::OnOff::Attributes::OnOff::Id: {
-		Set(*buffer);
+		SetOnOff(*buffer);
 		return CHIP_NO_ERROR;
 	}
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
+}
+
+CHIP_ERROR OnOffLightDevice::HandleAttributeChange(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
+						   size_t dataSize)
+{
+	if (clusterId != Clusters::OnOff::Id || !data) {
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+
+	CHIP_ERROR err;
+
+	switch (attributeId) {
+	case Clusters::OnOff::Attributes::OnOff::Id: {
+		bool value;
+
+		err = CopyAttribute(data, dataSize, &value, sizeof(value));
+
+		if (err != CHIP_NO_ERROR) {
+			return err;
+		}
+
+		SetOnOff(value);
+		break;
+	}
+	default:
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+
+	return err;
 }

@@ -7,37 +7,34 @@
 #pragma once
 
 #include "bridged_device.h"
-
-#if CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
-#include "onoff_light.h"
-#endif
-
-#if CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
-#include "temperature_sensor.h"
-#endif
-
-#if CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
-#include "humidity_sensor.h"
-#endif
+#include "bridged_device_data_provider.h"
+#include <map>
 
 class BridgeManager {
 public:
 	void Init();
 	CHIP_ERROR AddBridgedDevice(BridgedDevice::DeviceType bridgedDeviceType, const char *nodeLabel);
 	CHIP_ERROR RemoveBridgedDevice(uint16_t endpoint);
-	static BridgedDevice * GetBridgedDevice(uint16_t endpoint, const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer);
+	static BridgedDevice *GetBridgedDevice(uint16_t endpoint, const EmberAfAttributeMetadata *attributeMetadata,
+					       uint8_t *buffer);
 	static CHIP_ERROR HandleRead(uint16_t endpoint, chip::ClusterId clusterId,
 				     const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer,
 				     uint16_t maxReadLength);
 	static CHIP_ERROR HandleWrite(uint16_t endpoint, chip::ClusterId clusterId,
 				      const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer);
+	static void HandleUpdate(BridgedDeviceDataProvider &dataProvider, chip::ClusterId clusterId,
+				 chip::AttributeId attributeId, void *data, size_t dataSize);
 
 private:
 	CHIP_ERROR AddDevice(BridgedDevice *device);
 
 	static constexpr uint8_t kMaxBridgedDevices = CHIP_DEVICE_CONFIG_DYNAMIC_ENDPOINT_COUNT;
+	static constexpr uint8_t kMaxDataProviders = CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER;
 
+	/* TODO: Implement lightweight map to decrease flash usage. */
+	std::map<BridgedDevice *, BridgedDeviceDataProvider *> mDevicesMap;
 	BridgedDevice *mBridgedDevices[kMaxBridgedDevices];
+	BridgedDeviceDataProvider *mDataProviders[kMaxDataProviders];
 
 	chip::EndpointId mFirstDynamicEndpointId;
 	chip::EndpointId mCurrentDynamicEndpointId;

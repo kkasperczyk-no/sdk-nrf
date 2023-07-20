@@ -10,7 +10,7 @@ namespace
 {
 DESCRIPTOR_CLUSTER_ATTRIBUTES(descriptorAttrs);
 BRIDGED_DEVICE_BASIC_INFORMATION_CLUSTER_ATTRIBUTES(bridgedDeviceBasicAttrs);
-}; // namespace
+}; /* namespace */
 
 using namespace ::chip;
 using namespace ::chip::app;
@@ -74,25 +74,81 @@ CHIP_ERROR HumiditySensorDevice::HandleReadRelativeHumidityMeasurement(Attribute
 	switch (attributeId) {
 	case Clusters::RelativeHumidityMeasurement::Attributes::MeasuredValue::Id: {
 		uint16_t value = GetMeasuredValue();
-		return HandleReadAttribute(&value, sizeof(value), buffer, maxReadLength);
+		return CopyAttribute(&value, sizeof(value), buffer, maxReadLength);
 	}
 	case Clusters::RelativeHumidityMeasurement::Attributes::MinMeasuredValue::Id: {
 		uint16_t value = GetMinMeasuredValue();
-		return HandleReadAttribute(&value, sizeof(value), buffer, maxReadLength);
+		return CopyAttribute(&value, sizeof(value), buffer, maxReadLength);
 	}
 	case Clusters::RelativeHumidityMeasurement::Attributes::MaxMeasuredValue::Id: {
 		uint16_t value = GetMaxMeasuredValue();
-		return HandleReadAttribute(&value, sizeof(value), buffer, maxReadLength);
+		return CopyAttribute(&value, sizeof(value), buffer, maxReadLength);
 	}
 	case Clusters::RelativeHumidityMeasurement::Attributes::ClusterRevision::Id: {
 		uint16_t clusterRevision = GetRelativeHumidityMeasurementClusterRevision();
-		return HandleReadAttribute(&clusterRevision, sizeof(clusterRevision), buffer, maxReadLength);
+		return CopyAttribute(&clusterRevision, sizeof(clusterRevision), buffer, maxReadLength);
 	}
 	case Clusters::RelativeHumidityMeasurement::Attributes::FeatureMap::Id: {
 		uint32_t featureMap = GetRelativeHumidityMeasurementFeatureMap();
-		return HandleReadAttribute(&featureMap, sizeof(featureMap), buffer, maxReadLength);
+		return CopyAttribute(&featureMap, sizeof(featureMap), buffer, maxReadLength);
 	}
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
+}
+
+CHIP_ERROR HumiditySensorDevice::HandleAttributeChange(chip::ClusterId clusterId, chip::AttributeId attributeId,
+						       void *data, size_t dataSize)
+{
+	if (clusterId != Clusters::RelativeHumidityMeasurement::Id || !data) {
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+
+	CHIP_ERROR err;
+
+	switch (attributeId) {
+	case Clusters::RelativeHumidityMeasurement::Attributes::MeasuredValue::Id: {
+		int16_t value;
+
+		err = CopyAttribute(data, dataSize, &value, sizeof(value));
+
+		if (err != CHIP_NO_ERROR) {
+			return err;
+		}
+
+		SetMeasuredValue(value);
+
+		break;
+	}
+	case Clusters::RelativeHumidityMeasurement::Attributes::MinMeasuredValue::Id: {
+		int16_t value;
+
+		err = CopyAttribute(data, dataSize, &value, sizeof(value));
+
+		if (err != CHIP_NO_ERROR) {
+			return err;
+		}
+
+		SetMinMeasuredValue(value);
+
+		break;
+	}
+	case Clusters::RelativeHumidityMeasurement::Attributes::MaxMeasuredValue::Id: {
+		int16_t value;
+
+		err = CopyAttribute(data, dataSize, &value, sizeof(value));
+
+		if (err != CHIP_NO_ERROR) {
+			return err;
+		}
+
+		SetMaxMeasuredValue(value);
+
+		break;
+	}
+	default:
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+
+	return err;
 }
