@@ -53,15 +53,24 @@ if(CONFIG_CHIP_OTA_REQUESTOR)
 endif()
 
 if(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE)
-    target_sources(app PRIVATE src/bridged_device_types/onoff_light.cpp)
+    target_sources(app PRIVATE
+        src/bridged_device_types/onoff_light.cpp
+        src/bridged_device_types/onoff_light_data_provider.cpp
+    )
 endif()
 
 if(CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE)
-    target_sources(app PRIVATE src/bridged_device_types/temperature_sensor.cpp)
+    target_sources(app PRIVATE
+            src/bridged_device_types/temperature_sensor.cpp
+            src/bridged_device_types/temperature_sensor_data_provider.cpp
+    )
 endif()
 
 if(CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE)
-    target_sources(app PRIVATE src/bridged_device_types/humidity_sensor.cpp)
+    target_sources(app PRIVATE
+        src/bridged_device_types/humidity_sensor.cpp
+        src/bridged_device_types/humidity_sensor_data_provider.cpp
+    )
 endif()
 
 chip_configure_data_model(app

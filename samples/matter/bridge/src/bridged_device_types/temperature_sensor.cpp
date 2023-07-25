@@ -10,7 +10,7 @@ namespace
 {
 DESCRIPTOR_CLUSTER_ATTRIBUTES(descriptorAttrs);
 BRIDGED_DEVICE_BASIC_INFORMATION_CLUSTER_ATTRIBUTES(bridgedDeviceBasicAttrs);
-}; // namespace
+}; /* namespace */
 
 using namespace ::chip;
 using namespace ::chip::app;
@@ -72,25 +72,80 @@ CHIP_ERROR TemperatureSensorDevice::HandleReadTemperatureMeasurement(AttributeId
 	switch (attributeId) {
 	case Clusters::TemperatureMeasurement::Attributes::MeasuredValue::Id: {
 		int16_t value = GetMeasuredValue();
-		return HandleReadAttribute(&value, sizeof(value), buffer, maxReadLength);
+		return CopyAttribute(&value, sizeof(value), buffer, maxReadLength);
 	}
 	case Clusters::TemperatureMeasurement::Attributes::MinMeasuredValue::Id: {
 		int16_t value = GetMinMeasuredValue();
-		return HandleReadAttribute(&value, sizeof(value), buffer, maxReadLength);
+		return CopyAttribute(&value, sizeof(value), buffer, maxReadLength);
 	}
 	case Clusters::TemperatureMeasurement::Attributes::MaxMeasuredValue::Id: {
 		int16_t value = GetMaxMeasuredValue();
-		return HandleReadAttribute(&value, sizeof(value), buffer, maxReadLength);
+		return CopyAttribute(&value, sizeof(value), buffer, maxReadLength);
 	}
 	case Clusters::TemperatureMeasurement::Attributes::ClusterRevision::Id: {
 		uint16_t clusterRevision = GetTemperatureMeasurementClusterRevision();
-		return HandleReadAttribute(&clusterRevision, sizeof(clusterRevision), buffer, maxReadLength);
+		return CopyAttribute(&clusterRevision, sizeof(clusterRevision), buffer, maxReadLength);
 	}
 	case Clusters::TemperatureMeasurement::Attributes::FeatureMap::Id: {
 		uint32_t featureMap = GetTemperatureMeasurementFeatureMap();
-		return HandleReadAttribute(&featureMap, sizeof(featureMap), buffer, maxReadLength);
+		return CopyAttribute(&featureMap, sizeof(featureMap), buffer, maxReadLength);
 	}
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
+}
+
+CHIP_ERROR TemperatureSensorDevice::HandleAttributeChange(chip::ClusterId clusterId, chip::AttributeId attributeId,
+							  void *data, size_t dataSize)
+{
+	if (clusterId != Clusters::TemperatureMeasurement::Id || !data) {
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+
+	CHIP_ERROR err;
+
+	switch (attributeId) {
+	case Clusters::TemperatureMeasurement::Attributes::MeasuredValue::Id: {
+		int16_t value;
+
+		err = CopyAttribute(data, dataSize, &value, sizeof(value));
+
+		if (err != CHIP_NO_ERROR) {
+			return err;
+		}
+
+		SetMeasuredValue(value);
+
+		break;
+	}
+	case Clusters::TemperatureMeasurement::Attributes::MinMeasuredValue::Id: {
+		int16_t value;
+
+		err = CopyAttribute(data, dataSize, &value, sizeof(value));
+
+		if (err != CHIP_NO_ERROR) {
+			return err;
+		}
+
+		SetMinMeasuredValue(value);
+
+		break;
+	}
+	case Clusters::TemperatureMeasurement::Attributes::MaxMeasuredValue::Id: {
+		int16_t value;
+
+		err = CopyAttribute(data, dataSize, &value, sizeof(value));
+
+		if (err != CHIP_NO_ERROR) {
+			return err;
+		}
+
+		SetMaxMeasuredValue(value);
+
+		break;
+	}
+	default:
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+	return err;
 }

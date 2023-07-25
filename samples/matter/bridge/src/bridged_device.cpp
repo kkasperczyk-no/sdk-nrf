@@ -10,7 +10,7 @@
 using namespace ::chip;
 using namespace ::chip::app;
 
-CHIP_ERROR BridgedDevice::HandleReadAttribute(void *attribute, size_t attributeSize, uint8_t *buffer,
+CHIP_ERROR BridgedDevice::CopyAttribute(void *attribute, size_t attributeSize, void *buffer,
 					      uint16_t maxBufferSize)
 {
 	if (maxBufferSize < attributeSize) {
@@ -28,7 +28,7 @@ CHIP_ERROR BridgedDevice::HandleReadBridgedDeviceBasicInformation(AttributeId at
 	switch (attributeId) {
 	case Clusters::BridgedDeviceBasicInformation::Attributes::Reachable::Id: {
 		bool isReachable = GetIsReachable();
-		return HandleReadAttribute(&isReachable, sizeof(isReachable), buffer, maxReadLength);
+		return CopyAttribute(&isReachable, sizeof(isReachable), buffer, maxReadLength);
 	}
 	case Clusters::BridgedDeviceBasicInformation::Attributes::NodeLabel::Id: {
 		MutableByteSpan zclNodeLabelSpan(buffer, maxReadLength);
@@ -36,11 +36,11 @@ CHIP_ERROR BridgedDevice::HandleReadBridgedDeviceBasicInformation(AttributeId at
 	}
 	case Clusters::BridgedDeviceBasicInformation::Attributes::ClusterRevision::Id: {
 		uint16_t clusterRevision = GetBridgedDeviceBasicInformationClusterRevision();
-		return HandleReadAttribute(&clusterRevision, sizeof(clusterRevision), buffer, maxReadLength);
+		return CopyAttribute(&clusterRevision, sizeof(clusterRevision), buffer, maxReadLength);
 	}
 	case Clusters::BridgedDeviceBasicInformation::Attributes::FeatureMap::Id: {
 		uint32_t featureMap = GetBridgedDeviceBasicInformationFeatureMap();
-		return HandleReadAttribute(&featureMap, sizeof(featureMap), buffer, maxReadLength);
+		return CopyAttribute(&featureMap, sizeof(featureMap), buffer, maxReadLength);
 	}
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
@@ -52,11 +52,11 @@ CHIP_ERROR BridgedDevice::HandleReadDescriptor(AttributeId attributeId, uint8_t 
 	switch (attributeId) {
 	case Clusters::Descriptor::Attributes::ClusterRevision::Id: {
 		uint16_t clusterRevision = GetDescriptorClusterRevision();
-		return HandleReadAttribute(&clusterRevision, sizeof(clusterRevision), buffer, maxReadLength);
+		return CopyAttribute(&clusterRevision, sizeof(clusterRevision), buffer, maxReadLength);
 	}
 	case Clusters::Descriptor::Attributes::FeatureMap::Id: {
 		uint32_t featureMap = GetDescriptorFeatureMap();
-		return HandleReadAttribute(&featureMap, sizeof(featureMap), buffer, maxReadLength);
+		return CopyAttribute(&featureMap, sizeof(featureMap), buffer, maxReadLength);
 	}
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;

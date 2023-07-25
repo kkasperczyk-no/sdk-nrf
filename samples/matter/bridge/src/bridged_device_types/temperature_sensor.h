@@ -10,6 +10,9 @@
 
 class TemperatureSensorDevice : public BridgedDevice {
 public:
+	static constexpr uint16_t kTemperatureMeasurementClusterRevision = 1;
+	static constexpr uint32_t kTemperatureMeasurementFeatureMap = 0;
+
 	TemperatureSensorDevice(const char *nodeLabel);
 
 	int16_t GetMeasuredValue() { return mMeasuredValue; }
@@ -26,12 +29,15 @@ public:
 	{
 		return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
 	}
+	CHIP_ERROR HandleAttributeChange(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
+					 size_t dataSize) override;
 
 private:
-	static constexpr uint16_t kTemperatureMeasurementClusterRevision = 1;
-	static constexpr uint32_t kTemperatureMeasurementFeatureMap = 0;
+	void SetMeasuredValue(int16_t value) { mMeasuredValue = value; }
+	void SetMinMeasuredValue(int16_t value) { mMinMeasuredValue = value; }
+	void SetMaxMeasuredValue(int16_t value) { mMaxMeasuredValue = value; }
 
-	int16_t mMeasuredValue = 20;
-	int16_t mMinMeasuredValue = -10;
-	int16_t mMaxMeasuredValue = 40;
+	int16_t mMeasuredValue = 0;
+	int16_t mMinMeasuredValue = CONFIG_BRIDGE_TEMPERATURE_SENSOR_MIN_MEASURED_VALUE;
+	int16_t mMaxMeasuredValue = CONFIG_BRIDGE_TEMPERATURE_SENSOR_MAX_MEASURED_VALUE;
 };

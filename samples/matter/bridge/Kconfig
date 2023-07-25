@@ -9,6 +9,10 @@ config BRIDGE_MAX_DYNAMIC_ENDPOINTS_NUMBER
 	int "Maximum number of dynamic endpoints supported by the Bridge"
 	default 16
 
+config BRIDGE_MAX_BRIDGED_DEVICES_NUMBER
+	int "Maximum number of physical non-Matter devices supported by the Bridge"
+	default 16
+
 config BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 	bool "OnOff Light Bridged Device support"
 	default y
@@ -20,6 +24,30 @@ config BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 config BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 	bool "Humidity Sensor Bridged Device support"
 	default y
+
+if BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
+
+config BRIDGE_TEMPERATURE_SENSOR_MIN_MEASURED_VALUE
+	int "Default minimum measured value allowed by the bridged temperature sensor device."
+	default -20
+
+config BRIDGE_TEMPERATURE_SENSOR_MAX_MEASURED_VALUE
+	int "Default maximum measured value allowed by the bridged temperature sensor device."
+	default 60
+
+endif
+
+if BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
+
+config BRIDGE_HUMIDITY_SENSOR_MIN_MEASURED_VALUE
+	int "Default minimum measured value allowed by the bridged humidity sensor device."
+	default 0
+
+config BRIDGE_HUMIDITY_SENSOR_MAX_MEASURED_VALUE
+	int "Default maximum measured value allowed by the bridged humidity sensor device."
+	default 100
+
+endif
 
 source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.defaults"
