@@ -126,10 +126,10 @@ You can use the following commands to control the bridge device:
 
    For example:
 
-   .. parsed-literal::
-      :class: highlight
+.. parsed-literal::
+   :class: highlight
 
-      uart:~$ matter_bridge add 256 "Kitchen Light"
+   uart:~$ matter_bridge add 256 "Kitchen Light"
 
    You should be able to see the following output on the terminal:
 
@@ -150,12 +150,17 @@ You can use the following commands to control the bridge device:
 
       * ``<bridged_device_endpoint_id>`` is the endpoint ID of the bridged device to be removed.
 
-   For example:
+This command removes a new bridged device from the bridge.
+In this command:
 
-   .. parsed-literal::
-      :class: highlight
+   * ``<bridged_device_endpoint_id>`` is the endpoint id of the bridged device to be removed
 
-      uart:~$ matter_bridge remove 3
+For example:
+
+.. parsed-literal::
+   :class: highlight
+
+   uart:~$ matter_bridge remove 3
 
 Configuration
 *************

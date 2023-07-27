@@ -11,11 +11,30 @@ config BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 
 config BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 	bool "Temperature Sensor Bridged Device support"
-	default y
+	default n
 
 config BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 	bool "Humidity Sensor Bridged Device support"
-	default y
+	default n
+
+choice BRIDGED_DEVICE_IMPLEMENTATION
+	prompt "Bridged Device implementation"
+	default BRIDGED_DEVICE_SIMULATED
+
+	config BRIDGED_DEVICE_SIMULATED
+		bool "Simulated Bridged Device"
+		help
+		  Enables using simulated bridged devices that do not perform
+		  real operations, but emulate some exemplary data to mock the real
+		  devices behavior.
+
+	config BRIDGED_DEVICE_BLE
+		bool "Bluetooth LE Bridged Device"
+		help
+		  Enables using real bridged devices that communicate with the Bridge device
+		  over Bluetooth LE.
+
+endchoice
 
 if BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 

@@ -9,6 +9,11 @@
 #include "bridge_manager.h"
 #include "led_util.h"
 
+#ifdef CONFIG_BRIDGED_DEVICE_BLE
+#include "ble_connectivity_manager.h"
+#include <bluetooth/services/lbs.h>
+#endif /* CONFIG_BRIDGED_DEVICE_BLE */
+
 #include <platform/CHIPDeviceLayer.h>
 
 #include <app-common/zap-generated/ids/Attributes.h>
@@ -53,6 +58,13 @@ FactoryResetLEDsWrapper<1> sFactoryResetLEDs{ { FACTORY_RESET_SIGNAL_LED } };
 bool sIsNetworkProvisioned = false;
 bool sIsNetworkEnabled = false;
 bool sHaveBLEConnections = false;
+
+#ifdef CONFIG_BRIDGED_DEVICE_BLE
+static struct bt_uuid *sUuidEss = BT_UUID_ESS;
+static struct bt_uuid *sUuidLbs = BT_UUID_LBS;
+static struct bt_uuid *sUuidServices[] = { sUuidLbs, sUuidEss };
+#endif /* CONFIG_BRIDGED_DEVICE_BLE */
+
 } /* namespace */
 
 namespace LedConsts
@@ -138,6 +150,10 @@ CHIP_ERROR AppTask::Init()
 
 	/* Initialize bridge manager */
 	GetBridgeManager().Init();
+
+#ifdef CONFIG_BRIDGED_DEVICE_BLE
+	GetBLEConnectivityManager().Init(sUuidServices, 2);
+#endif
 
 	/*
 	 * Add CHIP event handler and start CHIP thread.
