@@ -4,10 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "bridge_manager.h"
+#include "bridged_device_factory.h"
+
 #include <zephyr/logging/log.h>
 #include <zephyr/shell/shell.h>
-
-#include "bridge_manager.h"
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
@@ -20,8 +21,17 @@ static int add_bridged_device(const struct shell *shell, size_t argc, char **arg
 		nodeLabel = argv[2];
 	}
 
-	CHIP_ERROR err =
-		GetBridgeManager().AddBridgedDevice(static_cast<BridgedDevice::DeviceType>(deviceType), nodeLabel);
+	auto *newBridgedDevice = BridgeFactory::GetBridgedDeviceFactory().Create(
+		static_cast<BridgedDevice::DeviceType>(deviceType), nodeLabel);
+	auto *newDataProvider = BridgeFactory::GetDataProviderFactory().Create(
+		static_cast<BridgedDevice::DeviceType>(deviceType), BridgeManager::HandleUpdate);
+
+	if (!newBridgedDevice || !newDataProvider) {
+		shell_fprintf(shell, SHELL_INFO, "Unsupported device type\n");
+		return -EPERM;
+	}
+
+	CHIP_ERROR err = GetBridgeManager().AddBridgedDevices(newBridgedDevice, newDataProvider);
 	if (err == CHIP_NO_ERROR) {
 		shell_fprintf(shell, SHELL_INFO, "Done\n");
 	} else if (err == CHIP_ERROR_INVALID_STRING_LENGTH) {

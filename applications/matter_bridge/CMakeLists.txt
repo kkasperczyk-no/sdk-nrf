@@ -34,6 +34,7 @@ target_include_directories(app PRIVATE
     src/bridged_device_types
     ${COMMON_ROOT}/src
     ${COMMON_ROOT}/src/bridge/
+    ${COMMON_ROOT}/src/bridge/util
     ${NLIO_ROOT}/include
     ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/zzz_generated/app-common
 )
