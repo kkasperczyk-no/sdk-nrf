@@ -27,7 +27,7 @@ static int add_bridged_device(const struct shell *shell, size_t argc, char **arg
 		static_cast<BridgedDevice::DeviceType>(deviceType), BridgeManager::HandleUpdate);
 
 	if (!newBridgedDevice || !newDataProvider) {
-		shell_fprintf(shell, SHELL_INFO, "Unsupported device type\n");
+		shell_fprintf(shell, SHELL_INFO, "Cannot allocate device of given type\n");
 		return -EPERM;
 	}
 

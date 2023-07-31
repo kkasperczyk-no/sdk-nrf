@@ -54,13 +54,14 @@ private:
 					   uint8_t *buffer);
 
 	DeviceMap mDevicesMap;
-	DevicePtr mBridgedDevices[kMaxBridgedDevices];
+	uint16_t mNumberOfProviders{ 0 };
 
 	chip::EndpointId mFirstDynamicEndpointId;
 	chip::EndpointId mCurrentDynamicEndpointId;
 
 	friend BridgeManager &GetBridgeManager();
 	static BridgeManager sBridgeManager;
+
 };
 
 inline BridgeManager &GetBridgeManager()

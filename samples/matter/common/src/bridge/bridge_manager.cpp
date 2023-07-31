@@ -6,21 +6,6 @@
 
 #include "bridge_manager.h"
 
-#if CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
-#include "onoff_light.h"
-#include "onoff_light_data_provider.h"
-#endif
-
-#if CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
-#include "temperature_sensor.h"
-#include "temperature_sensor_data_provider.h"
-#endif
-
-#if CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
-#include "humidity_sensor.h"
-#include "humidity_sensor_data_provider.h"
-#endif
-
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/reporting/reporting.h>
 #include <app/util/generic-callbacks.h>
@@ -90,6 +75,11 @@ CHIP_ERROR BridgeManager::AddDevices(BridgedDevice *aDevice, BridgedDeviceDataPr
 	uint8_t index = 0;
 	Platform::UniquePtr<BridgedDevice> device(aDevice);
 	Platform::UniquePtr<BridgedDeviceDataProvider> provider(aDataProvider);
+
+	/* Maximum number of Matter bridged devices is controlled inside mDevicesMap,
+	   but the data providers may be created independently, so let's ensure we do not
+	   violate the maximum number of supported instances. */
+	VerifyOrReturnError(++mNumberOfProviders <= kMaxDataProviders, CHIP_ERROR_INTERNAL);
 
 	while (index < kMaxBridgedDevices) {
 		/* Find the first empty index in the bridged devices list */
