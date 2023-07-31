@@ -8,9 +8,9 @@
 
 #include "bridged_device.h"
 
+#include <cstdint>
 #include <functional>
 #include <map>
-#include <cstdint>
 
 /*
    DeviceFactory template container allows to instantiate a map which
@@ -54,7 +54,7 @@ private:
 };
 
 /*
-   FiniteMap template container allows to wrap mappings between T1 and T2 types.
+   FiniteMap template container allows to wrap mappings between uint16_t type key and T type value.
    The size or the container is predefined at compilation time, therefore
    the maximum number of stored elements must be well known. FiniteMap owns
    inserted values, meaning that once the user inserts a value it will not longer
@@ -66,34 +66,33 @@ private:
      * checking if the map contains a non-null value under given key (Contains)
      * iterating though stored item via publicly available mMap member
    Prerequisites:
-     * T1 must have == operator implemented
-     * T2 must have =operator(&&) and bool()operator implemented
+     * T must have =operator(&&) and bool()operator implemented
 */
-template <typename T1, typename T2, std::size_t N> struct FiniteMap {
+template <typename T, std::size_t N> struct FiniteMap {
 	struct Pair {
-		T1 key;
-		T2 value;
+		uint16_t key;
+		T value;
 	};
 
-	void Insert(const T1 &key, T2 &&value)
+	void Insert(uint16_t key, T &&value)
 	{
 		if (Contains(key)) {
 			/* The key with sane value already exists in the map, return prematurely. */
 			return;
 		} else if (mElementsCount < N) {
-			mMap[mElementsCount].key = key;
-			mMap[mElementsCount].value = std::move(value);
+			mMap[key].key = key;
+			mMap[key].value = std::move(value);
 			mElementsCount++;
 		}
 	}
 
-	bool Erase(const T1 &key)
+	bool Erase(uint16_t key)
 	{
 		const auto &it = std::find_if(std::begin(mMap), std::end(mMap),
 					      [key](const Pair &pair) { return pair.key == key; });
 		if (it != std::end(mMap) && it->value) {
 			/* Invalidate the value but leave the key unchanged */
-			it->value = T2{};
+			it->value = T{};
 			mElementsCount--;
 			return true;
 		}
@@ -101,7 +100,7 @@ template <typename T1, typename T2, std::size_t N> struct FiniteMap {
 	}
 
 	/* TODO: refactor to return a reference (Constains() check will be always needed) */
-	const T2 *operator[](const T1 &key) const
+	const T *operator[](uint16_t key) const
 	{
 		for (auto &it : mMap) {
 			if (key == it.key)
@@ -110,9 +109,9 @@ template <typename T1, typename T2, std::size_t N> struct FiniteMap {
 		return nullptr;
 	}
 
-	bool Contains(const T1 &key)
+	bool Contains(uint16_t key)
 	{
-		const T2 *stored = (*this)[key];
+		const T *stored = (*this)[key];
 		if (stored && *stored) {
 			/* The key with sane value found in the map */
 			return true;

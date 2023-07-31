@@ -46,8 +46,7 @@ private:
 		DevicePtr mDevice;
 		ProviderPtr mProvider;
 	};
-	using DeviceIndex = uint16_t;
-	using DeviceMap = FiniteMap<DeviceIndex, DevicePair, kMaxBridgedDevices>;
+	using DeviceMap = FiniteMap<DevicePair, kMaxBridgedDevices>;
 
 	CHIP_ERROR AddDevices(BridgedDevice *aDevice, BridgedDeviceDataProvider *aDataProvider);
 
