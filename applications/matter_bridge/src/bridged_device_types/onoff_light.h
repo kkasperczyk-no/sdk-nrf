@@ -13,7 +13,7 @@ public:
 	static constexpr uint16_t kOnOffClusterRevision = 1;
 	static constexpr uint32_t kOnOffFeatureMap = 0;
 
-	OnOffLightDevice(const char *nodeLabel);
+	OnOffLightDevice(const char *nodeLabel, BridgedDevice::DeviceType deviceType);
 
 	bool GetOnOff() { return mOnOff; }
 	void Toggle() { mOnOff = !mOnOff; }

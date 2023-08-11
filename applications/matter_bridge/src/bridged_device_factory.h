@@ -39,7 +39,7 @@ namespace BridgeFactory
 {
 using UpdateAttributeCallback = BridgedDeviceDataProvider::UpdateAttributeCallback;
 using DeviceType = BridgedDevice::DeviceType;
-using BridgedDeviceFactory = DeviceFactory<BridgedDevice, const char *>;
+using BridgedDeviceFactory = DeviceFactory<BridgedDevice, const char *, BridgedDevice::DeviceType>;
 
 #ifdef CONFIG_BRIDGED_DEVICE_SIMULATED
 using SimulatedDataProviderFactory = DeviceFactory<BridgedDeviceDataProvider, UpdateAttributeCallback>;
@@ -62,29 +62,29 @@ inline BridgedDeviceFactory &GetBridgedDeviceFactory()
 	static BridgedDeviceFactory sBridgedDeviceFactory{
 #ifdef CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 		{ DeviceType::HumiditySensor,
-		  [](const char *nodeLabel) -> BridgedDevice * {
+		  [](const char *nodeLabel, BridgedDevice::DeviceType deviceType) -> BridgedDevice * {
 			  if (!checkLabel(nodeLabel)) {
 				  return nullptr;
 			  }
-			  return chip::Platform::New<HumiditySensorDevice>(nodeLabel);
+			  return chip::Platform::New<HumiditySensorDevice>(nodeLabel, deviceType);
 		  } },
 #endif
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 		{ DeviceType::OnOffLight,
-		  [](const char *nodeLabel) -> BridgedDevice * {
+		  [](const char *nodeLabel, BridgedDevice::DeviceType deviceType) -> BridgedDevice * {
 			  if (!checkLabel(nodeLabel)) {
 				  return nullptr;
 			  }
-			  return chip::Platform::New<OnOffLightDevice>(nodeLabel);
+			  return chip::Platform::New<OnOffLightDevice>(nodeLabel, deviceType);
 		  } },
 #endif
 #ifdef CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 		{ BridgedDevice::DeviceType::TemperatureSensor,
-		  [](const char *nodeLabel) -> BridgedDevice * {
+		  [](const char *nodeLabel, BridgedDevice::DeviceType deviceType) -> BridgedDevice * {
 			  if (!checkLabel(nodeLabel)) {
 				  return nullptr;
 			  }
-			  return chip::Platform::New<TemperatureSensorDevice>(nodeLabel);
+			  return chip::Platform::New<TemperatureSensorDevice>(nodeLabel, deviceType);
 		  } },
 #endif
 	};

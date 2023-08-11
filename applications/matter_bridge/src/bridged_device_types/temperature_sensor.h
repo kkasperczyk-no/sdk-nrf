@@ -13,7 +13,7 @@ public:
 	static constexpr uint16_t kTemperatureMeasurementClusterRevision = 1;
 	static constexpr uint32_t kTemperatureMeasurementFeatureMap = 0;
 
-	TemperatureSensorDevice(const char *nodeLabel);
+	TemperatureSensorDevice(const char *nodeLabel, BridgedDevice::DeviceType deviceType);
 
 	int16_t GetMeasuredValue() { return mMeasuredValue; }
 	int16_t GetMinMeasuredValue() { return mMinMeasuredValue; }

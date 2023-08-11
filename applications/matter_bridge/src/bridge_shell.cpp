@@ -5,89 +5,13 @@
  */
 
 #include "bridge_manager.h"
-#include "bridged_device_factory.h"
-
-#include <zephyr/logging/log.h>
-#include <zephyr/shell/shell.h>
+#include "bridged_devices_creator.h"
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
-#include "ble_bridged_device.h"
 #include "ble_connectivity_manager.h"
 #endif /* CONFIG_BRIDGED_DEVICE_BT */
 
-LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
-
-#ifdef CONFIG_BRIDGED_DEVICE_SIMULATED
-static BridgedDeviceDataProvider *CreateSimulatedProvider(int deviceType)
-{
-	return BridgeFactory::GetSimulatedDataProviderFactory().Create(
-		static_cast<BridgedDevice::DeviceType>(deviceType), BridgeManager::HandleUpdate);
-}
-#endif /* CONFIG_BRIDGED_DEVICE_SIMULATED */
-
-#ifdef CONFIG_BRIDGED_DEVICE_BT
-
-static BridgedDeviceDataProvider *CreateBleProvider(int deviceType)
-{
-	return BridgeFactory::GetBleDataProviderFactory().Create(static_cast<BridgedDevice::DeviceType>(deviceType),
-								 BridgeManager::HandleUpdate);
-}
-
-struct BluetoothConnectionContext {
-	const struct shell *shell;
-	int deviceType;
-	char nodeLabel[BridgedDevice::kNodeLabelSize];
-	BLEBridgedDeviceProvider *provider;
-};
-#endif /* CONFIG_BRIDGED_DEVICE_BT */
-
-static void AddDevice(const struct shell *shell, int deviceType, const char *nodeLabel,
-		      BridgedDeviceDataProvider *provider)
-{
-	VerifyOrReturn(provider != nullptr,
-		       shell_fprintf(shell, SHELL_INFO, "Cannot allocate data provider of given type\n"));
-
-	auto *newBridgedDevice = BridgeFactory::GetBridgedDeviceFactory().Create(
-		static_cast<BridgedDevice::DeviceType>(deviceType), nodeLabel);
-
-	VerifyOrReturn(newBridgedDevice != nullptr, delete provider,
-		       shell_fprintf(shell, SHELL_INFO, "Cannot allocate Matter device of given type\n"));
-
-	CHIP_ERROR err = BridgeManager::Instance().AddBridgedDevices(newBridgedDevice, provider);
-	if (err == CHIP_NO_ERROR) {
-		shell_fprintf(shell, SHELL_INFO, "Done\n");
-	} else if (err == CHIP_ERROR_INVALID_STRING_LENGTH) {
-		shell_fprintf(shell, SHELL_ERROR, "Error: too long node label (max %d)\n",
-			      BridgedDevice::kNodeLabelSize);
-	} else if (err == CHIP_ERROR_NO_MEMORY) {
-		shell_fprintf(shell, SHELL_ERROR, "Error: no memory\n");
-	} else if (err == CHIP_ERROR_INVALID_ARGUMENT) {
-		shell_fprintf(shell, SHELL_ERROR, "Error: invalid device type\n");
-	} else {
-		shell_fprintf(shell, SHELL_ERROR, "Error: internal\n");
-	}
-}
-
-#ifdef CONFIG_BRIDGED_DEVICE_BT
-static void BluetoothDeviceConnected(BLEBridgedDevice *device, bt_gatt_dm *discoveredData, bool discoverySucceeded,
-				     void *context)
-{
-	if (context && device && discoveredData && discoverySucceeded) {
-		BluetoothConnectionContext *ctx = reinterpret_cast<BluetoothConnectionContext *>(context);
-		chip::Platform::UniquePtr<BluetoothConnectionContext> ctxPtr(ctx);
-
-		if (ctxPtr->provider->MatchBleDevice(device)) {
-			return;
-		}
-
-		if (ctxPtr->provider->ParseDiscoveredData(discoveredData)) {
-			return;
-		}
-
-		AddDevice(ctx->shell, ctx->deviceType, ctx->nodeLabel, ctx->provider);
-	}
-}
-#endif /* CONFIG_BRIDGED_DEVICE_BT */
+#include <zephyr/shell/shell.h>
 
 static int AddBridgedDeviceHandler(const struct shell *shell, size_t argc, char **argv)
 {
@@ -101,35 +25,7 @@ static int AddBridgedDeviceHandler(const struct shell *shell, size_t argc, char 
 		nodeLabel = argv[3];
 	}
 
-	/* The device object can be created once the Bluetooth LE connection will be established. */
-	BluetoothConnectionContext *context = chip::Platform::New<BluetoothConnectionContext>();
-
-	if (!context) {
-		return -ENOMEM;
-	}
-
-	chip::Platform::UniquePtr<BluetoothConnectionContext> contextPtr(context);
-	contextPtr->shell = shell;
-	contextPtr->deviceType = deviceType;
-
-	if (nodeLabel) {
-		strcpy(contextPtr->nodeLabel, nodeLabel);
-	}
-
-	BridgedDeviceDataProvider *provider = CreateBleProvider(contextPtr->deviceType);
-
-	if (!provider) {
-		return -ENOMEM;
-	}
-
-	contextPtr->provider = static_cast<BLEBridgedDeviceProvider *>(provider);
-
-	CHIP_ERROR err = BLEConnectivityManager::Instance().Connect(
-		bleDeviceIndex, BluetoothDeviceConnected, contextPtr.get(), contextPtr->provider->GetServiceUuid());
-
-	if (err == CHIP_NO_ERROR) {
-		contextPtr.release();
-	}
+	BridgedDeviceCreator::CreateDevice(deviceType, nodeLabel, bleDeviceIndex);
 
 #elif defined(CONFIG_BRIDGED_DEVICE_SIMULATED)
 
@@ -137,9 +33,7 @@ static int AddBridgedDeviceHandler(const struct shell *shell, size_t argc, char 
 		nodeLabel = argv[2];
 	}
 
-	/* The device is simulated, so it can be added immediately. */
-	BridgedDeviceDataProvider *provider = CreateSimulatedProvider(deviceType);
-	AddDevice(shell, deviceType, nodeLabel, provider);
+	BridgedDeviceCreator::CreateDevice(deviceType, nodeLabel);
 #else
 	return -ENOTSUP;
 
@@ -152,7 +46,7 @@ static int RemoveBridgedDeviceHandler(const struct shell *shell, size_t argc, ch
 {
 	int endpointId = strtoul(argv[1], NULL, 0);
 
-	if (CHIP_NO_ERROR == BridgeManager::Instance().RemoveBridgedDevice(endpointId)) {
+	if (BridgedDeviceCreator::RemoveDevice(endpointId)) {
 		shell_fprintf(shell, SHELL_INFO, "Done\n");
 	} else {
 		shell_fprintf(shell, SHELL_ERROR, "Error: device not found\n");

@@ -13,7 +13,7 @@ public:
 	static constexpr uint16_t kRelativeHumidityMeasurementClusterRevision = 1;
 	static constexpr uint32_t kRelativeHumidityMeasurementFeatureMap = 0;
 
-	HumiditySensorDevice(const char *nodeLabel);
+	HumiditySensorDevice(const char *nodeLabel, BridgedDevice::DeviceType deviceType);
 
 	uint16_t GetMeasuredValue() { return mMeasuredValue; }
 	uint16_t GetMinMeasuredValue() { return mMinMeasuredValue; }

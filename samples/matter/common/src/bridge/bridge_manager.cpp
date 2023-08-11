@@ -31,15 +31,16 @@ void BridgeManager::Init()
 				     false);
 }
 
-CHIP_ERROR BridgeManager::AddBridgedDevices(BridgedDevice *aDevice, BridgedDeviceDataProvider *aDataProvider)
+CHIP_ERROR BridgeManager::AddBridgedDevices(BridgedDevice *aDevice, BridgedDeviceDataProvider *aDataProvider,
+					    uint8_t &aDevicesPairIndex)
 {
 	aDataProvider->Init();
-	CHIP_ERROR err = AddDevices(aDevice, aDataProvider);
+	CHIP_ERROR err = AddDevices(aDevice, aDataProvider, aDevicesPairIndex);
 
 	return err;
 }
 
-CHIP_ERROR BridgeManager::RemoveBridgedDevice(uint16_t endpoint)
+CHIP_ERROR BridgeManager::RemoveBridgedDevice(uint16_t endpoint, uint8_t &aDevicesPairIndex)
 {
 	uint8_t index = 0;
 
@@ -52,6 +53,7 @@ CHIP_ERROR BridgeManager::RemoveBridgedDevice(uint16_t endpoint)
 				emberAfClearDynamicEndpoint(index);
 				if (mDevicesMap.Erase(index)) {
 					mNumberOfProviders--;
+					aDevicesPairIndex = index;
 					return CHIP_NO_ERROR;
 				} else {
 					LOG_ERR("Cannot remove bridged devices under index=%d", index);
@@ -64,7 +66,8 @@ CHIP_ERROR BridgeManager::RemoveBridgedDevice(uint16_t endpoint)
 	return CHIP_ERROR_NOT_FOUND;
 }
 
-CHIP_ERROR BridgeManager::AddDevices(BridgedDevice *aDevice, BridgedDeviceDataProvider *aDataProvider)
+CHIP_ERROR BridgeManager::AddDevices(BridgedDevice *aDevice, BridgedDeviceDataProvider *aDataProvider,
+				     uint8_t &aDevicesPairIndex)
 {
 	uint8_t index = 0;
 
@@ -99,13 +102,16 @@ CHIP_ERROR BridgeManager::AddDevices(BridgedDevice *aDevice, BridgedDeviceDataPr
 				if (ret == EMBER_ZCL_STATUS_SUCCESS) {
 					LOG_INF("Added device to dynamic endpoint %d (index=%d)",
 						mCurrentDynamicEndpointId, index);
+
 					storedDevice->Init(mCurrentDynamicEndpointId);
+					aDevicesPairIndex = index;
+
 					return CHIP_NO_ERROR;
 				} else if (ret != EMBER_ZCL_STATUS_DUPLICATE_EXISTS) {
 					LOG_ERR("Failed to add dynamic endpoint: Internal error!");
-					RemoveBridgedDevice(mCurrentDynamicEndpointId); // TODO: check if this is ok, we
-											// need to cleanup the unused
-											// devices
+					RemoveBridgedDevice(mCurrentDynamicEndpointId, index); // TODO: check if this is
+											       // ok, we need to cleanup
+											       // the unused devices
 					return CHIP_ERROR_INTERNAL;
 				}
 

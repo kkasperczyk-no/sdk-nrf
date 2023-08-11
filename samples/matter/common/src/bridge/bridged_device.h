@@ -49,16 +49,18 @@ public:
 	static constexpr uint8_t kNodeLabelSize = 32;
 	static constexpr uint8_t kDescriptorAttributeArraySize = 254;
 
-	explicit BridgedDevice(const char *nodeLabel)
+	explicit BridgedDevice(const char *nodeLabel, DeviceType deviceType)
 	{
 		if (nodeLabel) {
 			memcpy(mNodeLabel, nodeLabel, strlen(nodeLabel));
 		}
+		mDeviceType = deviceType;
 	}
 	virtual ~BridgedDevice() { chip::Platform::MemoryFree(mDataVersion); }
 
 	void Init(chip::EndpointId endpoint) { mEndpointId = endpoint; }
 	chip::EndpointId GetEndpointId() { return mEndpointId; }
+	DeviceType GetDeviceType() { return mDeviceType; }
 
 	virtual CHIP_ERROR HandleRead(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,
 				      uint16_t maxReadLength) = 0;
@@ -88,6 +90,7 @@ public:
 
 protected:
 	chip::EndpointId mEndpointId;
+	DeviceType mDeviceType;
 
 private:
 	static constexpr uint16_t kBridgedDeviceBasicInformationClusterRevision = 1;

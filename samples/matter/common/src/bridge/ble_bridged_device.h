@@ -24,6 +24,17 @@ public:
 	virtual int MatchBleDevice(BLEBridgedDevice *device) = 0;
 	virtual int ParseDiscoveredData(bt_gatt_dm *discoveredData) = 0;
 
+	bool GetBtAddress(bt_addr_le_t *addr)
+	{
+		if (mDevice == nullptr || !addr) {
+			return false;
+		}
+
+		*addr = mDevice->mAddr;
+
+		return true;
+	}
+
 protected:
 	BLEBridgedDevice *mDevice{ nullptr };
 };

@@ -33,6 +33,7 @@ public:
 
 private:
 	CHIP_ERROR Init();
+	CHIP_ERROR RestoreBridgedDevices();
 
 	void CancelTimer();
 	void StartTimer(uint32_t timeoutInMs);

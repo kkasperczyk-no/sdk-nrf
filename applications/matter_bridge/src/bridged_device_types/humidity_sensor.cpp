@@ -41,7 +41,8 @@ static constexpr EmberAfDeviceType kBridgedHumidityDeviceTypes[] = {
 
 static constexpr uint8_t kHumidityDataVersionSize = ArraySize(bridgedHumidityClusters);
 
-HumiditySensorDevice::HumiditySensorDevice(const char *nodeLabel) : BridgedDevice(nodeLabel)
+HumiditySensorDevice::HumiditySensorDevice(const char *nodeLabel, BridgedDevice::DeviceType deviceType)
+	: BridgedDevice(nodeLabel, deviceType)
 {
 	mDataVersionSize = kHumidityDataVersionSize;
 	mEp = &bridgedHumidityEndpoint;

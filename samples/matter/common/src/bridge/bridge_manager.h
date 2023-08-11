@@ -12,9 +12,12 @@
 
 class BridgeManager {
 public:
+	static constexpr uint8_t kMaxBridgedDevices = CHIP_DEVICE_CONFIG_DYNAMIC_ENDPOINT_COUNT;
+
 	void Init();
-	CHIP_ERROR AddBridgedDevices(BridgedDevice *aDevice, BridgedDeviceDataProvider *aDataProvider);
-	CHIP_ERROR RemoveBridgedDevice(uint16_t endpoint);
+	CHIP_ERROR AddBridgedDevices(BridgedDevice *aDevice, BridgedDeviceDataProvider *aDataProvider,
+				     uint8_t &aDevicesPairIndex);
+	CHIP_ERROR RemoveBridgedDevice(uint16_t endpoint, uint8_t &aDevicesPairIndex);
 	static CHIP_ERROR HandleRead(uint16_t index, chip::ClusterId clusterId,
 				     const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer,
 				     uint16_t maxReadLength);
@@ -30,7 +33,6 @@ public:
 	}
 
 private:
-	static constexpr uint8_t kMaxBridgedDevices = CHIP_DEVICE_CONFIG_DYNAMIC_ENDPOINT_COUNT;
 	static constexpr uint8_t kMaxDataProviders = CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER;
 
 	using DevicePtr = chip::Platform::UniquePtr<BridgedDevice>;
@@ -54,7 +56,8 @@ private:
 	};
 	using DeviceMap = FiniteMap<DevicePair, kMaxBridgedDevices>;
 
-	CHIP_ERROR AddDevices(BridgedDevice *aDevice, BridgedDeviceDataProvider *aDataProvider);
+	CHIP_ERROR AddDevices(BridgedDevice *aDevice, BridgedDeviceDataProvider *aDataProvider,
+			      uint8_t &aDevicesPairIndex);
 
 	DeviceMap mDevicesMap;
 	uint16_t mNumberOfProviders{ 0 };
