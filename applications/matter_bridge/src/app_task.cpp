@@ -7,6 +7,8 @@
 #include "app_task.h"
 #include "app_config.h"
 #include "bridge_manager.h"
+#include "bridge_storage_manager.h"
+#include "bridged_devices_creator.h"
 #include "led_util.h"
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
@@ -149,7 +151,7 @@ CHIP_ERROR AppTask::Init()
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 
 	/* Initialize bridge manager */
-	BridgeManager::Instance().Init();
+	BridgeManager::Instance().Init(RestoreBridgedDevices);
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 	BLEConnectivityManager::Instance().Init(sUuidServices, kUuidServicesNumber);
@@ -353,4 +355,57 @@ void AppTask::DispatchEvent(const AppEvent &event)
 	} else {
 		LOG_INF("Event received with no handler. Dropping event.");
 	}
+}
+
+CHIP_ERROR AppTask::RestoreBridgedDevices()
+{
+	uint8_t count;
+	uint8_t indexes[BridgeManager::kMaxBridgedDevices] = { 0 };
+	size_t indexesCount = 0;
+
+	if (!BridgeStorageManager::Instance().LoadBridgedDevicesCount(count)) {
+		LOG_INF("No bridged devices to load from the storage.");
+		return CHIP_NO_ERROR;
+	}
+
+	if (!BridgeStorageManager::Instance().LoadBridgedDevicesIndexes(indexes, BridgeManager::kMaxBridgedDevices,
+									indexesCount)) {
+		return CHIP_ERROR_NOT_FOUND;
+	}
+
+	/* Load all devices based on the read count number. */
+	for (auto i = 0; i < static_cast<int>(indexesCount); i++) {
+		uint16_t endpointId;
+		char label[BridgedDevice::kNodeLabelSize] = { 0 };
+		size_t labelSize;
+		uint16_t deviceType;
+
+		if (!BridgeStorageManager::Instance().LoadBridgedDeviceEndpointId(endpointId, indexes[i])) {
+			return CHIP_ERROR_NOT_FOUND;
+		}
+
+		/* Ignore an error, as node label is optional, so it may not be found. */
+		BridgeStorageManager::Instance().LoadBridgedDeviceNodeLabel(label, sizeof(label), labelSize,
+									    indexes[i]);
+
+		if (!BridgeStorageManager::Instance().LoadBridgedDeviceType(deviceType, indexes[i])) {
+			return CHIP_ERROR_NOT_FOUND;
+		}
+
+#ifdef CONFIG_BRIDGED_DEVICE_BT
+		bt_addr_le_t addr;
+
+		if (!BridgeStorageManager::Instance().LoadBtAddress(addr, indexes[i])) {
+			return CHIP_ERROR_NOT_FOUND;
+		}
+
+		/* TODO: Add creating a device once BLE re-connection mechanism will be in place*/
+#else
+		LOG_INF("Loaded bridged device on endpoint id %d from the storage", endpointId);
+
+		BridgedDeviceCreator::CreateDevice(deviceType, label, chip::Optional<uint8_t>(indexes[i]),
+						   chip::Optional<uint16_t>(endpointId));
+#endif
+	}
+	return CHIP_NO_ERROR;
 }

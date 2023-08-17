@@ -18,8 +18,19 @@ LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 using namespace ::chip;
 using namespace ::chip::app;
 
-void BridgeManager::Init()
+CHIP_ERROR BridgeManager::Init(LoadStoredBridgedDevices loadStoredBridgedDevicesCb)
 {
+	if (!loadStoredBridgedDevicesCb) {
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (mIsInitialized) {
+		LOG_INF("BridgeManager is already initialized.");
+		return CHIP_ERROR_INCORRECT_STATE;
+	}
+
+	mIsInitialized = true;
+
 	/* The first dynamic endpoint is the last fixed endpoint + 1. */
 	mFirstDynamicEndpointId = static_cast<chip::EndpointId>(
 		static_cast<int>(emberAfEndpointFromIndex(static_cast<uint16_t>(emberAfFixedEndpointCount() - 1))) + 1);
@@ -29,6 +40,9 @@ void BridgeManager::Init()
 	/* Disable the placeholder endpoint */
 	emberAfEndpointEnableDisable(emberAfEndpointFromIndex(static_cast<uint16_t>(emberAfFixedEndpointCount() - 1)),
 				     false);
+
+	/* Invoke the callback to load stored devices in a proper moment. */
+	return loadStoredBridgedDevicesCb();
 }
 
 CHIP_ERROR BridgeManager::AddBridgedDevices(BridgedDevice *device, BridgedDeviceDataProvider *dataProvider,
@@ -148,7 +162,6 @@ CHIP_ERROR BridgeManager::AddDevices(BridgedDevice *aDevice, BridgedDeviceDataPr
 	 */
 	if (devicesPairIndex.HasValue()) {
 		index = devicesPairIndex.Value();
-
 		/* The requested index is already used. */
 		if (mDevicesMap.Contains(index)) {
 			return CHIP_ERROR_INTERNAL;
@@ -162,7 +175,7 @@ CHIP_ERROR BridgeManager::AddDevices(BridgedDevice *aDevice, BridgedDeviceDataPr
 			/* Make sure that the following endpoint id assignments will be monotonically continued from the
 			 * biggest assigned number. */
 			mCurrentDynamicEndpointId =
-				mCurrentDynamicEndpointId > endpointId ? mCurrentDynamicEndpointId : endpointId;
+				mCurrentDynamicEndpointId > endpointId ? mCurrentDynamicEndpointId : endpointId + 1;
 		}
 
 		return err;

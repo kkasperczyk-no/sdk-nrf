@@ -13,20 +13,7 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/gatt.h>
 
-struct BLEBridgedDevice;
-
-class BLEBridgedDeviceProvider : public BridgedDeviceDataProvider {
-public:
-	explicit BLEBridgedDeviceProvider(UpdateAttributeCallback callback) : BridgedDeviceDataProvider(callback) {}
-	virtual ~BLEBridgedDeviceProvider() = default;
-
-	virtual bt_uuid *GetServiceUuid() = 0;
-	virtual int MatchBleDevice(BLEBridgedDevice *device) = 0;
-	virtual int ParseDiscoveredData(bt_gatt_dm *discoveredData) = 0;
-
-protected:
-	BLEBridgedDevice *mDevice{ nullptr };
-};
+struct BLEBridgedDeviceProvider;
 
 struct BLEBridgedDevice {
 	using DeviceConnectedCallback = void (*)(BLEBridgedDevice *device, bt_gatt_dm *discoveredData,
@@ -38,4 +25,28 @@ struct BLEBridgedDevice {
 	bt_uuid *mServiceUuid;
 	bt_conn *mConn;
 	BLEBridgedDeviceProvider *mProvider;
+};
+
+class BLEBridgedDeviceProvider : public BridgedDeviceDataProvider {
+public:
+	explicit BLEBridgedDeviceProvider(UpdateAttributeCallback callback) : BridgedDeviceDataProvider(callback) {}
+	virtual ~BLEBridgedDeviceProvider() = default;
+
+	virtual bt_uuid *GetServiceUuid() = 0;
+	virtual int MatchBleDevice(BLEBridgedDevice *device) = 0;
+	virtual int ParseDiscoveredData(bt_gatt_dm *discoveredData) = 0;
+
+	bool GetBtAddress(bt_addr_le_t *addr)
+	{
+		if (mDevice == nullptr || !addr) {
+			return false;
+		}
+
+		memcpy(addr, &mDevice->mAddr, sizeof(mDevice->mAddr));
+
+		return true;
+	}
+
+protected:
+	BLEBridgedDevice *mDevice{ nullptr };
 };
