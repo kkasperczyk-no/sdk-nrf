@@ -31,15 +31,43 @@ void BridgeManager::Init()
 				     false);
 }
 
-CHIP_ERROR BridgeManager::AddBridgedDevices(BridgedDevice *aDevice, BridgedDeviceDataProvider *aDataProvider)
+CHIP_ERROR BridgeManager::AddBridgedDevices(BridgedDevice *device, BridgedDeviceDataProvider *dataProvider,
+					    uint8_t &devicesPairIndex)
 {
-	aDataProvider->Init();
-	CHIP_ERROR err = AddDevices(aDevice, aDataProvider);
+	chip::Optional<uint8_t> index;
 
-	return err;
+	return AddBridgedDevices(device, dataProvider, devicesPairIndex, mCurrentDynamicEndpointId, index);
 }
 
-CHIP_ERROR BridgeManager::RemoveBridgedDevice(uint16_t endpoint)
+CHIP_ERROR BridgeManager::AddBridgedDevices(BridgedDevice *device, BridgedDeviceDataProvider *dataProvider,
+					    uint8_t &devicesPairIndex, uint16_t endpointId)
+{
+	chip::Optional<uint8_t> index;
+	index.SetValue(devicesPairIndex);
+
+	return AddBridgedDevices(device, dataProvider, devicesPairIndex, endpointId, index);
+}
+
+CHIP_ERROR BridgeManager::AddBridgedDevices(BridgedDevice *device, BridgedDeviceDataProvider *dataProvider,
+					    uint8_t &devicesPairIndex, uint16_t endpointId,
+					    chip::Optional<uint8_t> &index)
+{
+	CHIP_ERROR err = AddDevices(device, dataProvider, index, endpointId);
+
+	if (err != CHIP_NO_ERROR) {
+		return err;
+	}
+
+	if (!index.HasValue()) {
+		return CHIP_ERROR_INTERNAL;
+	}
+
+	devicesPairIndex = index.Value();
+
+	return CHIP_NO_ERROR;
+}
+
+CHIP_ERROR BridgeManager::RemoveBridgedDevice(uint16_t endpoint, uint8_t &devicesPairIndex)
 {
 	uint8_t index = 0;
 
@@ -52,6 +80,7 @@ CHIP_ERROR BridgeManager::RemoveBridgedDevice(uint16_t endpoint)
 				emberAfClearDynamicEndpoint(index);
 				if (mDevicesMap.Erase(index)) {
 					mNumberOfProviders--;
+					devicesPairIndex = index;
 					return CHIP_NO_ERROR;
 				} else {
 					LOG_ERR("Cannot remove bridged devices under index=%d", index);
@@ -64,13 +93,46 @@ CHIP_ERROR BridgeManager::RemoveBridgedDevice(uint16_t endpoint)
 	return CHIP_ERROR_NOT_FOUND;
 }
 
-CHIP_ERROR BridgeManager::AddDevices(BridgedDevice *aDevice, BridgedDeviceDataProvider *aDataProvider)
+CHIP_ERROR BridgeManager::CreateEndpoint(uint8_t index, uint16_t endpointId)
+{
+	if (!mDevicesMap[index]) {
+		LOG_ERR("Cannot retrieve bridged device from index %d", index);
+		return CHIP_ERROR_INTERNAL;
+	}
+
+	auto &storedDevice = mDevicesMap[index]->mDevice;
+	EmberAfStatus ret = emberAfSetDynamicEndpoint(
+		index, endpointId, storedDevice->mEp,
+		Span<DataVersion>(storedDevice->mDataVersion, storedDevice->mDataVersionSize),
+		Span<const EmberAfDeviceType>(storedDevice->mDeviceTypeList, storedDevice->mDeviceTypeListSize));
+
+	if (ret == EMBER_ZCL_STATUS_SUCCESS) {
+		LOG_INF("Added device to dynamic endpoint %d (index=%d)", endpointId, index);
+		storedDevice->Init(endpointId);
+		return CHIP_NO_ERROR;
+	} else if (ret != EMBER_ZCL_STATUS_DUPLICATE_EXISTS) {
+		LOG_ERR("Failed to add dynamic endpoint: Internal error!");
+		RemoveBridgedDevice(endpointId, index); // TODO: check if this
+							// is ok, we need to
+							// cleanup the unused
+							// devices
+		return CHIP_ERROR_INTERNAL;
+	} else {
+		return CHIP_ERROR_SENTINEL;
+	}
+}
+
+CHIP_ERROR BridgeManager::AddDevices(BridgedDevice *aDevice, BridgedDeviceDataProvider *aDataProvider,
+				     chip::Optional<uint8_t> &devicesPairIndex, uint16_t endpointId)
 {
 	uint8_t index = 0;
+	CHIP_ERROR err;
 
 	Platform::UniquePtr<BridgedDevice> device(aDevice);
 	Platform::UniquePtr<BridgedDeviceDataProvider> provider(aDataProvider);
 	VerifyOrReturnError(device && provider, CHIP_ERROR_INTERNAL);
+
+	provider->Init();
 
 	/* Maximum number of Matter bridged devices is controlled inside mDevicesMap,
 	   but the data providers may be created independently, so let's ensure we do not
@@ -79,43 +141,55 @@ CHIP_ERROR BridgeManager::AddDevices(BridgedDevice *aDevice, BridgedDeviceDataPr
 	VerifyOrReturnError(mNumberOfProviders + 1 <= kMaxDataProviders, CHIP_ERROR_INTERNAL);
 	mNumberOfProviders++;
 
-	while (index < kMaxBridgedDevices) {
-		/* Find the first empty index in the bridged devices list */
-		if (!mDevicesMap.Contains(index)) {
-			mDevicesMap.Insert(index, DevicePair(std::move(device), std::move(provider)));
-			EmberAfStatus ret;
-			while (true) {
-				if (!mDevicesMap[index]) {
-					LOG_ERR("Cannot retrieve bridged device from index %d", index);
-					return CHIP_ERROR_INTERNAL;
-				}
-				auto &storedDevice = mDevicesMap[index]->mDevice;
-				ret = emberAfSetDynamicEndpoint(
-					index, mCurrentDynamicEndpointId, storedDevice->mEp,
-					Span<DataVersion>(storedDevice->mDataVersion, storedDevice->mDataVersionSize),
-					Span<const EmberAfDeviceType>(storedDevice->mDeviceTypeList,
-								      storedDevice->mDeviceTypeListSize));
+	/* The adding algorithm differs depending on the devicesPairIndex value:
+	 * - If devicesPairIndex has value it means that index and endpoint id are specified and should be assigned
+	 * based on the input arguments (e.g. the device was loaded from storage and has to use specific data).
+	 * - If devicesPairIndex has no value it means the default monotonically increasing numbering should be used.
+	 */
+	if (devicesPairIndex.HasValue()) {
+		index = devicesPairIndex.Value();
 
-				if (ret == EMBER_ZCL_STATUS_SUCCESS) {
-					LOG_INF("Added device to dynamic endpoint %d (index=%d)",
-						mCurrentDynamicEndpointId, index);
-					storedDevice->Init(mCurrentDynamicEndpointId);
-					return CHIP_NO_ERROR;
-				} else if (ret != EMBER_ZCL_STATUS_DUPLICATE_EXISTS) {
-					LOG_ERR("Failed to add dynamic endpoint: Internal error!");
-					RemoveBridgedDevice(mCurrentDynamicEndpointId); // TODO: check if this is ok, we
-											// need to cleanup the unused
-											// devices
-					return CHIP_ERROR_INTERNAL;
-				}
-
-				/* Handle wrap condition */
-				if (++mCurrentDynamicEndpointId < mFirstDynamicEndpointId) {
-					mCurrentDynamicEndpointId = mFirstDynamicEndpointId;
-				}
-			}
+		/* The requested index is already used. */
+		if (mDevicesMap.Contains(index)) {
+			return CHIP_ERROR_INTERNAL;
 		}
-		index++;
+
+		mDevicesMap.Insert(index, DevicePair(std::move(device), std::move(provider)));
+		err = CreateEndpoint(index, endpointId);
+
+		if (err == CHIP_NO_ERROR) {
+			devicesPairIndex.SetValue(index);
+			/* Make sure that the following endpoint id assignments will be monotonically continued from the
+			 * biggest assigned number. */
+			mCurrentDynamicEndpointId =
+				mCurrentDynamicEndpointId > endpointId ? mCurrentDynamicEndpointId : endpointId;
+		}
+
+		return err;
+	} else {
+		while (index < kMaxBridgedDevices) {
+			/* Find the first empty index in the bridged devices list */
+			if (!mDevicesMap.Contains(index)) {
+				mDevicesMap.Insert(index, DevicePair(std::move(device), std::move(provider)));
+
+				/* Assign the free endpoint ID. */
+				do {
+					err = CreateEndpoint(index, endpointId);
+
+					/* Handle wrap condition */
+					if (++mCurrentDynamicEndpointId < mFirstDynamicEndpointId) {
+						mCurrentDynamicEndpointId = mFirstDynamicEndpointId;
+					}
+				} while (err == CHIP_ERROR_SENTINEL);
+
+				if (err == CHIP_NO_ERROR) {
+					devicesPairIndex.SetValue(index);
+				}
+
+				return err;
+			}
+			index++;
+		}
 	}
 
 	LOG_ERR("Failed to add dynamic endpoint: No endpoints available!");

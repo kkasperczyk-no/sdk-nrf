@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "bridged_devices_creator.h"
 #include "bridge_manager.h"
 #include "bridge_storage_manager.h"
 #include "bridged_device_factory.h"
-#include "bridged_devices_creator.h"
 
 #include <zephyr/logging/log.h>
 
@@ -20,10 +20,8 @@ CHIP_ERROR AddDevice(int deviceType, const char *nodeLabel, BridgedDeviceDataPro
 	VerifyOrReturnError(provider != nullptr, CHIP_ERROR_INVALID_ARGUMENT,
 			    LOG_ERR("Cannot allocate data provider of given type"));
 
-	auto *newBridgedDevice =
-		BridgeFactory::GetBridgedDeviceFactory().Create(static_cast<BridgedDevice::DeviceType>(deviceType),
-								nodeLabel,
-								static_cast<BridgedDevice::DeviceType>(deviceType));
+	auto *newBridgedDevice = BridgeFactory::GetBridgedDeviceFactory().Create(
+		static_cast<BridgedDevice::DeviceType>(deviceType), nodeLabel);
 
 	if (newBridgedDevice == nullptr) {
 		delete provider;
@@ -31,7 +29,8 @@ CHIP_ERROR AddDevice(int deviceType, const char *nodeLabel, BridgedDeviceDataPro
 		return CHIP_ERROR_INTERNAL;
 	}
 
-	CHIP_ERROR err = BridgeManager::Instance().AddBridgedDevices(newBridgedDevice, provider);
+	uint8_t index = 0;
+	CHIP_ERROR err = BridgeManager::Instance().AddBridgedDevices(newBridgedDevice, provider, index);
 
 	if (err == CHIP_NO_ERROR) {
 	} else if (err == CHIP_ERROR_INVALID_STRING_LENGTH) {
@@ -120,8 +119,8 @@ BridgedDeviceDataProvider *CreateBleProvider(int deviceType, const char *nodeLab
 
 CHIP_ERROR BridgedDeviceCreator::CreateDevice(int deviceType, const char *nodeLabel
 #ifdef CONFIG_BRIDGED_DEVICE_BT
-					,
-					int bleDeviceIndex
+					      ,
+					      int bleDeviceIndex
 #endif
 )
 {
@@ -146,5 +145,7 @@ CHIP_ERROR BridgedDeviceCreator::CreateDevice(int deviceType, const char *nodeLa
 
 CHIP_ERROR BridgedDeviceCreator::RemoveDevice(int endpointId)
 {
-	return BridgeManager::Instance().RemoveBridgedDevice(endpointId);
+	uint8_t index = 0;
+
+	return BridgeManager::Instance().RemoveBridgedDevice(endpointId, index);
 }

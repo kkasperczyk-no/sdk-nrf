@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <lib/core/CHIPError.h>
+
 namespace BridgedDeviceCreator
 {
 CHIP_ERROR CreateDevice(int deviceType, const char *nodeLabel

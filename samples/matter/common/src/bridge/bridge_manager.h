@@ -13,8 +13,11 @@
 class BridgeManager {
 public:
 	void Init();
-	CHIP_ERROR AddBridgedDevices(BridgedDevice *aDevice, BridgedDeviceDataProvider *aDataProvider);
-	CHIP_ERROR RemoveBridgedDevice(uint16_t endpoint);
+	CHIP_ERROR AddBridgedDevices(BridgedDevice *device, BridgedDeviceDataProvider *dataProvider,
+				     uint8_t &devicesPairIndex);
+	CHIP_ERROR AddBridgedDevices(BridgedDevice *device, BridgedDeviceDataProvider *dataProvider,
+				     uint8_t &devicesPairIndex, uint16_t endpointId);
+	CHIP_ERROR RemoveBridgedDevice(uint16_t endpoint, uint8_t &devicesPairIndex);
 	static CHIP_ERROR HandleRead(uint16_t index, chip::ClusterId clusterId,
 				     const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer,
 				     uint16_t maxReadLength);
@@ -54,7 +57,11 @@ private:
 	};
 	using DeviceMap = FiniteMap<DevicePair, kMaxBridgedDevices>;
 
-	CHIP_ERROR AddDevices(BridgedDevice *aDevice, BridgedDeviceDataProvider *aDataProvider);
+	CHIP_ERROR AddBridgedDevices(BridgedDevice *device, BridgedDeviceDataProvider *dataProvider,
+				     uint8_t &devicesPairIndex, uint16_t endpointId, chip::Optional<uint8_t> &index);
+	CHIP_ERROR AddDevices(BridgedDevice *aDevice, BridgedDeviceDataProvider *aDataProvider,
+			      chip::Optional<uint8_t> &devicesPairIndex, uint16_t endpointId);
+	CHIP_ERROR CreateEndpoint(uint8_t index, uint16_t endpointId);
 
 	DeviceMap mDevicesMap;
 	uint16_t mNumberOfProviders{ 0 };
