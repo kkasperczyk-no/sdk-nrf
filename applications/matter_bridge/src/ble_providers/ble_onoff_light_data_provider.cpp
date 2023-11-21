@@ -10,6 +10,9 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/gatt.h>
 
+#include "binding_handler.h"
+#include <app/util/binding-table.h>
+
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
@@ -25,8 +28,10 @@ static bt_uuid *sUuidCcc = BT_UUID_GATT_CCC;
 uint8_t BleOnOffLightDataProvider::GattNotifyCallback(bt_conn *conn, bt_gatt_subscribe_params *params, const void *data,
 						      uint16_t length)
 {
+	LOG_ERR("XDDDDDDDDDDDDDd");
 	BleOnOffLightDataProvider *provider = static_cast<BleOnOffLightDataProvider *>(
 		BLEConnectivityManager::Instance().FindBLEProvider(*bt_conn_get_dst(conn)));
+	BindingHandler::BindingData *data2;
 
 	VerifyOrExit(data, );
 	VerifyOrExit(length == sizeof(mOnOff), );
@@ -34,6 +39,12 @@ uint8_t BleOnOffLightDataProvider::GattNotifyCallback(bt_conn *conn, bt_gatt_sub
 
 	/* TODO: Implement invoking command through the binding for OnOff light switch or update state of generic
 	 * switch. */
+	data2 = Platform::New<BindingHandler::BindingData>();
+	data2->EndpointId = 4;
+	data2->CommandId = Clusters::OnOff::Commands::Toggle::Id;
+	data2->ClusterId = Clusters::OnOff::Id;
+
+	DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::DeviceWorkerHandler, reinterpret_cast<intptr_t>(data2));
 
 exit:
 
@@ -43,6 +54,102 @@ exit:
 void BleOnOffLightDataProvider::Init()
 {
 	/* Do nothing in this case */
+	BindingHandler::Instance().Init(&SwitchChangedHandler);
+}
+
+void BleOnOffLightDataProvider::SwitchChangedHandler(const EmberBindingTableEntry &binding,
+						     OperationalDeviceProxy *deviceProxy, void *context)
+{
+	VerifyOrReturn(context != nullptr, LOG_ERR("Invalid context for the switch handler"););
+	BindingHandler::BindingData *data = static_cast<BindingHandler::BindingData *>(context);
+
+	if (binding.type == EMBER_MULTICAST_BINDING && data->IsGroup) {
+		switch (data->ClusterId) {
+		case Clusters::OnOff::Id:
+			OnOffProcessCommand(data->CommandId, binding, nullptr, context);
+			break;
+		default:
+			ChipLogError(NotSpecified, "Invalid binding group command data");
+			break;
+		}
+	} else if (binding.type == EMBER_UNICAST_BINDING && !data->IsGroup) {
+		switch (data->ClusterId) {
+		case Clusters::OnOff::Id:
+			OnOffProcessCommand(data->CommandId, binding, deviceProxy, context);
+			break;
+		default:
+			ChipLogError(NotSpecified, "Invalid binding unicast command data");
+			break;
+		}
+	}
+}
+
+void BleOnOffLightDataProvider::OnOffProcessCommand(CommandId aCommandId, const EmberBindingTableEntry &aBinding,
+				      OperationalDeviceProxy *aDevice, void *aContext)
+{
+	CHIP_ERROR ret = CHIP_NO_ERROR;
+	BindingHandler::BindingData *data = reinterpret_cast<BindingHandler::BindingData *>(aContext);
+
+	auto onSuccess = [](const ConcreteCommandPath &commandPath, const StatusIB &status, const auto &dataResponse) {
+		BindingHandler::OnInvokeCommandSucces();
+	};
+
+	auto onFailure = [dataRef = *data](CHIP_ERROR aError) mutable {
+		BindingHandler::OnInvokeCommandFailure(dataRef, aError);
+	};
+
+	if (aDevice) {
+		/* We are validating connection is ready once here instead of multiple times in each case statement
+		 * below. */
+		VerifyOrDie(aDevice->ConnectionReady());
+	}
+
+	switch (aCommandId) {
+	case Clusters::OnOff::Commands::Toggle::Id:
+		Clusters::OnOff::Commands::Toggle::Type toggleCommand;
+		if (aDevice) {
+			ret = Controller::InvokeCommandRequest(aDevice->GetExchangeManager(),
+							       aDevice->GetSecureSession().Value(), aBinding.remote,
+							       toggleCommand, onSuccess, onFailure);
+		} else {
+			Messaging::ExchangeManager &exchangeMgr = Server::GetInstance().GetExchangeManager();
+			ret = Controller::InvokeGroupCommandRequest(&exchangeMgr, aBinding.fabricIndex,
+								    aBinding.groupId, toggleCommand);
+		}
+		break;
+
+	case Clusters::OnOff::Commands::On::Id:
+		Clusters::OnOff::Commands::On::Type onCommand;
+		if (aDevice) {
+			ret = Controller::InvokeCommandRequest(aDevice->GetExchangeManager(),
+							       aDevice->GetSecureSession().Value(), aBinding.remote,
+							       onCommand, onSuccess, onFailure);
+		} else {
+			Messaging::ExchangeManager &exchangeMgr = Server::GetInstance().GetExchangeManager();
+			ret = Controller::InvokeGroupCommandRequest(&exchangeMgr, aBinding.fabricIndex,
+								    aBinding.groupId, onCommand);
+		}
+		break;
+
+	case Clusters::OnOff::Commands::Off::Id:
+		Clusters::OnOff::Commands::Off::Type offCommand;
+		if (aDevice) {
+			ret = Controller::InvokeCommandRequest(aDevice->GetExchangeManager(),
+							       aDevice->GetSecureSession().Value(), aBinding.remote,
+							       offCommand, onSuccess, onFailure);
+		} else {
+			Messaging::ExchangeManager &exchangeMgr = Server::GetInstance().GetExchangeManager();
+			ret = Controller::InvokeGroupCommandRequest(&exchangeMgr, aBinding.fabricIndex,
+								    aBinding.groupId, offCommand);
+		}
+		break;
+	default:
+		LOG_DBG("Invalid binding command data - commandId is not supported");
+		break;
+	}
+	if (CHIP_NO_ERROR != ret) {
+		LOG_ERR("Invoke OnOff Command Request ERROR: %s", ErrorStr(ret));
+	}
 }
 
 void BleOnOffLightDataProvider::NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,

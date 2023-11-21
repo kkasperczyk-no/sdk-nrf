@@ -7,6 +7,8 @@
 #include "sensor.h"
 #include "temp_sensor_manager.h"
 
+#include <atomic>
+
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);

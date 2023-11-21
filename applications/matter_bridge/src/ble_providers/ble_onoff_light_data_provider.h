@@ -10,6 +10,8 @@
 #include "ble_connectivity_manager.h"
 #include "bridged_device_data_provider.h"
 
+#include "binding_handler.h"
+
 #include <bluetooth/services/lbs.h>
 
 class BleOnOffLightDataProvider : public BLEBridgedDeviceProvider {
@@ -32,6 +34,11 @@ public:
 private:
 	void Subscribe();
 	bool CheckSubscriptionParameters(bt_gatt_subscribe_params *params);
+
+	static void SwitchChangedHandler(const EmberBindingTableEntry &binding,
+					 chip::OperationalDeviceProxy *deviceProxy, void *context);
+	static void OnOffProcessCommand(chip::CommandId aCommandId, const EmberBindingTableEntry &aBinding,
+					chip::OperationalDeviceProxy *aDevice, void *aContext);
 
 	bool mOnOff = false;
 	uint16_t mLedCharacteristicHandle;

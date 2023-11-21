@@ -364,6 +364,11 @@ CHIP_ERROR BridgeManager::HandleWrite(uint16_t index, ClusterId clusterId,
 	/* Verify if the device is reachable or we should return prematurely. */
 	VerifyOrReturnError(device->GetIsReachable(), CHIP_ERROR_INCORRECT_STATE);
 
+	LOG_ERR("size %d", attributeMetadata->size);
+	for (int i=0; i<attributeMetadata->size; i++) {
+		LOG_ERR("%x", *(buffer+i));
+	}
+
 	/* Handle Identify cluster write - for now it does not imply updating the provider's state */
 	if (clusterId == Clusters::Identify::Id) {
 		return device->HandleWriteIdentify(attributeMetadata->attributeId, buffer, attributeMetadata->size);
@@ -402,6 +407,7 @@ EmberAfStatus emberAfExternalAttributeReadCallback(EndpointId endpoint, ClusterI
 						   const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer,
 						   uint16_t maxReadLength)
 {
+	LOG_ERR("emberAfExternalAttributeReadCallback");
 	uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpoint);
 
 	if (CHIP_NO_ERROR ==
@@ -415,6 +421,7 @@ EmberAfStatus emberAfExternalAttributeReadCallback(EndpointId endpoint, ClusterI
 EmberAfStatus emberAfExternalAttributeWriteCallback(EndpointId endpoint, ClusterId clusterId,
 						    const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer)
 {
+	LOG_ERR("emberAfExternalAttributeWriteCallback");
 	uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpoint);
 
 	if (CHIP_NO_ERROR ==

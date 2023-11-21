@@ -35,12 +35,12 @@ constexpr CommandId onOffOutgoingCommands[] = {
 
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(bindingAttrs)
 DECLARE_DYNAMIC_ATTRIBUTE(Clusters::Binding::Attributes::Binding::Id, ARRAY,
-			  sizeof(Clusters::Binding::Structs::TargetStruct::Type), 0),
+			  sizeof(Clusters::Binding::Structs::TargetStruct::Type), ZAP_ATTRIBUTE_MASK(WRITABLE)),
 	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::Binding::Attributes::FeatureMap::Id, BITMAP32, 4, 0),
 	DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
 
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(bridgedLightSwitchClusters)
-DECLARE_DYNAMIC_CLUSTER(Clusters::OnOff::Id, onOffClientAttrs, nullptr, onOffOutgoingCommands),
+DECLARE_DYNAMIC_CLUSTER_CLIENT(Clusters::OnOff::Id, onOffClientAttrs, nullptr, onOffOutgoingCommands),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::Descriptor::Id, descriptorAttrs, nullptr, nullptr),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, nullptr, nullptr),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::Identify::Id, identifyAttrs, sIdentifyIncomingCommands, nullptr),
@@ -111,4 +111,19 @@ CHIP_ERROR OnOffLightSwitchDevice::HandleReadBinding(AttributeId attributeId, ui
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
+}
+
+CHIP_ERROR OnOffLightSwitchDevice::HandleWrite(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer) {
+	if (clusterId != Clusters::Binding::Id) {
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+
+	// switch (attributeId) {
+	// case Clusters::Binding::Attributes::Binding::Id: {
+	// 	// SetOnOff(*buffer);
+	// 	// return CHIP_NO_ERROR;
+	// }
+	// default:
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	// }
 }

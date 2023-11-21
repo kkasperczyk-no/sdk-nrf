@@ -8,6 +8,8 @@
 #include <app/util/basic-types.h>
 #include <lib/core/CHIPError.h>
 
+#include "binding_handler.h"
+
 #include <atomic>
 
 /** @class LightSwitch
@@ -37,6 +39,12 @@ public:
 	}
 
 private:
+	static void SwitchChangedHandler(const EmberBindingTableEntry &binding, chip::OperationalDeviceProxy *deviceProxy,
+				       	void *context);
+	static void OnOffProcessCommand(chip::CommandId aCommandId, const EmberBindingTableEntry &aBinding,
+				      	chip::OperationalDeviceProxy *aDevice, void *aContext);
+	static void LevelControlProcessCommand(chip::CommandId aCommandId, const EmberBindingTableEntry &aBinding,
+					    chip::OperationalDeviceProxy *aDevice, void *aContext);
 	constexpr static auto kOnePercentBrightnessApproximation = 3;
 	constexpr static auto kMaximumBrightness = 254;
 

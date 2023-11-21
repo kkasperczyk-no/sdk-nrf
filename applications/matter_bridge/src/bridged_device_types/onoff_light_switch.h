@@ -30,10 +30,7 @@ public:
 			      uint16_t maxReadLength) override;
 	CHIP_ERROR HandleReadOnOff(chip::AttributeId attributeId, uint8_t *buffer, uint16_t maxReadLength);
 	CHIP_ERROR HandleReadBinding(chip::AttributeId attributeId, uint8_t *buffer, uint16_t maxReadLength);
-	CHIP_ERROR HandleWrite(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer) override
-	{
-		return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
-	}
+	CHIP_ERROR HandleWrite(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer) override;
 	CHIP_ERROR HandleAttributeChange(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
 					 size_t dataSize) override
 	{

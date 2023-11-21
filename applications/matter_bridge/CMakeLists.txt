@@ -65,6 +65,7 @@ if(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE AND CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH
         src/bridged_device_types/onoff_light.cpp
         src/bridged_device_types/onoff_light_switch.cpp
         src/ble_providers/ble_onoff_light_data_provider.cpp
+        ${COMMON_ROOT}/src/binding_handler.cpp
     )
 endif() # CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 
