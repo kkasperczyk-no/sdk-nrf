@@ -29,6 +29,14 @@
 #include <lib/support/Span.h>
 
 // List specific responses
+typedef void (*OnOffGeneratedCommandListListAttributeCallback)(
+	void *context, const chip::app::DataModel::DecodableList<chip::CommandId> &data);
+typedef void (*OnOffAcceptedCommandListListAttributeCallback)(
+	void *context, const chip::app::DataModel::DecodableList<chip::CommandId> &data);
+typedef void (*OnOffEventListListAttributeCallback)(void *context,
+						    const chip::app::DataModel::DecodableList<chip::EventId> &data);
+typedef void (*OnOffAttributeListListAttributeCallback)(
+	void *context, const chip::app::DataModel::DecodableList<chip::AttributeId> &data);
 typedef void (*OtaSoftwareUpdateProviderGeneratedCommandListListAttributeCallback)(
 	void *context, const chip::app::DataModel::DecodableList<chip::CommandId> &data);
 typedef void (*OtaSoftwareUpdateProviderAcceptedCommandListListAttributeCallback)(

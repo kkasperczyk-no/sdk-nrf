@@ -11,9 +11,16 @@
 #include "matter_bridged_device.h"
 #include <lib/support/CHIPMem.h>
 
-#ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
+#if defined(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE) && defined(CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE)
 #include "ble_onoff_light_data_provider.h"
+#endif
+
+#ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 #include "onoff_light.h"
+#endif
+
+#ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
+#include "onoff_light_switch.h"
 #endif
 
 #ifdef CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE

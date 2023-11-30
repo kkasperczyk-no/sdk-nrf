@@ -20,6 +20,7 @@ CHIP_ERROR MatterDeviceTypeToBleService(MatterBridgedDevice::DeviceType deviceTy
 {
 	switch (deviceType) {
 	case MatterBridgedDevice::DeviceType::OnOffLight:
+	case MatterBridgedDevice::DeviceType::OnOffLightSwitch:
 		serviceUUid = BleBridgedDeviceFactory::ServiceUuid::LedButtonService;
 		break;
 	case MatterBridgedDevice::DeviceType::TemperatureSensor:
@@ -42,7 +43,8 @@ CHIP_ERROR BleServiceToMatterDeviceType(BleBridgedDeviceFactory::ServiceUuid ser
 			return CHIP_ERROR_BUFFER_TOO_SMALL;
 		}
 		deviceType[0] = MatterBridgedDevice::DeviceType::OnOffLight;
-		count = 1;
+		deviceType[1] = MatterBridgedDevice::DeviceType::OnOffLightSwitch;
+		count = 2;
 	} break;
 	case BleBridgedDeviceFactory::ServiceUuid::EnvironmentalSensorService: {
 		if (maxCount < 2) {
@@ -236,6 +238,15 @@ BleBridgedDeviceFactory::BridgedDeviceFactory &BleBridgedDeviceFactory::GetBridg
 			  return chip::Platform::New<OnOffLightDevice>(nodeLabel);
 		  } },
 #endif
+#ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
+		{ DeviceType::OnOffLightSwitch,
+		  [checkLabel](const char *nodeLabel) -> MatterBridgedDevice * {
+			  if (!checkLabel(nodeLabel)) {
+				  return nullptr;
+			  }
+			  return chip::Platform::New<OnOffLightSwitchDevice>(nodeLabel);
+		  } },
+#endif
 #ifdef CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 		{ MatterBridgedDevice::DeviceType::TemperatureSensor,
 		  [checkLabel](const char *nodeLabel) -> MatterBridgedDevice * {
@@ -253,7 +264,7 @@ BleBridgedDeviceFactory::BleDataProviderFactory &BleBridgedDeviceFactory::GetDat
 {
 	static BleDataProviderFactory sDeviceDataProvider
 	{
-#ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
+#if defined(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE) && defined(CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE)
 		{ ServiceUuid::LedButtonService,
 		  [](UpdateAttributeCallback clb) { return chip::Platform::New<BleOnOffLightDataProvider>(clb); } },
 #endif

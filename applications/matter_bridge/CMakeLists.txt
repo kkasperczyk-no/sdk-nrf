@@ -60,9 +60,10 @@ if(CONFIG_BRIDGED_DEVICE_BT)
     )
     target_include_directories(app PRIVATE src/ble_providers)
 
-if(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE)
+if(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE AND CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE)
     target_sources(app PRIVATE
         src/bridged_device_types/onoff_light.cpp
+        src/bridged_device_types/onoff_light_switch.cpp
         src/ble_providers/ble_onoff_light_data_provider.cpp
     )
 endif() # CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
