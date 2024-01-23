@@ -39,6 +39,8 @@ manifest:
       url-base: https://github.com/BabbleSim
     - name: bosch
       url-base: https://github.com/boschsensortec
+    - name: ArekBalysNordic
+      url-base: https://github.com/ArekBalysNordic
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -153,8 +155,9 @@ manifest:
       revision: 2102e16a0108cd903c8ac6b91e1d72f23b06479f
     - name: matter
       repo-path: sdk-connectedhomeip
+      remote: ArekBalysNordic
       path: modules/lib/matter
-      revision: 288b64af79b92d0a5412181eb87fa3a5e0368cab
+      revision: nordic_matter_TE_1_3
       submodules:
         - name: nlio
           path: third_party/nlio/repo
