@@ -44,6 +44,10 @@ private:
 	static void SwitchTransportTriggerHandler(const SwitchButtonAction &action);
 #endif
 
+#ifdef CONFIG_CHIP_ICD_UAT_SUPPORT
+	static void IcdUatEventHandler();
+#endif
+
 #ifdef CONFIG_CHIP_NUS
 	static void NUSLockCallback(void *context);
 	static void NUSUnlockCallback(void *context);

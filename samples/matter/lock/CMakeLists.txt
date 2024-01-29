@@ -47,14 +47,32 @@ target_sources(app PRIVATE
     src/bolt_lock_manager.cpp
     src/main.cpp
     src/zcl_callbacks.cpp
-    src/zap-generated/callback-stub.cpp
-    src/zap-generated/IMClusterCommandHandler.cpp
     ${COMMON_ROOT}/src/board/led_widget.cpp
     ${COMMON_ROOT}/src/app/task_executor.cpp
     ${COMMON_ROOT}/src/board/board.cpp
     ${COMMON_ROOT}/src/app/matter_init.cpp
     ${COMMON_ROOT}/src/app/matter_event_handler.cpp
 )
+
+if(CONFIG_CHIP_ICD_LIT_SUPPORT)
+target_include_directories(app PRIVATE
+    src/lit
+)
+
+target_sources(app PRIVATE
+    src/lit/zap-generated/callback-stub.cpp
+    src/lit/zap-generated/IMClusterCommandHandler.cpp
+)
+else()
+target_include_directories(app PRIVATE
+    src/sit
+)
+
+target_sources(app PRIVATE
+    src/sit/zap-generated/callback-stub.cpp
+    src/sit/zap-generated/IMClusterCommandHandler.cpp
+)
+endif()
 
 if(CONFIG_CHIP_OTA_REQUESTOR OR CONFIG_MCUMGR_TRANSPORT_BT)
     target_sources(app PRIVATE ${COMMON_ROOT}/src/dfu/ota/ota_util.cpp)
@@ -81,10 +99,19 @@ if(CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS)
     target_sources(app PRIVATE ${COMMON_ROOT}/src/migration/migration_manager.cpp)
 endif()
 
+if(CONFIG_CHIP_ICD_LIT_SUPPORT)
 chip_configure_data_model(app
     INCLUDE_SERVER
     BYPASS_IDL
-    GEN_DIR src/zap-generated
+    GEN_DIR src/lit/zap-generated
+    ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/lock-lit.zap
+)
+else()
+chip_configure_data_model(app
+    INCLUDE_SERVER
+    BYPASS_IDL
+    GEN_DIR src/sit/zap-generated
     ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/lock.zap
 )
+endif()
 # NORDIC SDK APP END

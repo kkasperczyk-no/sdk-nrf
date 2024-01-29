@@ -54,6 +54,10 @@ constexpr uint32_t kSwitchTransportTimeout = 10000;
 
 #define APPLICATION_BUTTON_MASK DK_BTN2_MSK
 #define SWITCHING_BUTTON_MASK DK_BTN3_MSK
+
+#ifdef CONFIG_CHIP_ICD_UAT_SUPPORT
+#define ICD_UAT_BUTTON_MASK DK_BTN4_MSK
+#endif
 } /* namespace */
 
 Identify sIdentify = { kLockEndpointId, AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
@@ -81,6 +85,12 @@ void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChan
 		SwitchButtonAction action =
 			(SWITCHING_BUTTON_MASK & state) ? SwitchButtonAction::Pressed : SwitchButtonAction::Released;
 		Nrf::PostTask([action] { SwitchTransportTriggerHandler(action); });
+	}
+#endif
+
+#ifdef CONFIG_CHIP_ICD_UAT_SUPPORT
+	if ((ICD_UAT_BUTTON_MASK & hasChanged) & state) {
+		Nrf::PostTask([] { IcdUatEventHandler(); });
 	}
 #endif
 }
@@ -117,6 +127,13 @@ void AppTask::SwitchTransportTriggerHandler(const SwitchButtonAction &action)
 		LOG_INF("Switching to %s cancelled", ThreadWifiSwitch::IsThreadActive() ? "Wi-Fi" : "Thread");
 		k_timer_stop(&sSwitchTransportTimer);
 	}
+}
+#endif
+
+#ifdef CONFIG_CHIP_ICD_UAT_SUPPORT
+void AppTask::IcdUatEventHandler()
+{
+	Server::GetInstance().GetICDManager().UpdateOperationState(ICDManager::OperationalState::ActiveMode);
 }
 #endif
 
