@@ -26,14 +26,17 @@ using namespace Nrf;
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(switchAttr)
 DECLARE_DYNAMIC_ATTRIBUTE(Clusters::Switch::Attributes::NumberOfPositions::Id, INT8U, 1, 0),
 	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::Switch::Attributes::CurrentPosition::Id, INT8U, 1, 0),
+	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::Switch::Attributes::MultiPressMax::Id, INT8U, 1, 0),
+	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::Switch::Attributes::FeatureMap::Id, BITMAP32, 4, 0),
 	DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
 
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(genericSwitchClusters)
 DECLARE_DYNAMIC_CLUSTER(Clusters::Switch::Id, switchAttr, ZAP_CLUSTER_MASK(SERVER), nullptr, nullptr),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::Descriptor::Id, descriptorAttrs, ZAP_CLUSTER_MASK(SERVER), nullptr, nullptr),
-	DECLARE_DYNAMIC_CLUSTER(Clusters::BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, ZAP_CLUSTER_MASK(SERVER), nullptr, nullptr),
-	DECLARE_DYNAMIC_CLUSTER(Clusters::Identify::Id, identifyAttrs, ZAP_CLUSTER_MASK(SERVER), sIdentifyIncomingCommands,
-				nullptr) DECLARE_DYNAMIC_CLUSTER_LIST_END;
+	DECLARE_DYNAMIC_CLUSTER(Clusters::BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs,
+				ZAP_CLUSTER_MASK(SERVER), nullptr, nullptr),
+	DECLARE_DYNAMIC_CLUSTER(Clusters::Identify::Id, identifyAttrs, ZAP_CLUSTER_MASK(SERVER),
+				sIdentifyIncomingCommands, nullptr) DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
 DECLARE_DYNAMIC_ENDPOINT(bridgedGenericSwitchEndpoint, genericSwitchClusters);
 
@@ -77,6 +80,10 @@ CHIP_ERROR GenericSwitchDevice::HandleReadSwitch(AttributeId attributeId, uint8_
 	}
 	case Clusters::Switch::Attributes::CurrentPosition::Id: {
 		return CopyAttribute(&mCurrentPosition, sizeof(mCurrentPosition), buffer, maxReadLength);
+	}
+	case Clusters::Switch::Attributes::MultiPressMax::Id: {
+		uint8_t xd = 2;
+		return CopyAttribute(&xd, sizeof(xd), buffer, maxReadLength);
 	}
 	case Clusters::Switch::Attributes::ClusterRevision::Id: {
 		uint16_t clusterRevision = GetSwitchClusterRevision();

@@ -58,14 +58,14 @@ static void connected(struct bt_conn *conn, uint8_t err)
 
 	printk("Connected\n");
 
-	dk_set_led_on(CON_STATUS_LED);
+	// dk_set_led_on(CON_STATUS_LED);
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	printk("Disconnected (reason %u)\n", reason);
 
-	dk_set_led_off(CON_STATUS_LED);
+	// dk_set_led_off(CON_STATUS_LED);
 }
 
 #ifdef CONFIG_BT_LBS_SECURITY_ENABLED
@@ -146,7 +146,10 @@ static struct bt_conn_auth_info_cb conn_auth_info_callbacks;
 
 static void app_led_cb(bool led_state)
 {
-	dk_set_led(USER_LED, led_state);
+	dk_set_led(DK_LED1, led_state);
+	dk_set_led(DK_LED2, led_state);
+	dk_set_led(DK_LED3, led_state);
+	dk_set_led(DK_LED4, led_state);
 }
 
 static bool app_button_cb(void)
@@ -242,7 +245,7 @@ int main(void)
 	printk("Advertising successfully started\n");
 
 	for (;;) {
-		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
+		// dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
 		k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
 	}
 }

@@ -32,9 +32,25 @@ extern "C" {
 	BT_UUID_128_ENCODE(0x00001525, 0x1212, 0xefde, 0x1523, 0x785feabcd123)
 
 
+/** @brief LBS Service UUID. */
+#define BT_UUID_LBS_VAL2 \
+	BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcda23)
+
+/** @brief Button Characteristic UUID. */
+#define BT_UUID_LBS_BUTTON_VAL2 \
+	BT_UUID_128_ENCODE(0x00001524, 0x1212, 0xefde, 0x1523, 0x785feabcda23)
+
+/** @brief LED Characteristic UUID. */
+#define BT_UUID_LBS_LED_VAL2 \
+	BT_UUID_128_ENCODE(0x00001525, 0x1212, 0xefde, 0x1523, 0x785feabcda23)
+
 #define BT_UUID_LBS           BT_UUID_DECLARE_128(BT_UUID_LBS_VAL)
 #define BT_UUID_LBS_BUTTON    BT_UUID_DECLARE_128(BT_UUID_LBS_BUTTON_VAL)
 #define BT_UUID_LBS_LED       BT_UUID_DECLARE_128(BT_UUID_LBS_LED_VAL)
+
+#define BT_UUID_LBS2           BT_UUID_DECLARE_128(BT_UUID_LBS_VAL2)
+#define BT_UUID_LBS_BUTTON2    BT_UUID_DECLARE_128(BT_UUID_LBS_BUTTON_VAL2)
+#define BT_UUID_LBS_LED2       BT_UUID_DECLARE_128(BT_UUID_LBS_LED_VAL2)
 
 /** @brief Callback type for when an LED state change is received. */
 typedef void (*led_cb_t)(const bool led_state);

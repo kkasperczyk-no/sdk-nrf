@@ -14,6 +14,10 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/gatt.h>
 
+#include <app-common/zap-generated/attributes/Accessors.h>
+#include <app-common/zap-generated/cluster-objects.h>
+#include <app/clusters/switch-server/switch-server.h>
+
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
@@ -28,7 +32,8 @@ static bt_uuid *sUuidButton = BT_UUID_LBS_BUTTON;
 static bt_uuid *sUuidCcc = BT_UUID_GATT_CCC;
 
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
-void ProcessCommand(const EmberBindingTableEntry &aBinding, OperationalDeviceProxy *aDevice, Nrf::Matter::BindingHandler::BindingData &aData)
+void ProcessCommand(const EmberBindingTableEntry &aBinding, OperationalDeviceProxy *aDevice,
+		    Nrf::Matter::BindingHandler::BindingData &aData)
 {
 	CHIP_ERROR ret = CHIP_NO_ERROR;
 
@@ -105,74 +110,132 @@ void BleLBSDataProvider::NotifyUpdateState(chip::ClusterId clusterId, chip::Attr
 		mUpdateAttributeCallback(*this, clusterId, attributeId, data, dataSize);
 	}
 
-	/* Set the previous LED state on the ble device after retrieving the connection. */
-	if (Clusters::BridgedDeviceBasicInformation::Id == clusterId &&
-	    Clusters::BridgedDeviceBasicInformation::Attributes::Reachable::Id == attributeId &&
-	    sizeof(bool) == dataSize) {
-		/* Set the LED state only if the reachable status is true */
-		if (*reinterpret_cast<bool *>(data)) {
-			UpdateState(Clusters::OnOff::Id, Clusters::OnOff::Attributes::OnOff::Id,
-				    reinterpret_cast<uint8_t *>(&mOnOff));
-		}
+	uint8_t state = *reinterpret_cast<uint8_t *>(data);
+
+	if (state == 1) {
+		// DeviceLayer::SystemLayer().ScheduleLambda([this] {
+		// 	// Press moves Position from 0 (idle) to 1 (press)
+		// 	uint8_t newPosition = 1;
+
+		Clusters::Switch::Attributes::CurrentPosition::Set(4, state);
+		// InitialPress event takes newPosition as event data
+		Clusters::SwitchServer::Instance().OnInitialPress(4, state);
+		// });
+	} else {
+
+			Clusters::Switch::Attributes::CurrentPosition::Set(5, state);
+		// InitialPress event takes newPosition as event data
+		Clusters::SwitchServer::Instance().OnInitialPress(5, state);
+		// DeviceLayer::SystemLayer().ScheduleLambda([this] {
+		// Release moves Position from 1 (press) to 0 (idle)
+		// uint8_t previousPosition = 1;
+		// uint8_t newPosition = 0;
+
+		// Clusters::Switch::Attributes::CurrentPosition::Set(4, newPosition);
+		// ShortRelease event takes previousPosition as event data
+		// Clusters::SwitchServer::Instance().OnShortRelease(4, previousPosition);
+		// Clusters::SwitchServer::Instance().OnMultiPressComplete(4, previousPosition, 2);
+		// });
 	}
+	// 	if (*reinterpret_cast<bool *>(data)) {
+	// 		UpdateState(Clusters::OnOff::Id, Clusters::OnOff::Attributes::OnOff::Id,
+	// 			    reinterpret_cast<uint8_t *>(&mOnOff));
+	// 	}
+
+	// /* Set the previous LED state on the ble device after retrieving the connection. */
+	// if (Clusters::BridgedDeviceBasicInformation::Id == clusterId &&
+	//     Clusters::BridgedDeviceBasicInformation::Attributes::Reachable::Id == attributeId &&
+	//     sizeof(bool) == dataSize) {
+	// 	/* Set the LED state only if the reachable status is true */
+	// 	if (*reinterpret_cast<bool *>(data)) {
+	// 		UpdateState(Clusters::OnOff::Id, Clusters::OnOff::Attributes::OnOff::Id,
+	// 			    reinterpret_cast<uint8_t *>(&mOnOff));
+	// 	}
+	// }
+
+	// 	void LightSwitch::GenericSwitchInitialPress()
+	// {
+	//     DeviceLayer::SystemLayer().ScheduleLambda([this] {
+	//         // Press moves Position from 0 (idle) to 1 (press)
+	//         uint8_t newPosition = 1;
+
+	//         Clusters::Switch::Attributes::CurrentPosition::Set(mLightGenericSwitchEndpointId, newPosition);
+	//         // InitialPress event takes newPosition as event data
+	//         Clusters::SwitchServer::Instance().OnInitialPress(mLightGenericSwitchEndpointId, newPosition);
+	//     });
+	// }
+
+	// void LightSwitch::GenericSwitchReleasePress()
+	// {
+	//     DeviceLayer::SystemLayer().ScheduleLambda([this] {
+	//         // Release moves Position from 1 (press) to 0 (idle)
+	//         uint8_t previousPosition = 1;
+	//         uint8_t newPosition      = 0;
+
+	//         Clusters::Switch::Attributes::CurrentPosition::Set(mLightGenericSwitchEndpointId, newPosition);
+	//         // ShortRelease event takes previousPosition as event data
+	//         Clusters::SwitchServer::Instance().OnShortRelease(mLightGenericSwitchEndpointId, previousPosition);
+	//     });
+	// }
 }
 
-void BleLBSDataProvider::GattWriteCallback(bt_conn *conn, uint8_t err, bt_gatt_write_params *params)
-{
-	if (!params) {
-		return;
-	}
+// void BleLBSDataProvider::GattWriteCallback(bt_conn *conn, uint8_t err, bt_gatt_write_params *params)
+// {
+// 	if (!params) {
+// 		return;
+// 	}
 
-	if (params->length != sizeof(mOnOff)) {
-		return;
-	}
+// 	if (params->length != sizeof(mOnOff)) {
+// 		return;
+// 	}
 
-	BleLBSDataProvider *provider = static_cast<BleLBSDataProvider *>(
-		BLEConnectivityManager::Instance().FindBLEProvider(*bt_conn_get_dst(conn)));
+// 	BleLBSDataProvider *provider = static_cast<BleLBSDataProvider *>(
+// 		BLEConnectivityManager::Instance().FindBLEProvider(*bt_conn_get_dst(conn)));
 
-	if (!provider) {
-		return;
-	}
+// 	if (!provider) {
+// 		return;
+// 	}
 
-	/* Save data received in GATT write response. */
-	memcpy(&provider->mOnOff, params->data, params->length);
+// 	/* Save data received in GATT write response. */
+// 	memcpy(&provider->mOnOff, params->data, params->length);
 
-	DeviceLayer::PlatformMgr().ScheduleWork(NotifyOnOffAttributeChange, reinterpret_cast<intptr_t>(provider));
-}
+// 	DeviceLayer::PlatformMgr().ScheduleWork(NotifyOnOffAttributeChange, reinterpret_cast<intptr_t>(provider));
+// }
 
 CHIP_ERROR BleLBSDataProvider::UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer)
 {
-	if (clusterId != Clusters::OnOff::Id) {
-		return CHIP_ERROR_INVALID_ARGUMENT;
-	}
+	// if (clusterId != Clusters::OnOff::Id) {
+	// 	return CHIP_ERROR_INVALID_ARGUMENT;
+	// }
 
-	if (!mDevice.mConn) {
-		return CHIP_ERROR_INCORRECT_STATE;
-	}
+	// if (!mDevice.mConn) {
+	// 	return CHIP_ERROR_INCORRECT_STATE;
+	// }
 
-	LOG_INF("Updating state of the BleLBSDataProvider, cluster ID: %u, attribute ID: %u.", clusterId, attributeId);
+	// LOG_INF("Updating state of the BleLBSDataProvider, cluster ID: %u, attribute ID: %u.", clusterId,
+	// attributeId);
 
-	switch (attributeId) {
-	case Clusters::OnOff::Attributes::OnOff::Id: {
-		memcpy(mGattWriteDataBuffer, buffer, sizeof(mOnOff));
+	// switch (attributeId) {
+	// case Clusters::OnOff::Attributes::OnOff::Id: {
+	// 	memcpy(mGattWriteDataBuffer, buffer, sizeof(mOnOff));
 
-		mGattWriteParams.data = mGattWriteDataBuffer;
-		mGattWriteParams.offset = 0;
-		mGattWriteParams.length = sizeof(mOnOff);
-		mGattWriteParams.handle = mLedCharacteristicHandle;
-		mGattWriteParams.func = BleLBSDataProvider::GattWriteCallback;
+	// 	mGattWriteParams.data = mGattWriteDataBuffer;
+	// 	mGattWriteParams.offset = 0;
+	// 	mGattWriteParams.length = sizeof(mOnOff);
+	// 	mGattWriteParams.handle = mLedCharacteristicHandle;
+	// 	mGattWriteParams.func = BleLBSDataProvider::GattWriteCallback;
 
-		int err = bt_gatt_write(mDevice.mConn, &mGattWriteParams);
-		if (err) {
-			LOG_ERR("GATT write operation failed");
-			return CHIP_ERROR_INTERNAL;
-		}
+	// 	int err = bt_gatt_write(mDevice.mConn, &mGattWriteParams);
+	// 	if (err) {
+	// 		LOG_ERR("GATT write operation failed");
+	// 		return CHIP_ERROR_INTERNAL;
+	// 	}
 
-		return CHIP_NO_ERROR;
-	}
-	default:
-		return CHIP_ERROR_INVALID_ARGUMENT;
-	}
+	// 	return CHIP_NO_ERROR;
+	// }
+	// default:
+	// 	return CHIP_ERROR_INVALID_ARGUMENT;
+	// }
 
 	return CHIP_NO_ERROR;
 }
@@ -209,18 +272,18 @@ int BleLBSDataProvider::ParseDiscoveredData(bt_gatt_dm *discoveredData)
 	const bt_gatt_dm_attr *gatt_chrc;
 	const bt_gatt_dm_attr *gatt_desc;
 
-	gatt_chrc = bt_gatt_dm_char_by_uuid(discoveredData, sUuidLED);
-	if (!gatt_chrc) {
-		LOG_ERR("No LED characteristic found.");
-		return -EINVAL;
-	}
+	// gatt_chrc = bt_gatt_dm_char_by_uuid(discoveredData, sUuidLED);
+	// if (!gatt_chrc) {
+	// 	LOG_ERR("No LED characteristic found.");
+	// 	return -EINVAL;
+	// }
 
-	gatt_desc = bt_gatt_dm_desc_by_uuid(discoveredData, gatt_chrc, sUuidLED);
-	if (!gatt_desc) {
-		LOG_ERR("No LED characteristic value found.");
-		return -EINVAL;
-	}
-	mLedCharacteristicHandle = gatt_desc->handle;
+	// gatt_desc = bt_gatt_dm_desc_by_uuid(discoveredData, gatt_chrc, sUuidLED);
+	// if (!gatt_desc) {
+	// 	LOG_ERR("No LED characteristic value found.");
+	// 	return -EINVAL;
+	// }
+	// mLedCharacteristicHandle = gatt_desc->handle;
 
 	gatt_chrc = bt_gatt_dm_char_by_uuid(discoveredData, sUuidButton);
 	if (!gatt_chrc) {
@@ -248,13 +311,13 @@ int BleLBSDataProvider::ParseDiscoveredData(bt_gatt_dm *discoveredData)
 	return 0;
 }
 
-void BleLBSDataProvider::NotifyOnOffAttributeChange(intptr_t context)
-{
-	BleLBSDataProvider *provider = reinterpret_cast<BleLBSDataProvider *>(context);
+// void BleLBSDataProvider::NotifyOnOffAttributeChange(intptr_t context)
+// {
+// 	BleLBSDataProvider *provider = reinterpret_cast<BleLBSDataProvider *>(context);
 
-	provider->NotifyUpdateState(Clusters::OnOff::Id, Clusters::OnOff::Attributes::OnOff::Id, &provider->mOnOff,
-				    sizeof(provider->mOnOff));
-}
+// 	provider->NotifyUpdateState(Clusters::OnOff::Id, Clusters::OnOff::Attributes::OnOff::Id, &provider->mOnOff,
+// 				    sizeof(provider->mOnOff));
+// }
 
 #ifdef CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
 void BleLBSDataProvider::NotifySwitchCurrentPositionAttributeChange(intptr_t context)

@@ -22,6 +22,8 @@ CHIP_ERROR MatterDeviceTypeToBleService(MatterBridgedDevice::DeviceType deviceTy
 {
 	switch (deviceType) {
 	case MatterBridgedDevice::DeviceType::OnOffLight:
+		serviceUUid = BleBridgedDeviceFactory::ServiceUuid::LightService;
+		break;
 	case MatterBridgedDevice::DeviceType::GenericSwitch:
 	case MatterBridgedDevice::DeviceType::OnOffLightSwitch:
 		serviceUUid = BleBridgedDeviceFactory::ServiceUuid::LedButtonService;
@@ -41,19 +43,24 @@ CHIP_ERROR BleServiceToMatterDeviceType(BleBridgedDeviceFactory::ServiceUuid ser
 					MatterBridgedDevice::DeviceType deviceType[], uint8_t maxCount, uint8_t &count)
 {
 	switch (serviceUUid) {
-	case BleBridgedDeviceFactory::ServiceUuid::LedButtonService: {
+	case BleBridgedDeviceFactory::ServiceUuid::LightService: {
 		if (maxCount == 0) {
 			return CHIP_ERROR_BUFFER_TOO_SMALL;
 		}
 		deviceType[0] = MatterBridgedDevice::DeviceType::OnOffLight;
+		count = 1;
+	} break;
+	case BleBridgedDeviceFactory::ServiceUuid::LedButtonService: {
+		if (maxCount == 0) {
+			return CHIP_ERROR_BUFFER_TOO_SMALL;
+		}
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
-		deviceType[1] = MatterBridgedDevice::DeviceType::OnOffLightSwitch;
-		count = 2;
+		deviceType[0] = MatterBridgedDevice::DeviceType::OnOffLightSwitch;
+		count = 1;
 #elif defined(CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE)
+		deviceType[0] = MatterBridgedDevice::DeviceType::GenericSwitch;
 		deviceType[1] = MatterBridgedDevice::DeviceType::GenericSwitch;
 		count = 2;
-#else
-		count = 1;
 #endif
 	} break;
 	case BleBridgedDeviceFactory::ServiceUuid::EnvironmentalSensorService: {
@@ -293,6 +300,13 @@ BleBridgedDeviceFactory::BleDataProviderFactory &BleBridgedDeviceFactory::GetDat
 	{
 #if defined(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE) && (defined(CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE) ||      \
 							  defined(CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE))
+		{ ServiceUuid::LightService,
+		  [](UpdateAttributeCallback updateClb, InvokeCommandCallback commandClb) {
+			  return chip::Platform::New<BleLightDataProvider>(updateClb, commandClb);
+		  } },
+#endif
+#if defined(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE) && (defined(CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE) ||      \
+							  defined(CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE))
 		{ ServiceUuid::LedButtonService,
 		  [](UpdateAttributeCallback updateClb, InvokeCommandCallback commandClb) {
 			  return chip::Platform::New<BleLBSDataProvider>(updateClb, commandClb);
@@ -469,6 +483,8 @@ CHIP_ERROR BleBridgedDeviceFactory::RemoveDevice(int endpointId)
 const char *BleBridgedDeviceFactory::GetUuidString(uint16_t uuid)
 {
 	switch (uuid) {
+	case ServiceUuid::LightService:
+		return "Light Service";
 	case ServiceUuid::LedButtonService:
 		return "Led Button Service";
 	case ServiceUuid::EnvironmentalSensorService:

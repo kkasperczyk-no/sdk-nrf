@@ -15,6 +15,7 @@
 #include "ble_lbs_data_provider.h"
 
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
+#include "ble_light_data_provider.h"
 #include "onoff_light.h"
 #endif
 
@@ -44,7 +45,7 @@ namespace BleBridgedDeviceFactory
 {
 
 /* The values were assigned based on BT_UUID_16(uuid)->val of a BT services. */
-enum ServiceUuid : uint16_t { LedButtonService = 0xbcd1, EnvironmentalSensorService = 0x181a };
+enum ServiceUuid : uint16_t { LedButtonService = 0xbcd1, LightService = 0xbcda, EnvironmentalSensorService = 0x181a };
 
 using UpdateAttributeCallback = Nrf::BridgedDeviceDataProvider::UpdateAttributeCallback;
 using InvokeCommandCallback = Nrf::BridgedDeviceDataProvider::InvokeCommandCallback;

@@ -45,8 +45,8 @@ namespace
 {
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 static bt_uuid *sUuidLbs = BT_UUID_LBS;
-static bt_uuid *sUuidEs = BT_UUID_ESS;
-static bt_uuid *sUuidServices[] = { sUuidLbs, sUuidEs };
+static bt_uuid *sUuidLbs2 = BT_UUID_LBS2;
+static bt_uuid *sUuidServices[] = { sUuidLbs, sUuidLbs2 };
 static constexpr uint8_t kUuidServicesNumber = ARRAY_SIZE(sUuidServices);
 /**
  * @brief Blink rates for indication the BLE Connectivity Manager state.
@@ -146,7 +146,7 @@ CHIP_ERROR AppTask::Init()
 	/* Initialize Matter stack */
 	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(Nrf::Matter::InitData{ .mPostServerInitClbk = [] {
 #ifdef CONFIG_BRIDGED_DEVICE_BT
-		Nrf::BLEConnectivityManager::Instance().RegisterStateCallback(BLEStateChangeCallback);
+		// Nrf::BLEConnectivityManager::Instance().RegisterStateCallback(BLEStateChangeCallback);
 		/* Initialize BLE Connectivity Manager before the Bridge Manager, as it must be ready to recover
 		 * devices loaded from persistent storage during the bridge init. */
 		CHIP_ERROR bleInitError =

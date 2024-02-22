@@ -130,25 +130,6 @@ void BLEConnectivityManager::ConnectionHandler(bt_conn *conn, uint8_t conn_err)
 		provider->NotifySuccessfulRecovery();
 	}
 
-	if (!sys_slist_is_empty(&Instance().mRecovery.mListToReconnect)) {
-		/* There is another provider to re-connect, schedule this operation. */
-		BLEBridgedDeviceProvider *providerToRecover =
-			Instance().mRecovery.GetProvider(&Instance().mRecovery.mListToReconnect);
-		DeviceLayer::PlatformMgr().ScheduleWork(
-			[](intptr_t context) {
-				Instance().Reconnect(reinterpret_cast<BLEBridgedDeviceProvider *>(context));
-			},
-			reinterpret_cast<intptr_t>(providerToRecover));
-		/* We have still a device to recover, keep the LostDevice state active */
-		Instance().UpdateStateFlag(State::LostDevice, true);
-	} else if (!sys_slist_is_empty(&Instance().mRecovery.mListToRecover)) {
-		/* There are pending providers to recover and no more scanned ones, schedule next scan operation. */
-		Instance().mRecovery.StartTimer();
-	} else {
-		/* All devices have been recovered, disable LostDevice state */
-		Instance().UpdateStateFlag(State::LostDevice, false);
-	}
-
 	char addrStr[BT_ADDR_LE_STR_LEN];
 	bt_addr_le_to_str(dstAddr, addrStr, sizeof(addrStr));
 	LOG_INF("Connected: %s", addrStr);
@@ -181,10 +162,33 @@ exit:
 		/* In case when the connection failed, disable the Pairing state */
 		Instance().UpdateStateFlag(State::Pairing, false);
 #endif
+
+		if (!sys_slist_is_empty(&Instance().mRecovery.mListToReconnect)) {
+			/* There is another provider to re-connect, schedule this operation. */
+			BLEBridgedDeviceProvider *providerToRecover =
+				Instance().mRecovery.GetProvider(&Instance().mRecovery.mListToReconnect);
+			DeviceLayer::PlatformMgr().ScheduleWork(
+				[](intptr_t context) {
+					Instance().Reconnect(reinterpret_cast<BLEBridgedDeviceProvider *>(context));
+				},
+				reinterpret_cast<intptr_t>(providerToRecover));
+			/* We have still a device to recover, keep the LostDevice state active */
+			Instance().UpdateStateFlag(State::LostDevice, true);
+		} else if (!sys_slist_is_empty(&Instance().mRecovery.mListToRecover)) {
+			/* There are pending providers to recover and no more scanned ones, schedule next scan
+			 * operation. */
+			Instance().mRecovery.StartTimer();
+		} else {
+			/* All devices have been recovered, disable LostDevice state */
+			Instance().UpdateStateFlag(State::LostDevice, false);
+		}
 	}
-	/* Trigger the connection callback to inform the application that the connection procedure failed. */
-	provider->GetBLEBridgedDevice().mFirstConnectionCallback(
-		false, provider->GetBLEBridgedDevice().mFirstConnectionCallbackContext);
+
+	if (!provider->IsInitiallyConnected()) {
+		/* Trigger the connection callback to inform the application that the connection procedure failed. */
+		provider->GetBLEBridgedDevice().mFirstConnectionCallback(
+			false, provider->GetBLEBridgedDevice().mFirstConnectionCallbackContext);
+	}
 }
 
 void BLEConnectivityManager::DisconnectionHandler(bt_conn *conn, uint8_t reason)
@@ -359,6 +363,25 @@ exit:
 		discoveryCtx.release();
 	} else {
 		bt_gatt_dm_data_release(dm);
+	}
+
+	if (!sys_slist_is_empty(&Instance().mRecovery.mListToReconnect)) {
+		/* There is another provider to re-connect, schedule this operation. */
+		BLEBridgedDeviceProvider *providerToRecover =
+			Instance().mRecovery.GetProvider(&Instance().mRecovery.mListToReconnect);
+		DeviceLayer::PlatformMgr().ScheduleWork(
+			[](intptr_t context) {
+				Instance().Reconnect(reinterpret_cast<BLEBridgedDeviceProvider *>(context));
+			},
+			reinterpret_cast<intptr_t>(providerToRecover));
+		/* We have still a device to recover, keep the LostDevice state active */
+		Instance().UpdateStateFlag(State::LostDevice, true);
+	} else if (!sys_slist_is_empty(&Instance().mRecovery.mListToRecover)) {
+		/* There are pending providers to recover and no more scanned ones, schedule next scan operation. */
+		Instance().mRecovery.StartTimer();
+	} else {
+		/* All devices have been recovered, disable LostDevice state */
+		Instance().UpdateStateFlag(State::LostDevice, false);
 	}
 }
 

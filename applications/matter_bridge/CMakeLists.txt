@@ -69,6 +69,7 @@ if(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE AND (CONFIG_BRIDGE_GENERIC_SWITCH_BR
     target_sources(app PRIVATE
         src/bridged_device_types/onoff_light.cpp
         src/ble_providers/ble_lbs_data_provider.cpp
+        src/ble_providers/ble_light_data_provider.cpp
     )
 
 if(CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE)

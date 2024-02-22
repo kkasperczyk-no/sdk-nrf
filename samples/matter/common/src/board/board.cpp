@@ -63,7 +63,7 @@ bool Board::Init(button_handler_t buttonHandler, LedStateHandler ledStateHandler
 		mLedStateHandler = ledStateHandler;
 	}
 
-	mLedStateHandler();
+	// mLedStateHandler();
 #endif
 	return true;
 }
@@ -72,7 +72,7 @@ void Board::UpdateDeviceState(DeviceState state)
 {
 	if (mState != state) {
 		mState = state;
-		mLedStateHandler();
+		// mLedStateHandler();
 	}
 }
 
@@ -127,25 +127,25 @@ void Board::UpdateStatusLED()
 	 * rate of 100ms.
 	 *
 	 * Otherwise, blink the LED for a very short time. */
-	sInstance.mLED1.Set(false);
+	// sInstance.mLED1.Set(false);
 
-	switch (sInstance.mState) {
-	case DeviceState::DeviceDisconnected:
-	case DeviceState::DeviceAdvertisingBLE:
-		sInstance.mLED1.Blink(LedConsts::StatusLed::Disconnected::kOn_ms,
-				      LedConsts::StatusLed::Disconnected::kOff_ms);
+	// switch (sInstance.mState) {
+	// case DeviceState::DeviceDisconnected:
+	// case DeviceState::DeviceAdvertisingBLE:
+	// 	// sInstance.mLED1.Blink(LedConsts::StatusLed::Disconnected::kOn_ms,
+	// 			    //   LedConsts::StatusLed::Disconnected::kOff_ms);
 
-		break;
-	case DeviceState::DeviceConnectedBLE:
-		sInstance.mLED1.Blink(LedConsts::StatusLed::BleConnected::kOn_ms,
-				      LedConsts::StatusLed::BleConnected::kOff_ms);
-		break;
-	case DeviceState::DeviceProvisioned:
-		sInstance.mLED1.Set(true);
-		break;
-	default:
-		break;
-	}
+	// 	break;
+	// case DeviceState::DeviceConnectedBLE:
+	// 	// sInstance.mLED1.Blink(LedConsts::StatusLed::BleConnected::kOn_ms,
+	// 			      LedConsts::StatusLed::BleConnected::kOff_ms);
+	// 	break;
+	// case DeviceState::DeviceProvisioned:
+	// 	// sInstance.mLED1.Set(true);
+	// 	break;
+	// default:
+	// 	break;
+	// }
 }
 
 LEDWidget &Board::GetLED(DeviceLeds led)
@@ -244,7 +244,7 @@ void Board::FunctionHandler(const ButtonAction &action)
 		} else if (sInstance.mFunctionTimerActive && sInstance.mFunction == BoardFunctions::FactoryReset) {
 			sInstance.CancelTimer();
 			sInstance.RestoreAllLedsState();
-			sInstance.mLedStateHandler();
+			// sInstance.mLedStateHandler();
 			sInstance.mFunction = BoardFunctions::None;
 			LOG_INF("Factory reset has been canceled");
 		}
