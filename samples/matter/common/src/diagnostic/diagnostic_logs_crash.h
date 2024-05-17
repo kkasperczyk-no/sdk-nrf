@@ -6,8 +6,13 @@
 
 #pragma once
 
+#include <lib/core/CHIPError.h>
+#include <lib/support/Span.h>
+
 #include <zephyr/device.h>
 #include <zephyr/kernel.h>
+
+using namespace chip;
 
 namespace Nrf
 {
@@ -81,6 +86,11 @@ public:
 	 */
 	size_t CalculateSize();
 
+	CHIP_ERROR GetCrashLogs(chip::MutableByteSpan &outBuffer, bool &outIsEndOfLog);
+	CHIP_ERROR FinishCrashLogs();
+	size_t GetCrashLogsSize();
+	CHIP_ERROR MoveCrashLogsToNVS();
+
 private:
 	/* The source is obtained based on values from ARM Cortex vector table set in the ICSR register. */
 	enum FaultSource {
@@ -98,6 +108,9 @@ private:
 
 	bool BasicDump();
 	bool ReasonDump();
+
+	CHIP_ERROR LoadCrashData();
+	void ClearState();
 
 	/* Actual crash data to be filled */
 	CrashDescription mDescription = {};
