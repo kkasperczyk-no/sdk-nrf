@@ -98,7 +98,9 @@ void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChan
 #ifdef CONFIG_CHIP_ICD_UAT_SUPPORT
 	} else if ((UAT_BUTTON_MASK & state & hasChanged)) {
 		LOG_INF("ICD UserActiveMode has been triggered.");
-		Server::GetInstance().GetICDManager().UpdateOperationState(ICDManager::OperationalState::ActiveMode);
+		// Temporarily claim network activity, until we implement a "user trigger" reason for ICD wakeups.
+		PlatformMgr().ScheduleWork(
+			[](intptr_t) { ICDNotifier::GetInstance().NotifyNetworkActivityNotification(); });
 #endif
 	}
 }

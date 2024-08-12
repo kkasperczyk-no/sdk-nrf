@@ -53,7 +53,13 @@ constexpr uint32_t kSwitchTransportTimeout = 10000;
 #endif
 
 #define APPLICATION_BUTTON_MASK DK_BTN2_MSK
+
+#ifdef CONFIG_CHIP_ICD_UAT_SUPPORT
+#define UAT_BUTTON_MASK DK_BTN3_MSK
+#else
 #define SWITCHING_BUTTON_MASK DK_BTN3_MSK
+#endif
+
 } /* namespace */
 
 Identify sIdentify = { kLockEndpointId, AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
@@ -81,6 +87,15 @@ void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChan
 		SwitchButtonAction action =
 			(SWITCHING_BUTTON_MASK & state) ? SwitchButtonAction::Pressed : SwitchButtonAction::Released;
 		Nrf::PostTask([action] { SwitchTransportTriggerHandler(action); });
+	}
+#endif
+
+#ifdef CONFIG_CHIP_ICD_UAT_SUPPORT
+	if ((UAT_BUTTON_MASK & state & hasChanged)) {
+		LOG_INF("ICD UserActiveMode has been triggered.");
+		// Temporarily claim network activity, until we implement a "user trigger" reason for ICD wakeups.
+		PlatformMgr().ScheduleWork(
+			[](intptr_t) { ICDNotifier::GetInstance().NotifyNetworkActivityNotification(); });
 	}
 #endif
 }

@@ -31,9 +31,6 @@
 #define GENERATED_ACCESS_READ_ATTRIBUTE__CLUSTER { \
     0x0000001F, /* Cluster: Access Control, Attribute: ACL, Privilege: administer */ \
     0x0000001F, /* Cluster: Access Control, Attribute: Extension, Privilege: administer */ \
-    /* Cluster: Access Control, Attribute: SubjectsPerAccessControlEntry, Privilege: view */ \
-    /* Cluster: Access Control, Attribute: TargetsPerAccessControlEntry, Privilege: view */ \
-    /* Cluster: Access Control, Attribute: AccessControlEntriesPerFabric, Privilege: view */ \
     /* Cluster: Basic Information, Attribute: NodeLabel, Privilege: view */ \
     /* Cluster: Basic Information, Attribute: Location, Privilege: view */ \
     /* Cluster: OTA Software Update Requestor, Attribute: DefaultOTAProviders, Privilege: view */ \
@@ -46,6 +43,8 @@
     0x00000031, /* Cluster: Network Commissioning, Attribute: LastConnectErrorValue, Privilege: administer */ \
     0x0000003E, /* Cluster: Operational Credentials, Attribute: NOCs, Privilege: administer */ \
     /* Cluster: Group Key Management, Attribute: GroupKeyMap, Privilege: view */ \
+    0x00000046, /* Cluster: ICD Management, Attribute: RegisteredClients, Privilege: administer */ \
+    0x00000046, /* Cluster: ICD Management, Attribute: ICDCounter, Privilege: administer */ \
     /* Cluster: Door Lock, Attribute: Language, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: AutoRelockTime, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: SoundVolume, Privilege: view */ \
@@ -61,9 +60,6 @@
 #define GENERATED_ACCESS_READ_ATTRIBUTE__ATTRIBUTE { \
     0x00000000, /* Cluster: Access Control, Attribute: ACL, Privilege: administer */ \
     0x00000001, /* Cluster: Access Control, Attribute: Extension, Privilege: administer */ \
-    /* Cluster: Access Control, Attribute: SubjectsPerAccessControlEntry, Privilege: view */ \
-    /* Cluster: Access Control, Attribute: TargetsPerAccessControlEntry, Privilege: view */ \
-    /* Cluster: Access Control, Attribute: AccessControlEntriesPerFabric, Privilege: view */ \
     /* Cluster: Basic Information, Attribute: NodeLabel, Privilege: view */ \
     /* Cluster: Basic Information, Attribute: Location, Privilege: view */ \
     /* Cluster: OTA Software Update Requestor, Attribute: DefaultOTAProviders, Privilege: view */ \
@@ -76,6 +72,8 @@
     0x00000007, /* Cluster: Network Commissioning, Attribute: LastConnectErrorValue, Privilege: administer */ \
     0x00000000, /* Cluster: Operational Credentials, Attribute: NOCs, Privilege: administer */ \
     /* Cluster: Group Key Management, Attribute: GroupKeyMap, Privilege: view */ \
+    0x00000003, /* Cluster: ICD Management, Attribute: RegisteredClients, Privilege: administer */ \
+    0x00000004, /* Cluster: ICD Management, Attribute: ICDCounter, Privilege: administer */ \
     /* Cluster: Door Lock, Attribute: Language, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: AutoRelockTime, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: SoundVolume, Privilege: view */ \
@@ -91,9 +89,6 @@
 #define GENERATED_ACCESS_READ_ATTRIBUTE__PRIVILEGE { \
     chip::Access::Privilege::kAdminister, /* Cluster: Access Control, Attribute: ACL, Privilege: administer */ \
     chip::Access::Privilege::kAdminister, /* Cluster: Access Control, Attribute: Extension, Privilege: administer */ \
-    /* Cluster: Access Control, Attribute: SubjectsPerAccessControlEntry, Privilege: view */ \
-    /* Cluster: Access Control, Attribute: TargetsPerAccessControlEntry, Privilege: view */ \
-    /* Cluster: Access Control, Attribute: AccessControlEntriesPerFabric, Privilege: view */ \
     /* Cluster: Basic Information, Attribute: NodeLabel, Privilege: view */ \
     /* Cluster: Basic Information, Attribute: Location, Privilege: view */ \
     /* Cluster: OTA Software Update Requestor, Attribute: DefaultOTAProviders, Privilege: view */ \
@@ -106,6 +101,8 @@
     chip::Access::Privilege::kAdminister, /* Cluster: Network Commissioning, Attribute: LastConnectErrorValue, Privilege: administer */ \
     chip::Access::Privilege::kAdminister, /* Cluster: Operational Credentials, Attribute: NOCs, Privilege: administer */ \
     /* Cluster: Group Key Management, Attribute: GroupKeyMap, Privilege: view */ \
+    chip::Access::Privilege::kAdminister, /* Cluster: ICD Management, Attribute: RegisteredClients, Privilege: administer */ \
+    chip::Access::Privilege::kAdminister, /* Cluster: ICD Management, Attribute: ICDCounter, Privilege: administer */ \
     /* Cluster: Door Lock, Attribute: Language, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: AutoRelockTime, Privilege: view */ \
     /* Cluster: Door Lock, Attribute: SoundVolume, Privilege: view */ \
@@ -218,6 +215,9 @@
     0x0000003F, /* Cluster: Group Key Management, Command: KeySetRead, Privilege: administer */ \
     0x0000003F, /* Cluster: Group Key Management, Command: KeySetRemove, Privilege: administer */ \
     0x0000003F, /* Cluster: Group Key Management, Command: KeySetReadAllIndices, Privilege: administer */ \
+    0x00000046, /* Cluster: ICD Management, Command: RegisterClient, Privilege: manage */ \
+    0x00000046, /* Cluster: ICD Management, Command: UnregisterClient, Privilege: manage */ \
+    0x00000046, /* Cluster: ICD Management, Command: StayActiveRequest, Privilege: manage */ \
     0x00000101, /* Cluster: Door Lock, Command: SetWeekDaySchedule, Privilege: administer */ \
     0x00000101, /* Cluster: Door Lock, Command: GetWeekDaySchedule, Privilege: administer */ \
     0x00000101, /* Cluster: Door Lock, Command: ClearWeekDaySchedule, Privilege: administer */ \
@@ -269,6 +269,9 @@
     0x00000001, /* Cluster: Group Key Management, Command: KeySetRead, Privilege: administer */ \
     0x00000003, /* Cluster: Group Key Management, Command: KeySetRemove, Privilege: administer */ \
     0x00000004, /* Cluster: Group Key Management, Command: KeySetReadAllIndices, Privilege: administer */ \
+    0x00000000, /* Cluster: ICD Management, Command: RegisterClient, Privilege: manage */ \
+    0x00000002, /* Cluster: ICD Management, Command: UnregisterClient, Privilege: manage */ \
+    0x00000003, /* Cluster: ICD Management, Command: StayActiveRequest, Privilege: manage */ \
     0x0000000B, /* Cluster: Door Lock, Command: SetWeekDaySchedule, Privilege: administer */ \
     0x0000000C, /* Cluster: Door Lock, Command: GetWeekDaySchedule, Privilege: administer */ \
     0x0000000D, /* Cluster: Door Lock, Command: ClearWeekDaySchedule, Privilege: administer */ \
@@ -320,6 +323,9 @@
     chip::Access::Privilege::kAdminister, /* Cluster: Group Key Management, Command: KeySetRead, Privilege: administer */ \
     chip::Access::Privilege::kAdminister, /* Cluster: Group Key Management, Command: KeySetRemove, Privilege: administer */ \
     chip::Access::Privilege::kAdminister, /* Cluster: Group Key Management, Command: KeySetReadAllIndices, Privilege: administer */ \
+    chip::Access::Privilege::kManage, /* Cluster: ICD Management, Command: RegisterClient, Privilege: manage */ \
+    chip::Access::Privilege::kManage, /* Cluster: ICD Management, Command: UnregisterClient, Privilege: manage */ \
+    chip::Access::Privilege::kManage, /* Cluster: ICD Management, Command: StayActiveRequest, Privilege: manage */ \
     chip::Access::Privilege::kAdminister, /* Cluster: Door Lock, Command: SetWeekDaySchedule, Privilege: administer */ \
     chip::Access::Privilege::kAdminister, /* Cluster: Door Lock, Command: GetWeekDaySchedule, Privilege: administer */ \
     chip::Access::Privilege::kAdminister, /* Cluster: Door Lock, Command: ClearWeekDaySchedule, Privilege: administer */ \
@@ -343,18 +349,24 @@
 #define GENERATED_ACCESS_READ_EVENT__CLUSTER { \
     0x0000001F, /* Cluster: Access Control, Event: AccessControlEntryChanged, Privilege: administer */ \
     0x0000001F, /* Cluster: Access Control, Event: AccessControlExtensionChanged, Privilege: administer */ \
+    0x0000001F, /* Cluster: Access Control, Event: AccessRestrictionEntryChanged, Privilege: administer */ \
+    0x0000001F, /* Cluster: Access Control, Event: FabricRestrictionReviewUpdate, Privilege: administer */ \
 }
 
 // Parallel array data (cluster, *event*, privilege) for read event
 #define GENERATED_ACCESS_READ_EVENT__EVENT { \
     0x00000000, /* Cluster: Access Control, Event: AccessControlEntryChanged, Privilege: administer */ \
     0x00000001, /* Cluster: Access Control, Event: AccessControlExtensionChanged, Privilege: administer */ \
+    0x00000002, /* Cluster: Access Control, Event: AccessRestrictionEntryChanged, Privilege: administer */ \
+    0x00000003, /* Cluster: Access Control, Event: FabricRestrictionReviewUpdate, Privilege: administer */ \
 }
 
 // Parallel array data (cluster, event, *privilege*) for read event
 #define GENERATED_ACCESS_READ_EVENT__PRIVILEGE { \
     chip::Access::Privilege::kAdminister, /* Cluster: Access Control, Event: AccessControlEntryChanged, Privilege: administer */ \
     chip::Access::Privilege::kAdminister, /* Cluster: Access Control, Event: AccessControlExtensionChanged, Privilege: administer */ \
+    chip::Access::Privilege::kAdminister, /* Cluster: Access Control, Event: AccessRestrictionEntryChanged, Privilege: administer */ \
+    chip::Access::Privilege::kAdminister, /* Cluster: Access Control, Event: FabricRestrictionReviewUpdate, Privilege: administer */ \
 }
 
 ////////////////////////////////////////////////////////////////////////////////
