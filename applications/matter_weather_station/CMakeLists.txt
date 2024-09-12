@@ -18,7 +18,7 @@ if(OVERLAY_CONFIG STREQUAL "overlay-factory_data.conf")
     set(PM_STATIC_YML_FILE ${APPLICATION_CONFIG_DIR}/pm_static_factory_data.yml)
 endif()
 
-find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})a
 project(matter-weather-station)
 
 ################################################################################
