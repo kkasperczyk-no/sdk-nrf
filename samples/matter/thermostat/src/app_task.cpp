@@ -32,12 +32,15 @@ namespace
 {
 constexpr EndpointId kThermostatEndpointId = 1;
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 Identify sIdentify = { kThermostatEndpointId, AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
 		       Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator };
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 #define TEMPERATURE_BUTTON_MASK DK_BTN2_MSK
 } // namespace
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 void AppTask::IdentifyStartHandler(Identify *)
 {
 	Nrf::PostTask(
@@ -48,6 +51,7 @@ void AppTask::IdentifyStopHandler(Identify *)
 {
 	Nrf::PostTask([] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false); });
 }
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)
 {

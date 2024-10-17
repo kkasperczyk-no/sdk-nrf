@@ -28,13 +28,16 @@ using namespace ::chip::DeviceLayer;
 
 namespace
 {
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 Identify sIdentify = { WindowCovering::Endpoint(), AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
 		       Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator };
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 #define OPEN_BUTTON_MASK DK_BTN2_MSK
 #define CLOSE_BUTTON_MASK DK_BTN3_MSK
 } /* namespace */
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 void AppTask::IdentifyStartHandler(Identify *)
 {
 	Nrf::PostTask([] {
@@ -50,6 +53,7 @@ void AppTask::IdentifyStopHandler(Identify *)
 		WindowCovering::Instance().GetLiftIndicator().ApplyLevel();
 	});
 }
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)
 {
@@ -118,12 +122,16 @@ void AppTask::ToggleMoveType()
 
 CHIP_ERROR AppTask::Init()
 {
-	/* Initialize Matter stack */
+/* Initialize Matter stack */
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(Nrf::Matter::InitData{ .mPostServerInitClbk = [] {
 		WindowCovering::Instance().PositionLEDUpdate(WindowCovering::MoveType::LIFT);
 		WindowCovering::Instance().PositionLEDUpdate(WindowCovering::MoveType::TILT);
 		return CHIP_NO_ERROR;
 	} }));
+#else
+	ReturnErrorOnFailure(Nrf::Matter::PrepareServer());
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 	if (!Nrf::GetBoard().Init(ButtonEventHandler)) {
 		LOG_ERR("User interface initialization failed.");

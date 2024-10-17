@@ -30,13 +30,15 @@ void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &a
 	if (clusterId == OnOff::Id && attributeId == OnOff::Attributes::OnOff::Id) {
 		ChipLogProgress(Zcl, "Cluster OnOff: attribute OnOff set to %" PRIu8 "", *value);
 
+#if defined(CONFIG_NCS_SAMPLE_MATTER_LEDS)
 #if defined(CONFIG_PWM)
 		AppTask::Instance().GetPWMDevice().InitiateAction(*value ? Nrf::PWMDevice::ON_ACTION :
 									   Nrf::PWMDevice::OFF_ACTION,
 								  static_cast<int32_t>(LightingActor::Remote), value);
 #else
 		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(*value);
-#endif
+#endif /* CONFIG_PWM */
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 #ifdef CONFIG_AWS_IOT_INTEGRATION
 		aws_iot_integration_attribute_set(ATTRIBUTE_ID_ONOFF, *value);
@@ -44,6 +46,7 @@ void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &a
 
 	} else if (clusterId == LevelControl::Id && attributeId == LevelControl::Attributes::CurrentLevel::Id) {
 		ChipLogProgress(Zcl, "Cluster LevelControl: attribute CurrentLevel set to %" PRIu8 "", *value);
+#if defined(CONFIG_NCS_SAMPLE_MATTER_LEDS)
 #if defined(CONFIG_PWM)
 		if (AppTask::Instance().GetPWMDevice().IsTurnedOn()) {
 			AppTask::Instance().GetPWMDevice().InitiateAction(
@@ -51,7 +54,8 @@ void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &a
 		} else {
 			ChipLogDetail(Zcl, "LED is off. Try to use move-to-level-with-on-off instead of move-to-level");
 		}
-#endif
+#endif /* CONFIG_PWM */
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 #ifdef CONFIG_AWS_IOT_INTEGRATION
 		aws_iot_integration_attribute_set(ATTRIBUTE_ID_LEVEL_CONTROL, *value);
@@ -83,13 +87,15 @@ void emberAfOnOffClusterInitCallback(EndpointId endpoint)
 	status = Attributes::OnOff::Get(endpoint, &storedValue);
 	if (status == Protocols::InteractionModel::Status::Success) {
 		/* Set actual state to the cluster state that was last persisted */
+#if defined(CONFIG_NCS_SAMPLE_MATTER_LEDS)
 #if defined(CONFIG_PWM)
 		AppTask::Instance().GetPWMDevice().InitiateAction(
 			storedValue ? Nrf::PWMDevice::ON_ACTION : Nrf::PWMDevice::OFF_ACTION,
 			static_cast<int32_t>(LightingActor::Remote), reinterpret_cast<uint8_t *>(&storedValue));
 #else
 		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(storedValue);
-#endif
+#endif /* CONFIG_PWM */
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 	}
 
 	AppTask::Instance().UpdateClusterState();

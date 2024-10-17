@@ -29,6 +29,7 @@ Board Board::sInstance;
 bool Board::Init(button_handler_t buttonHandler, LedStateHandler ledStateHandler)
 {
 #ifdef CONFIG_DK_LIBRARY
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 	/* Initialize LEDs */
 	LEDWidget::InitGpio();
 	LEDWidget::SetStateUpdateCallback(LEDStateUpdateHandler);
@@ -40,6 +41,7 @@ bool Board::Init(button_handler_t buttonHandler, LedStateHandler ledStateHandler
 	mLED3.Init(DK_LED3);
 	mLED4.Init(DK_LED4);
 #endif
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 	/* Initialize buttons */
 	int ret = dk_buttons_init(ButtonEventHandler);
@@ -60,12 +62,14 @@ bool Board::Init(button_handler_t buttonHandler, LedStateHandler ledStateHandler
 	k_timer_init(&mFunctionTimer, &FunctionTimerTimeoutCallback, nullptr);
 	k_timer_user_data_set(&mFunctionTimer, this);
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 	if (ledStateHandler) {
 		mLedStateHandler = ledStateHandler;
 	}
 
 	mLedStateHandler();
-#endif
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
+#endif /* CONFIG_DK_LIBRARY */
 	return true;
 }
 
@@ -73,10 +77,13 @@ void Board::UpdateDeviceState(DeviceState state)
 {
 	if (mState != state) {
 		mState = state;
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 		mLedStateHandler();
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 	}
 }
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 void Board::ResetAllLeds()
 {
 	mLED1SavedState = mLED1.GetState();
@@ -168,6 +175,7 @@ LEDWidget &Board::GetLED(DeviceLeds led)
 		return mLED1;
 	}
 }
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 void Board::CancelTimer()
 {
@@ -197,6 +205,7 @@ void Board::FunctionTimerEventHandler()
 		sInstance.StartTimer(FactoryResetConsts::kFactoryResetCancelWindowTimeout);
 		sInstance.mFunction = BoardFunctions::FactoryReset;
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 		/* Turn off all LEDs before starting blink to make sure blink is coordinated. */
 		sInstance.ResetAllLeds();
 
@@ -208,6 +217,7 @@ void Board::FunctionTimerEventHandler()
 		sInstance.mLED3.Blink(LedConsts::kBlinkRate_ms);
 		sInstance.mLED4.Blink(LedConsts::kBlinkRate_ms);
 #endif
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 	} else if (sInstance.mFunction == BoardFunctions::FactoryReset) {
 		/* Actually trigger Factory Reset */
 		sInstance.mFunction = BoardFunctions::None;
@@ -245,8 +255,10 @@ void Board::FunctionHandler(const ButtonAction &action)
 			sInstance.mFunction = BoardFunctions::None;
 		} else if (sInstance.mFunctionTimerActive && sInstance.mFunction == BoardFunctions::FactoryReset) {
 			sInstance.CancelTimer();
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 			sInstance.RestoreAllLedsState();
 			sInstance.mLedStateHandler();
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 			sInstance.mFunction = BoardFunctions::None;
 			LOG_INF("Factory reset has been canceled");
 		}

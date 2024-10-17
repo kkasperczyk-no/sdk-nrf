@@ -8,8 +8,10 @@
 
 #include "board/board_config.h"
 #include "board/board_consts.h"
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 #include "board/led_util.h"
 #include "board/led_widget.h"
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 #include <platform/CHIPDeviceEvent.h>
 
@@ -24,9 +26,11 @@ using ButtonState = uint32_t;
 using ButtonMask = uint32_t;
 using LedStateHandler = void (*)();
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 struct LEDEvent {
 	Nrf::LEDWidget *LedWidget;
 };
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 class Board {
 	using LedState = bool;
@@ -51,6 +55,7 @@ public:
 	 */
 	bool Init(button_handler_t buttonHandler = nullptr, LedStateHandler ledStateHandler = nullptr);
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 	/**
 	 * @brief Get the LED located on the board.
 	 *
@@ -58,6 +63,7 @@ public:
 	 * @return LEDWidget& a reference of the choosen LED.
 	 */
 	Nrf::LEDWidget &GetLED(DeviceLeds led);
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 	/**
 	 * @brief Update a device state to change LED indicator
@@ -113,6 +119,7 @@ private:
 	friend Board &GetBoard();
 	static Board sInstance;
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 	/* LEDs */
 	static void UpdateStatusLED();
 	static void LEDStateUpdateHandler(Nrf::LEDWidget &ledWidget);
@@ -124,8 +131,7 @@ private:
 	Nrf::LEDWidget mLED2;
 	bool mLED1SavedState;
 	bool mLED2SavedState;
-	k_timer mFunctionTimer;
-	DeviceState mState = DeviceState::DeviceDisconnected;
+
 	LedStateHandler mLedStateHandler = UpdateStatusLED;
 #if NUMBER_OF_LEDS == 3
 	Nrf::LEDWidget mLED3;
@@ -136,6 +142,10 @@ private:
 	bool mLED3SavedState;
 	bool mLED4SavedState;
 #endif
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
+
+	k_timer mFunctionTimer;
+	DeviceState mState = DeviceState::DeviceDisconnected;
 
 	/* Function Timer */
 	void CancelTimer();

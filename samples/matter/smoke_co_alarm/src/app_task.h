@@ -40,19 +40,25 @@ private:
 	CHIP_ERROR Init();
 
 	static void ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged);
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 	static void SelfTestLedTimerTimeoutCallback(k_timer *timer);
 	static void SelfTestLedTimerEventHandler();
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 	static void SelfTestTimerTimeoutCallback(k_timer *timer);
 	static void EndSelfTestEventHandler();
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
-	constexpr static Nrf::Matter::TestEventTrigger::EventTriggerId kPowerSourceOnEventTriggerId = 0xFFFF'FFFF'8000'0000;
-	constexpr static Nrf::Matter::TestEventTrigger::EventTriggerId kPowerSourceOffEventTriggerId = 0xFFFF'FFFF'8001'0000;
+	constexpr static Nrf::Matter::TestEventTrigger::EventTriggerId kPowerSourceOnEventTriggerId =
+		0xFFFF'FFFF'8000'0000;
+	constexpr static Nrf::Matter::TestEventTrigger::EventTriggerId kPowerSourceOffEventTriggerId =
+		0xFFFF'FFFF'8001'0000;
 	static CHIP_ERROR PowerSourceOnEventCallback(Nrf::Matter::TestEventTrigger::TriggerValue);
 	static CHIP_ERROR PowerSourceOffEventCallback(Nrf::Matter::TestEventTrigger::TriggerValue);
 #endif
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 	k_timer mSelfTestLedTimer;
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 	k_timer mSelfTestTimer;
 	chip::app::Clusters::SmokeCoAlarm::ExpressedStateEnum mCurrentState;
 };

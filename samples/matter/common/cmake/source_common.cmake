@@ -12,7 +12,6 @@ target_include_directories(app PRIVATE
 
 # Set sources that are used by all samples
 target_sources(app PRIVATE
-    ${MATTER_COMMONS_SRC_DIR}/board/led_widget.cpp
     ${MATTER_COMMONS_SRC_DIR}/board/board.cpp
     ${MATTER_COMMONS_SRC_DIR}/app/task_executor.cpp
     ${MATTER_COMMONS_SRC_DIR}/app/matter_init.cpp
@@ -20,6 +19,10 @@ target_sources(app PRIVATE
 )
 
 # Set specific sources that depend on Kconfigs
+if(CONFIG_NCS_SAMPLE_MATTER_LEDS)
+    target_sources(app PRIVATE ${MATTER_COMMONS_SRC_DIR}/board/led_widget.cpp)
+endif()
+
 if(CONFIG_CHIP_OTA_REQUESTOR OR CONFIG_MCUMGR_TRANSPORT_BT)
     target_sources(app PRIVATE ${MATTER_COMMONS_SRC_DIR}/dfu/ota/ota_util.cpp)
 endif()

@@ -21,19 +21,23 @@ using namespace ::chip;
 using namespace ::chip::DeviceLayer;
 using namespace chip::app::Clusters::WindowCovering;
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 static const struct pwm_dt_spec sLiftPwmDevice = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led1));
 static const struct pwm_dt_spec sTiltPwmDevice = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led2));
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 static constexpr uint32_t sMoveTimeoutMs{ 200 };
 
 WindowCovering::WindowCovering()
 {
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 	if (mLiftIndicator.Init(&sLiftPwmDevice, 0, 255) != 0) {
 		LOG_ERR("Cannot initialize the lift indicator");
 	}
 	if (mTiltIndicator.Init(&sTiltPwmDevice, 0, 255) != 0) {
 		LOG_ERR("Cannot initialize the tilt indicator");
 	}
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 }
 
 void WindowCovering::DriveCurrentLiftPosition(intptr_t)
@@ -228,6 +232,7 @@ void WindowCovering::SetTargetPosition(OperationalState aDirection, chip::Percen
 	}
 }
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 void WindowCovering::PositionLEDUpdate(MoveType aMoveType)
 {
 	Protocols::InteractionModel::Status status{};
@@ -270,6 +275,7 @@ uint8_t WindowCovering::PositionToBrightness(uint16_t aPosition, MoveType aMoveT
 
 	return Percent100thsToValue(pwmLimits, aPosition);
 }
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 void WindowCovering::SchedulePostAttributeChange(chip::EndpointId aEndpoint, chip::AttributeId aAttributeId)
 {

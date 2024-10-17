@@ -54,10 +54,14 @@ void MatterWindowCoveringClusterServerAttributeChangedCallback(const app::Concre
 			WindowCovering::Instance().StartMove(WindowCovering::MoveType::TILT);
 			break;
 		case Attributes::CurrentPositionLiftPercent100ths::Id:
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 			WindowCovering::Instance().PositionLEDUpdate(WindowCovering::MoveType::LIFT);
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 			break;
 		case Attributes::CurrentPositionTiltPercent100ths::Id:
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 			WindowCovering::Instance().PositionLEDUpdate(WindowCovering::MoveType::TILT);
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 			break;
 		default:
 			WindowCovering::Instance().SchedulePostAttributeChange(attributePath.mEndpointId,

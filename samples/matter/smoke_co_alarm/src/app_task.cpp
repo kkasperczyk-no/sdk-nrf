@@ -49,14 +49,17 @@ static std::array<Clusters::SmokeCoAlarm::ExpressedStateEnum, SmokeCoAlarmServer
 			   Clusters::SmokeCoAlarm::ExpressedStateEnum::kInterconnectSmoke,
 			   Clusters::SmokeCoAlarm::ExpressedStateEnum::kInterconnectCO };
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 Identify sIdentify = { AppTask::Instance().kSmokeCoAlarmEndpointId, AppTask::IdentifyStartHandler,
 		       AppTask::IdentifyStopHandler, Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator };
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 #ifdef CONFIG_CHIP_ICD_UAT_SUPPORT
 #define UAT_BUTTON_MASK DK_BTN3_MSK
 #endif
 } /* namespace */
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 void AppTask::IdentifyStartHandler(Identify *)
 {
 	Nrf::PostTask(
@@ -67,6 +70,7 @@ void AppTask::IdentifyStopHandler(Identify *)
 {
 	Nrf::PostTask([] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false); });
 }
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)
 {
@@ -78,6 +82,7 @@ void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChan
 #endif
 }
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 void AppTask::UpdatedExpressedLedState()
 {
 	Clusters::SmokeCoAlarm::ExpressedStateEnum state;
@@ -157,6 +162,7 @@ void AppTask::UpdatedExpressedLedState()
 		break;
 	}
 }
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 bool HandleSmokeCOTestEventTrigger(uint64_t eventTrigger)
 {
@@ -300,7 +306,9 @@ bool HandleSmokeCOTestEventTrigger(uint64_t eventTrigger)
 		return false;
 	}
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 	AppTask::Instance().UpdatedExpressedLedState();
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 	return true;
 }
@@ -315,9 +323,13 @@ void AppTask::EndSelfTestEventHandler()
 	LOG_INF("Alarm self test action end");
 	SmokeCoAlarmServer::Instance().SetTestInProgress(kSmokeCoAlarmEndpointId, false);
 	SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(kSmokeCoAlarmEndpointId, sPriorityOrder);
+
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 	Instance().UpdatedExpressedLedState();
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 }
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 void AppTask::SelfTestLedTimerTimeoutCallback(k_timer *timer)
 {
 	Nrf::PostTask([] { SelfTestLedTimerEventHandler(); });
@@ -338,6 +350,7 @@ void AppTask::SelfTestLedTimerEventHandler()
 
 	k_timer_start(&Instance().mSelfTestLedTimer, K_MSEC(kSelfTestLedUpdateTimeMs), K_NO_WAIT);
 }
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
 CHIP_ERROR AppTask::PowerSourceOnEventCallback(Nrf::Matter::TestEventTrigger::TriggerValue endpointId)
@@ -420,7 +433,9 @@ CHIP_ERROR AppTask::Init()
 		return CHIP_ERROR_INCORRECT_STATE;
 	}
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 	k_timer_init(&mSelfTestLedTimer, &SelfTestLedTimerTimeoutCallback, nullptr);
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 	k_timer_init(&mSelfTestTimer, &SelfTestTimerTimeoutCallback, nullptr);
 
 	/* Register Matter event handler that controls the connectivity status LED based on the captured Matter network
@@ -461,5 +476,7 @@ void AppTask::SelfTestHandler()
 {
 	LOG_INF("Triggered alarm self test action");
 	k_timer_start(&Instance().mSelfTestTimer, K_MSEC(kSelfTestDurationMs), K_NO_WAIT);
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 	UpdatedExpressedLedState();
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 }

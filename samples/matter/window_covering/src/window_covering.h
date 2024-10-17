@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "pwm/pwm_device.h"
 #include "board/board.h"
+#include "pwm/pwm_device.h"
 
 #include <app/clusters/window-covering-server/window-covering-server.h>
 
@@ -31,8 +31,10 @@ public:
 		return sInstance;
 	}
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 	Nrf::PWMDevice &GetLiftIndicator() { return mLiftIndicator; }
 	Nrf::PWMDevice &GetTiltIndicator() { return mTiltIndicator; }
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 	void StartMove(MoveType aMoveType);
 	void SetSingleStepTarget(OperationalState aDirection);
@@ -58,8 +60,12 @@ private:
 	static void DoPostAttributeChange(intptr_t aArg);
 
 	MoveType mCurrentUIMoveType;
+
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 	Nrf::PWMDevice mLiftIndicator;
 	Nrf::PWMDevice mTiltIndicator;
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
+
 	bool mInLiftMove{ false };
 	bool mInTiltMove{ false };
 };

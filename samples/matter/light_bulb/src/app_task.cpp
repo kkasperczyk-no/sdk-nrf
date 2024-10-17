@@ -45,14 +45,16 @@ constexpr uint16_t kTriggerEffectFinishTimeout = 1000;
 
 k_timer sTriggerEffectTimer;
 
+bool sIsTriggerEffectActive = false;
+
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 Identify sIdentify = { kLightEndpointId, AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
 		       Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator, AppTask::TriggerIdentifyEffectHandler };
-
-bool sIsTriggerEffectActive = false;
 
 #if defined(CONFIG_PWM)
 const struct pwm_dt_spec sLightPwmDevice = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led1));
 #endif
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 // Define a custom attribute persister which makes actual write of the CurrentLevel attribute value
 // to the non-volatile storage only when it has remained constant for 5 seconds. This is to reduce
@@ -68,6 +70,7 @@ DeferredAttributePersistenceProvider gDeferredAttributePersister(Server::GetInst
 #define APPLICATION_BUTTON_MASK DK_BTN2_MSK
 } /* namespace */
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 void AppTask::IdentifyStartHandler(Identify *)
 {
 	Nrf::PostTask(
@@ -143,9 +146,11 @@ void AppTask::TriggerIdentifyEffectHandler(Identify *identify)
 		break;
 	}
 }
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 void AppTask::LightingActionEventHandler(const LightingEvent &event)
 {
+#if defined(CONFIG_NCS_SAMPLE_MATTER_LEDS)
 #if defined(CONFIG_PWM)
 	Nrf::PWMDevice::Action_t action = Nrf::PWMDevice::INVALID_ACTION;
 	int32_t actor = 0;
@@ -159,7 +164,10 @@ void AppTask::LightingActionEventHandler(const LightingEvent &event)
 	}
 #else
 	Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(!Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).GetState());
-#endif
+#endif /* CONFIG_PWM */
+#else
+	Instance().UpdateClusterState();
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 }
 
 void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)
@@ -234,6 +242,7 @@ void AppTask::ActionCompleted(Nrf::PWMDevice::Action_t action, int32_t actor)
 void AppTask::UpdateClusterState()
 {
 	SystemLayer().ScheduleLambda([this] {
+#if defined(CONFIG_NCS_SAMPLE_MATTER_LEDS)
 #if defined(CONFIG_PWM)
 		/* write the new on/off value */
 		Protocols::InteractionModel::Status status =
@@ -241,11 +250,20 @@ void AppTask::UpdateClusterState()
 #else
 		Protocols::InteractionModel::Status status = Clusters::OnOff::Attributes::OnOff::Set(
 			kLightEndpointId, Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).GetState());
-#endif
+#endif /* CONFIG_PWM */
+#else
+		Protocols::InteractionModel::Status status;
+		bool currentValue;
+
+		/* Read storedValue on/off value */
+		status = Clusters::OnOff::Attributes::OnOff::Get(kLightEndpointId, &currentValue);
+		status = Clusters::OnOff::Attributes::OnOff::Set(kLightEndpointId, !currentValue);
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 		if (status != Protocols::InteractionModel::Status::Success) {
 			LOG_ERR("Updating on/off cluster failed: %x", to_underlying(status));
 		}
 
+#if defined(CONFIG_NCS_SAMPLE_MATTER_LEDS)
 #if defined(CONFIG_PWM)
 		/* write the current level */
 		status = Clusters::LevelControl::Attributes::CurrentLevel::Set(kLightEndpointId, mPWMDevice.GetLevel());
@@ -256,8 +274,12 @@ void AppTask::UpdateClusterState()
 		} else {
 			status = Clusters::LevelControl::Attributes::CurrentLevel::Set(kLightEndpointId, 0);
 		}
-#endif
-
+#endif /* CONFIG_PWM */
+#else
+		status = Clusters::OnOff::Attributes::OnOff::Get(kLightEndpointId, &currentValue);
+		status =
+			Clusters::LevelControl::Attributes::CurrentLevel::Set(kLightEndpointId, currentValue ? 100 : 0);
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 		if (status != Protocols::InteractionModel::Status::Success) {
 			LOG_ERR("Updating level cluster failed: %x", to_underlying(status));
 		}
@@ -289,6 +311,7 @@ CHIP_ERROR AppTask::Init()
 	}
 #endif
 
+#if defined(CONFIG_NCS_SAMPLE_MATTER_LEDS)
 	/* Initialize trigger effect timer */
 	k_timer_init(&sTriggerEffectTimer, &AppTask::TriggerEffectTimerTimeoutCallback, nullptr);
 
@@ -306,7 +329,8 @@ CHIP_ERROR AppTask::Init()
 	}
 
 	mPWMDevice.SetCallbacks(ActionInitiated, ActionCompleted);
-#endif
+#endif /* CONFIG_PWM */
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 	return Nrf::Matter::StartServer();
 }

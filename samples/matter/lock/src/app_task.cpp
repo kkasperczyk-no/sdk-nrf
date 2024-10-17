@@ -56,6 +56,7 @@ constexpr uint32_t kSwitchTransportTimeout = 10000;
 #define SWITCHING_BUTTON_MASK DK_BTN3_MSK
 } /* namespace */
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 Identify sIdentify = { kLockEndpointId, AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
 		       Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator };
 
@@ -69,6 +70,7 @@ void AppTask::IdentifyStopHandler(Identify *)
 {
 	Nrf::PostTask([] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(BoltLockMgr().IsLocked()); });
 }
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)
 {
@@ -125,21 +127,27 @@ void AppTask::LockStateChanged(BoltLockManager::State state, BoltLockManager::Op
 	switch (state) {
 	case BoltLockManager::State::kLockingInitiated:
 		LOG_INF("Lock action initiated");
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(50, 50);
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 #ifdef CONFIG_CHIP_NUS
 		Nrf::GetNUSService().SendData("locking", sizeof("locking"));
 #endif
 		break;
 	case BoltLockManager::State::kLockingCompleted:
 		LOG_INF("Lock action completed");
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(true);
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 #ifdef CONFIG_CHIP_NUS
 		Nrf::GetNUSService().SendData("locked", sizeof("locked"));
 #endif
 		break;
 	case BoltLockManager::State::kUnlockingInitiated:
 		LOG_INF("Unlock action initiated");
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(50, 50);
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 #ifdef CONFIG_CHIP_NUS
 		Nrf::GetNUSService().SendData("unlocking", sizeof("unlocking"));
 #endif
@@ -149,7 +157,9 @@ void AppTask::LockStateChanged(BoltLockManager::State state, BoltLockManager::Op
 #ifdef CONFIG_CHIP_NUS
 		Nrf::GetNUSService().SendData("unlocked", sizeof("unlocked"));
 #endif
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 		break;
 	}
 

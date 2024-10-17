@@ -37,8 +37,11 @@ constexpr EndpointId kLightEndpointId = 1;
 k_timer sDimmerPressKeyTimer;
 k_timer sDimmerTimer;
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 Identify sIdentify = { kLightEndpointId, AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
 		       Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator };
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
+	   
 bool sWasDimmerTriggered = false;
 
 #define APPLICATION_BUTTON_MASK DK_BTN2_MSK
@@ -77,6 +80,7 @@ void AppTask::TimerEventHandler(const Timer &timerType)
 	}
 }
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 void AppTask::IdentifyStartHandler(Identify *)
 {
 	Nrf::PostTask(
@@ -87,6 +91,7 @@ void AppTask::IdentifyStopHandler(Identify *)
 {
 	Nrf::PostTask([] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false); });
 }
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)
 {
