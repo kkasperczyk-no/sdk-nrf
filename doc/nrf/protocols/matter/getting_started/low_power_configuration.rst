@@ -93,7 +93,11 @@ In such scenarios, the LIT device initiates communication and it is not able to 
 The LIT device implementation requires multiple new features, such as Check-In protocol (CIP) support, ICD client registration, and User Active Mode Trigger (UAT).
 These features are not required for SIT device implementation, but can be optionally enabled.
 
-To configure the LIT, CIP or UAT, use the following Kconfig options:
+The LIT device allows you to enable optional Dynamic SIT LIT switching support (DSLS) that can be used to dynamically switch between SIT and LIT modes.
+The primary use case for this feature are devices, like smoke CO alarm, that may work as SIT when using wired power source and switch to LIT in case of power outage and using battery power source. 
+This feature is not available for the SIT device.
+
+To configure the LIT, CIP, UAT or DSLS, use the following Kconfig options:
 
 * :kconfig:option:`CONFIG_CHIP_ICD_LIT_SUPPORT` to enable the Long Idle Time device support.
 * :kconfig:option:`CONFIG_CHIP_ICD_CHECK_IN_SUPPORT` to enable the Check-In protocol support.
@@ -103,9 +107,9 @@ To configure the LIT, CIP or UAT, use the following Kconfig options:
 * :kconfig:option:`CONFIG_CHIP_ICD_UAT_SUPPORT` to enable the User Active Mode Trigger support.
   The User Active Mode Trigger allows triggering the ICD device to move from the idle to active state and make it immediately responsive, for example to change its configuration.
   This option is by default enabled for the LIT device.
-
-The LIT, CIP and UAT features were not finalized for Matter v1.3 and they are marked as provisional, so it is not recommended to use them, though you can find some of the LIT implementation in the Matter SDK and Matter specification.
-You can still enable them for testing purposes.
+* :kconfig:option:`CONFIG_CHIP_ICD_DSLS_SUPPORT` to enable Dynamic SIT LIT switching support (DSLS).
+  The DSLS allows the application to dynamically switch between SIT and LIT modes, as long as the requirements for these modes are met.
+  This option is by default disabled for the LIT device.
 
 Enable low power mode for the selected networking technology
 ************************************************************
