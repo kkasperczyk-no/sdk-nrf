@@ -155,6 +155,16 @@ The following table lists the available triggers and their activation codes:
     - Trigger an action that ceases end of service alarm
     - ``0x005c0000000000aa``
     - No additional value supported.
+  * - Power source on
+    - Only for :ref:`Matter Smoke CO Alarm <matter_smoke_co_alarm_sample>`
+    - Trigger an action that changes power source state to active
+    - ``0xFFFFFFFF80000000`` - ``0xFFFFFFFF80000001``
+    - The range of ``0x0`` - ``0x1`` is the endpoint id that has power source cluster instance enabled.
+  * - Power source off
+    - Only for :ref:`Matter Smoke CO Alarm <matter_smoke_co_alarm_sample>`
+    - Trigger an action that changes power source state to unavailable
+    - ``0xFFFFFFFF80010000`` - ``0xFFFFFFFF80010001``
+    - The range of ``0x0`` - ``0x1`` is the endpoint id that has power source cluster instance enabled.
   * - Door lock jammed
     - :kconfig:option:`CONFIG_CHIP_DEVICE_PRODUCT_ID` = ``32774``
     - Simulate the jammed lock state.

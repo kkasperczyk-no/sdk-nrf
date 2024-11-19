@@ -12,6 +12,7 @@
 #include <app-common/zap-generated/ids/Attributes.h>
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/ConcreteAttributePath.h>
+#include <app/icd/server/ICDNotifier.h>
 
 #include <lib/support/logging/CHIPLogging.h>
 
@@ -37,15 +38,25 @@ void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &a
 			return;
 		}
 
+#ifdef CONFIG_CHIP_ICD_DSLS_SUPPORT
 		if (state == PowerSource::PowerSourceStatusEnum::kActive) {
 			/* Wired source is active, we can switch into the SIT mode. */
-			/* TODO: Add requesting mode update once it will be implemented in the ICDManager. */
-            ChipLogProgress(Zcl, "Wired power source was activated, moving into the ICD SIT mode.");
+			chip::DeviceLayer::PlatformMgr().ScheduleWork(
+				[](intptr_t arg) {
+					chip::app::ICDNotifier::GetInstance().NotifySITModeRequestNotification();
+				},
+				0);
+			ChipLogProgress(Zcl, "Wired power source was activated, moving into the ICD SIT mode.");
 		} else {
 			/* Wired source is inactive, so we need to change mode into LIT to save power. */
-			/* TODO: Add requesting mode update once it will be implemented in the ICDManager. */
-            ChipLogProgress(Zcl, "Wired power source was deactivated, moving into the ICD LIT mode.");
+			chip::DeviceLayer::PlatformMgr().ScheduleWork(
+				[](intptr_t arg) {
+					chip::app::ICDNotifier::GetInstance().NotifySITModeRequestWithdrawal();
+				},
+				0);
+			ChipLogProgress(Zcl, "Wired power source was deactivated, moving into the ICD LIT mode.");
 		}
+#endif
 	}
 }
 
@@ -55,3 +66,18 @@ void emberAfPluginSmokeCoAlarmSelfTestRequestCommand(EndpointId endpointId)
 		AppTask::Instance().SelfTestHandler();
 	}
 }
+
+#ifdef CONFIG_CHIP_ICD_DSLS_SUPPORT
+void emberAfPowerSourceClusterInitCallback(EndpointId endpoint)
+{
+
+	Clusters::PowerSource::PowerSourceStatusEnum wiredPowerSourceState;
+	Clusters::PowerSource::Attributes::Status::Get(AppTask::Instance().kWiredPowerSourceEndpointId, &wiredPowerSourceState);
+	if (wiredPowerSourceState == Clusters::PowerSource::PowerSourceStatusEnum::kActive) {
+		/* Request switching to SIT, as soon as it's possible. */
+		chip::DeviceLayer::PlatformMgr().ScheduleWork(
+			[](intptr_t arg) { chip::app::ICDNotifier::GetInstance().NotifySITModeRequestNotification(); },
+			0);
+	}
+}
+#endif
