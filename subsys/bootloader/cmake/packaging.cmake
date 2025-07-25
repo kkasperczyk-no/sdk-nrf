@@ -50,6 +50,13 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
     list(APPEND dfu_multi_image_targets nrf70_wifi_fw_patch_target)
   endif()
 
+  if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_USER_DATA)
+    add_custom_target(user_data_target)
+    list(APPEND dfu_multi_image_ids ${SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_USER_DATA_ID})
+    list(APPEND dfu_multi_image_paths ${SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_USER_DATA_BIN_PATH})
+    list(APPEND dfu_multi_image_targets user_data_target)
+  endif()
+
   if(DEFINED dfu_multi_image_targets)
     dfu_multi_image_package(dfu_multi_image_pkg
       IMAGE_IDS ${dfu_multi_image_ids}

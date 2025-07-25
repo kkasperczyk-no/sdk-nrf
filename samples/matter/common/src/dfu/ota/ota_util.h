@@ -45,6 +45,10 @@ void InitBasicOTARequestor();
  */
 void OtaConfirmNewImage();
 
+#ifdef CONFIG_CHIP_DFU_MULTI_IMAGE_PACKAGE_USER_DATA
+CHIP_ERROR RegisterDfuWriter();
+#endif
+
 #endif /* CONFIG_CHIP_OTA_REQUESTOR */
 
 } /* namespace Nrf::Matter */

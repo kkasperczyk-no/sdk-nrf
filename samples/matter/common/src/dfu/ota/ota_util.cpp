@@ -12,6 +12,7 @@
 #include <app/clusters/ota-requestor/DefaultOTARequestorDriver.h>
 #include <app/clusters/ota-requestor/DefaultOTARequestorStorage.h>
 #include <app/server/Server.h>
+#include <dfu/dfu_multi_image.h>
 #include <platform/CHIPDeviceLayer.h>
 #include <zephyr/dfu/mcuboot.h>
 #endif
@@ -31,6 +32,14 @@ chip::DefaultOTARequestor sOTARequestor;
 } /* namespace */
 #endif
 
+#ifdef CONFIG_CHIP_DFU_MULTI_IMAGE_PACKAGE_USER_DATA
+constexpr size_t kMaxCustomDataChunkSize = CONFIG_CHIP_DFU_MULTI_IMAGE_PACKAGE_USER_DATA_CHUNK_SIZE;
+constexpr size_t kMaxCustomDataImageId = CONFIG_CHIP_DFU_MULTI_IMAGE_PACKAGE_USER_DATA_ID;
+
+uint8_t sCustomBuf[kMaxCustomDataChunkSize] = { 0 };
+size_t sCustomSavedBytes = 0;
+#endif
+
 namespace Nrf::Matter
 {
 
@@ -46,6 +55,29 @@ OTAImageProcessorImpl &GetOTAImageProcessor()
 	return sOTAImageProcessor;
 }
 
+#ifdef CONFIG_CHIP_DFU_MULTI_IMAGE_PACKAGE_USER_DATA
+CHIP_ERROR RegisterDfuWriter()
+{
+	dfu_image_writer customWriter;
+	customWriter.image_id = kMaxCustomDataImageId;
+	customWriter.open = [](int id, size_t size) { 
+		return size <= sizeof(sCustomBuf) ? 0 : -EFBIG; };
+	customWriter.write = [](const uint8_t *chunk, size_t chunk_size) {
+		memcpy(&sCustomBuf[sCustomSavedBytes], chunk, chunk_size);
+		sCustomSavedBytes += chunk_size;
+		return 0;
+	};
+	customWriter.close = [](bool success) {
+		// do something with the data from SCustomBuf, e.g save it to flash or send to other SoC
+		return 0;
+	};
+
+	ReturnErrorOnFailure(System::MapErrorZephyr(dfu_multi_image_register_writer(&customWriter)));
+
+	return CHIP_NO_ERROR;
+}
+#endif
+
 void InitBasicOTARequestor()
 {
 	VerifyOrReturn(GetRequestorInstance() == nullptr);
@@ -57,6 +89,10 @@ void InitBasicOTARequestor()
 	sOTARequestor.Init(Server::GetInstance(), sOTARequestorStorage, sOTARequestorDriver, sBDXDownloader);
 	chip::SetRequestorInstance(&sOTARequestor);
 	sOTARequestorDriver.Init(&sOTARequestor, &imageProcessor);
+
+#ifdef CONFIG_CHIP_DFU_MULTI_IMAGE_PACKAGE_USER_DATA
+	imageProcessor.SetDfuImageWriterRegisterCallback(RegisterDfuWriter);
+#endif
 }
 
 void OtaConfirmNewImage()

@@ -52,4 +52,16 @@ config DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH
 	  option. Refer to the documentation for detailed instructions on partition configuration
 	  and the DFU process.
 
+config DFU_MULTI_IMAGE_PACKAGE_USER_DATA
+	bool "Custom user data passed in DFU package"
+
+config DFU_MULTI_IMAGE_PACKAGE_USER_DATA_ID
+	int "User data image ID"
+	default 123
+	depends on DFU_MULTI_IMAGE_PACKAGE_USER_DATA
+
+config DFU_MULTI_IMAGE_PACKAGE_USER_DATA_BIN_PATH
+	string "User data binary path"
+	depends on DFU_MULTI_IMAGE_PACKAGE_USER_DATA
+
 endif # DFU_MULTI_IMAGE_PACKAGE_BUILD
