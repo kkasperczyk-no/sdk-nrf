@@ -1,0 +1,42 @@
+# DO NOT EDIT MANUALLY - Generated file
+#
+# List of cluster usages based on /home/kaka/ncs/v3.0.0/nrf/samples/matter/onoff_plug/src/default_zap/template.matter
+import("//build_overrides/chip.gni")
+
+template("declare_all_items_target") {
+  assert(defined(invoker.target),
+         "Need sources in $target_name that lists the target such as ':ids'")
+
+  source_set(target_name)
+  {
+    public_deps = [
+      "${chip_root}/zzz_generated/app-common/clusters/AccessControl" + invoker.target,
+      "${chip_root}/zzz_generated/app-common/clusters/AdministratorCommissioning" + invoker.target,
+      "${chip_root}/zzz_generated/app-common/clusters/BasicInformation" + invoker.target,
+      "${chip_root}/zzz_generated/app-common/clusters/Descriptor" + invoker.target,
+      "${chip_root}/zzz_generated/app-common/clusters/GeneralCommissioning" + invoker.target,
+      "${chip_root}/zzz_generated/app-common/clusters/GeneralDiagnostics" + invoker.target,
+      "${chip_root}/zzz_generated/app-common/clusters/GroupKeyManagement" + invoker.target,
+      "${chip_root}/zzz_generated/app-common/clusters/Groups" + invoker.target,
+      "${chip_root}/zzz_generated/app-common/clusters/Identify" + invoker.target,
+      "${chip_root}/zzz_generated/app-common/clusters/NetworkCommissioning" + invoker.target,
+      "${chip_root}/zzz_generated/app-common/clusters/OnOff" + invoker.target,
+      "${chip_root}/zzz_generated/app-common/clusters/OperationalCredentials" + invoker.target,
+      "${chip_root}/zzz_generated/app-common/clusters/OtaSoftwareUpdateProvider" + invoker.target,
+      "${chip_root}/zzz_generated/app-common/clusters/OtaSoftwareUpdateRequestor" + invoker.target,
+      "${chip_root}/zzz_generated/app-common/clusters/RandomNumberGenerator" + invoker.target,
+      "${chip_root}/zzz_generated/app-common/clusters/ScenesManagement" + invoker.target,
+    ]
+  }
+}
+
+declare_all_items_target("all-elements") { target = ":elements" }
+declare_all_items_target("all-enums") { target = ":enums" }
+declare_all_items_target("all-headers") { target = ":headers" }
+declare_all_items_target("all-ids") { target = ":ids" }
+declare_all_items_target("all-metadata") { target = ":metadata" }
+
+source_set("metadata-query") {
+  sources = [ "MetadataQuery.h" ]
+  public_deps = [ ":all-metadata" ]
+}

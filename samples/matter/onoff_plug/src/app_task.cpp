@@ -14,7 +14,9 @@
 
 #include <setup_payload/OnboardingCodesUtil.h>
 
+#include <app-common/zap-generated/callback.h>
 #include <app-common/zap-generated/attributes/Accessors.h>
+#include <zephyr/random/random.h>
 
 #include <zephyr/logging/log.h>
 
@@ -24,9 +26,34 @@ using namespace ::chip;
 using namespace ::chip::app;
 using namespace ::chip::app::Clusters;
 using namespace ::chip::app::Clusters::OnOff;
+using namespace ::chip::app::Clusters::RandomNumberGenerator;
 using namespace ::chip::DeviceLayer;
 
 constexpr EndpointId kOnOffPlugEndpointId = 1;
+
+bool emberAfRandomNumberGeneratorClusterGenerateCallback(chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
+	const RandomNumberGenerator::Commands::Generate::DecodableType &commandData)
+{
+	int16_t minValue = commandData.minValue;
+	int16_t maxValue = commandData.maxValue;
+
+
+	LOG_INF("Generating random number between %d and %d", minValue, maxValue);
+
+	int16_t randomNumber = sys_rand16_get() % (maxValue - minValue + 1) + minValue;
+
+	LOG_INF("Random number generated: %d", randomNumber);
+
+	Protocols::InteractionModel::Status status = RandomNumberGenerator::Attributes::GeneratedNumber::Set(commandPath.mEndpointId, randomNumber);
+	
+	commandObj->AddStatus(commandPath, status);
+
+	if (status == Protocols::InteractionModel::Status::Success) {
+		return true;
+	}
+
+	return false;
+}
 
 void ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)
 {
@@ -86,5 +113,13 @@ void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &a
 		LOG_INF("Cluster OnOff: attribute OnOff set to %" PRIu8 "", *value);
 
 		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(*value);
+	} else if (clusterId == RandomNumberGenerator::Id && attributeId == RandomNumberGenerator::Attributes::GeneratedNumber::Id) {
+		int16_t generatedNumber = 0;
+		memcpy(&generatedNumber, value, sizeof(int16_t));
+		LOG_INF("Cluster RandomNumberGenerator: attribute GeneratedNumber set to %d", generatedNumber);
 	}
+}
+
+void MatterRandomNumberGeneratorPluginServerInitCallback() {
+
 }

@@ -1,0 +1,9 @@
+// DO NOT EDIT MANUALLY - Generated file
+//
+// Identifier constant values for cluster ProxyConfiguration (cluster code: 66/0x0042)
+#pragma once
+
+#include <clusters/ProxyConfiguration/AttributeIds.h>
+#include <clusters/ProxyConfiguration/ClusterId.h>
+#include <clusters/ProxyConfiguration/CommandIds.h>
+#include <clusters/ProxyConfiguration/EventIds.h>

@@ -7,8 +7,8 @@
     <define>RANDOM_NUMBER_GENERATOR</define>
     <description>A cluster for generating random numbers</description>
     <attribute name="GeneratedNumber" side="server" code="0xfff10000" define="GENERATED_NUMBER" type="int16s" min="-32768" max="32767"/>
-    <command name="Generate" code="0xfff10000" source="client" response="GenerateResponse">
-      <description>Command that triggers random number generation and returns the number. Additionally it uses arguments that define min and max range of generation.</description>
+    <command name="Generate" code="0xfff10000" source="client">
+      <description>Command that triggers random number generation. Additionally it uses arguments that define min and max range of generation.</description>
       <arg name="MinValue" type="int16s" min="-32768" max="32767"/>
       <arg name="MaxValue" type="int16s" min="-32768" max="32767"/>
     </command>

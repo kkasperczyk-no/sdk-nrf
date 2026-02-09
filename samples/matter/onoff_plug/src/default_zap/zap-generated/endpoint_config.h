@@ -47,7 +47,7 @@
 	}
 
 // This is an array of EmberAfAttributeMetadata structures.
-#define GENERATED_ATTRIBUTE_COUNT 105
+#define GENERATED_ATTRIBUTE_COUNT 108
 #define GENERATED_ATTRIBUTES                                                                                                 \
 	{                                                                                                                    \
                                                                                                                              \
@@ -308,10 +308,18 @@
 													     */              \
 		{ ZAP_SIMPLE_DEFAULT(1), 0x0000FFFD, 2, ZAP_TYPE(INT16U), ZAP_ATTRIBUTE_MASK(READABLE) }, /* ClusterRevision \
 													   */                \
+                                                                                                                             \
+		/* Endpoint: 2, Cluster: RandomNumberGenerator (server) */                                                   \
+		{ ZAP_EMPTY_DEFAULT(), 0xFFF10000, 2, ZAP_TYPE(INT16S), ZAP_ATTRIBUTE_MASK(READABLE) }, /* GeneratedNumber   \
+													 */                  \
+		{ ZAP_SIMPLE_DEFAULT(0), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), ZAP_ATTRIBUTE_MASK(READABLE) }, /* FeatureMap    \
+													     */              \
+		{ ZAP_SIMPLE_DEFAULT(1), 0x0000FFFD, 2, ZAP_TYPE(INT16U), ZAP_ATTRIBUTE_MASK(READABLE) }, /* ClusterRevision \
+													   */                \
 	}
 
 // clang-format off
-#define GENERATED_EVENT_COUNT 6
+#define GENERATED_EVENT_COUNT 7
 #define GENERATED_EVENTS { \
   /* Endpoint: 0, Cluster: Basic Information (server) */ \
   /* EventList (index=0) */ \
@@ -323,6 +331,9 @@
   0x00000000, /* StateTransition */ \
   0x00000001, /* VersionApplied */ \
   0x00000002, /* DownloadError */ \
+  /* Endpoint: 2, Cluster: RandomNumberGenerator (server) */ \
+  /* EventList (index=6) */ \
+  0xFFF10000, /* NumberGenerated */ \
 }
 
 // clang-format on
@@ -463,12 +474,16 @@
   0x00000006 /* GetSceneMembershipResponse */, \
   0x00000040 /* CopySceneResponse */, \
   chip::kInvalidCommandId /* end of list */, \
+  /* Endpoint: 2, Cluster: RandomNumberGenerator (server) */\
+  /*   AcceptedCommandList (index=91) */ \
+  0xFFF10000 /* Generate */, \
+  chip::kInvalidCommandId /* end of list */, \
 }
 
 // clang-format on
 
 // This is an array of EmberAfCluster structures.
-#define GENERATED_CLUSTER_COUNT 16
+#define GENERATED_CLUSTER_COUNT 17
 // clang-format off
 #define GENERATED_CLUSTERS { \
   { \
@@ -679,17 +694,31 @@
       .eventList = nullptr, \
       .eventCount = 0, \
     },\
+  { \
+      /* Endpoint: 2, Cluster: RandomNumberGenerator (server) */ \
+      .clusterId = 0xFFF1FC01, \
+      .attributes = ZAP_ATTRIBUTE_INDEX(105), \
+      .attributeCount = 3, \
+      .clusterSize = 8, \
+      .mask = ZAP_CLUSTER_MASK(SERVER), \
+      .functions = NULL, \
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 91 ), \
+      .generatedCommandList = nullptr, \
+      .eventList = ZAP_GENERATED_EVENTS_INDEX( 6 ), \
+      .eventCount = 1, \
+    },\
 }
 
 // clang-format on
 
-#define ZAP_FIXED_ENDPOINT_DATA_VERSION_COUNT 15
+#define ZAP_FIXED_ENDPOINT_DATA_VERSION_COUNT 16
 
 // This is an array of EmberAfEndpointType structures.
 #define GENERATED_ENDPOINT_TYPES                                                                                       \
 	{                                                                                                              \
 		{ ZAP_CLUSTER_INDEX(0), 11, 13 },                                                                      \
 		{ ZAP_CLUSTER_INDEX(11), 5, 22 },                                                                      \
+		{ ZAP_CLUSTER_INDEX(16), 1, 8 },                                                                       \
 	}
 
 // Largest attribute size is needed for various buffers
@@ -702,29 +731,29 @@ static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 #define ATTRIBUTE_SINGLETONS_SIZE (0)
 
 // Total size of attribute storage
-#define ATTRIBUTE_MAX_SIZE (35)
+#define ATTRIBUTE_MAX_SIZE (43)
 
 // Number of fixed endpoints
-#define FIXED_ENDPOINT_COUNT (2)
+#define FIXED_ENDPOINT_COUNT (3)
 
 // Array of endpoints that are supported, the data inside
 // the array is the endpoint number.
-#define FIXED_ENDPOINT_ARRAY { 0x0000, 0x0001 }
+#define FIXED_ENDPOINT_ARRAY { 0x0000, 0x0001, 0x0002 }
 
 // Array of profile ids
-#define FIXED_PROFILE_IDS { 0x0103, 0x0103 }
+#define FIXED_PROFILE_IDS { 0x0103, 0x0103, 0x0104 }
 
 // Array of device types
-#define FIXED_DEVICE_TYPES { { 0x00000012, 1 }, { 0x00000016, 4 }, { 0x0000010A, 1 } }
+#define FIXED_DEVICE_TYPES { { 0x00000012, 1 }, { 0x00000016, 4 }, { 0x0000010A, 1 }, { 0xFFF10001, 1 } }
 
 // Array of device type offsets
-#define FIXED_DEVICE_TYPE_OFFSETS { 0, 2 }
+#define FIXED_DEVICE_TYPE_OFFSETS { 0, 2, 3 }
 
 // Array of device type lengths
-#define FIXED_DEVICE_TYPE_LENGTHS { 2, 1 }
+#define FIXED_DEVICE_TYPE_LENGTHS { 2, 1, 1 }
 
 // Array of endpoint types supported on each endpoint
-#define FIXED_ENDPOINT_TYPES { 0, 1 }
+#define FIXED_ENDPOINT_TYPES { 0, 1, 2 }
 
 // Array of parent endpoints for each endpoint
-#define FIXED_PARENT_ENDPOINTS { kInvalidEndpointId, kInvalidEndpointId }
+#define FIXED_PARENT_ENDPOINTS { kInvalidEndpointId, kInvalidEndpointId, kInvalidEndpointId }

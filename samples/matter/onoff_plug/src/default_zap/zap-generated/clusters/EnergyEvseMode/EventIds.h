@@ -1,0 +1,22 @@
+// DO NOT EDIT MANUALLY - Generated file
+//
+// Identifier constant values for cluster EnergyEvseMode (cluster code: 157/0x9D)
+#pragma once
+
+#include <lib/core/DataModelTypes.h>
+
+namespace chip
+{
+namespace app
+{
+	namespace Clusters
+	{
+		namespace EnergyEvseMode
+		{
+			namespace Events
+			{
+			} // namespace Events
+		} // namespace EnergyEvseMode
+	} // namespace Clusters
+} // namespace app
+} // namespace chip

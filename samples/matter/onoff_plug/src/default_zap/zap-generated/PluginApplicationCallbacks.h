@@ -33,6 +33,7 @@ void MatterAdministratorCommissioningPluginServerInitCallback();
 void MatterOperationalCredentialsPluginServerInitCallback();
 void MatterGroupKeyManagementPluginServerInitCallback();
 void MatterScenesManagementPluginServerInitCallback();
+void MatterRandomNumberGeneratorPluginServerInitCallback();
 
 #define MATTER_PLUGINS_INIT                                                                                            \
 	MatterIdentifyPluginServerInitCallback();                                                                      \
@@ -48,4 +49,5 @@ void MatterScenesManagementPluginServerInitCallback();
 	MatterAdministratorCommissioningPluginServerInitCallback();                                                    \
 	MatterOperationalCredentialsPluginServerInitCallback();                                                        \
 	MatterGroupKeyManagementPluginServerInitCallback();                                                            \
-	MatterScenesManagementPluginServerInitCallback();
+	MatterScenesManagementPluginServerInitCallback();                                                              \
+	MatterRandomNumberGeneratorPluginServerInitCallback();
