@@ -525,6 +525,7 @@ cluster OnOff = 6 {
   readonly attribute attrib_id attributeList[] = 65531;
   readonly attribute bitmap32 featureMap = 65532;
   readonly attribute int16u clusterRevision = 65533;
+  attribute boolean customOnOffAttribute = 4293984256;
 
   request struct OffWithEffectRequest {
     EffectIdentifierEnum effectIdentifier = 0;
@@ -549,6 +550,8 @@ cluster OnOff = 6 {
   command OnWithRecallGlobalScene(): DefaultSuccess = 65;
   /** This command allows devices to be turned on for a specific duration with a guarded off duration so that SHOULD the device be subsequently turned off, further OnWithTimedOff commands, received during this time, are prevented from turning the devices back on. */
   command OnWithTimedOff(OnWithTimedOffRequest): DefaultSuccess = 66;
+  /** Custom command for the OnOff cluster */
+  command CustomOnOffCommand(): DefaultSuccess = 4293984256;
 }
 
 /** The Descriptor Cluster is meant to replace the support from the Zigbee Device Object (ZDO) for describing a node, its endpoints and clusters. */
@@ -794,8 +797,11 @@ cluster BasicInformation = 40 {
   readonly attribute attrib_id attributeList[] = 65531;
   readonly attribute bitmap32 featureMap = 65532;
   readonly attribute int16u clusterRevision = 65533;
+  attribute boolean customBasicInfoAttribute = 4293984256;
 
   command MfgSpecificPing(): DefaultSuccess = 0;
+  /** Custom command for the Basic Information cluster */
+  command CustomBasicInfoCommand(): DefaultSuccess = 4293984256;
 }
 
 /** Provides an interface for providing OTA software updates */
@@ -1868,6 +1874,9 @@ endpoint 0 {
     callback attribute attributeList;
     callback attribute featureMap;
     callback attribute clusterRevision;
+    ram      attribute customBasicInfoAttribute;
+
+    handle command CustomBasicInfoCommand;
   }
 
   server cluster OtaSoftwareUpdateRequestor {
@@ -2062,10 +2071,12 @@ endpoint 1 {
     callback attribute attributeList;
     ram      attribute featureMap default = 0;
     ram      attribute clusterRevision default = 6;
+    ram      attribute customOnOffAttribute;
 
     handle command Off;
     handle command On;
     handle command Toggle;
+    handle command CustomOnOffCommand;
   }
 
   server cluster Descriptor {

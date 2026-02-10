@@ -192,7 +192,14 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace ConfigurationVersion
-				constexpr std::array<DataModel::AttributeEntry, 16> kMandatoryMetadata = {
+				namespace CustomBasicInfoAttribute
+				{
+					inline constexpr DataModel::AttributeEntry
+						kMetadataEntry(CustomBasicInfoAttribute::Id,
+							       BitFlags<DataModel::AttributeQualityFlags>(),
+							       Access::Privilege::kView, Access::Privilege::kOperate);
+				} // namespace CustomBasicInfoAttribute
+				constexpr std::array<DataModel::AttributeEntry, 17> kMandatoryMetadata = {
 					DataModelRevision::kMetadataEntry,
 					VendorName::kMetadataEntry,
 					VendorID::kMetadataEntry,
@@ -209,6 +216,7 @@ namespace app
 					SpecificationVersion::kMetadataEntry,
 					MaxPathsPerInvoke::kMetadataEntry,
 					ConfigurationVersion::kMetadataEntry,
+					CustomBasicInfoAttribute::kMetadataEntry,
 
 				};
 
@@ -224,6 +232,13 @@ namespace app
 							       BitFlags<DataModel::CommandQualityFlags>(),
 							       Access::Privilege::kOperate);
 				} // namespace MfgSpecificPing
+				namespace CustomBasicInfoCommand
+				{
+					inline constexpr DataModel::AcceptedCommandEntry
+						kMetadataEntry(CustomBasicInfoCommand::Id,
+							       BitFlags<DataModel::CommandQualityFlags>(),
+							       Access::Privilege::kOperate);
+				} // namespace CustomBasicInfoCommand
 
 			} // namespace Commands
 

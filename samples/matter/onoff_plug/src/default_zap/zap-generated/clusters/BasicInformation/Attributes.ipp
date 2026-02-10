@@ -95,6 +95,8 @@ namespace app
 						return DataModel::Decode(reader, featureMap);
 					case Attributes::ClusterRevision::TypeInfo::GetAttributeId():
 						return DataModel::Decode(reader, clusterRevision);
+					case Attributes::CustomBasicInfoAttribute::TypeInfo::GetAttributeId():
+						return DataModel::Decode(reader, customBasicInfoAttribute);
 					default:
 						return CHIP_NO_ERROR;
 					}

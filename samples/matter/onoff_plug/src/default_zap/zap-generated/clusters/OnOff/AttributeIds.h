@@ -18,7 +18,7 @@ namespace app
 			{
 
 				// Total number of attributes supported by the cluster, including global attributes
-				inline constexpr uint32_t kAttributesCount = 10;
+				inline constexpr uint32_t kAttributesCount = 11;
 
 				namespace OnOff
 				{
@@ -69,6 +69,11 @@ namespace app
 				{
 					inline constexpr AttributeId Id = Globals::Attributes::ClusterRevision::Id;
 				} // namespace ClusterRevision
+
+				namespace CustomOnOffAttribute
+				{
+					inline constexpr AttributeId Id = 0xFFF10000;
+				} // namespace CustomOnOffAttribute
 
 			} // namespace Attributes
 		} // namespace OnOff

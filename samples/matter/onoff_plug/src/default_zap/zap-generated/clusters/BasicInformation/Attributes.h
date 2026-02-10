@@ -547,6 +547,24 @@ namespace app
 						}
 					};
 				} // namespace ClusterRevision
+				namespace CustomBasicInfoAttribute
+				{
+					struct TypeInfo {
+						using Type = bool;
+						using DecodableType = bool;
+						using DecodableArgType = bool;
+
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::BasicInformation::Id;
+						}
+						static constexpr AttributeId GetAttributeId()
+						{
+							return Attributes::CustomBasicInfoAttribute::Id;
+						}
+						static constexpr bool MustUseTimedWrite() { return false; }
+					};
+				} // namespace CustomBasicInfoAttribute
 
 				struct TypeInfo {
 					struct DecodableType {
@@ -603,6 +621,8 @@ namespace app
 							static_cast<uint32_t>(0);
 						Attributes::ClusterRevision::TypeInfo::DecodableType clusterRevision =
 							static_cast<uint16_t>(0);
+						Attributes::CustomBasicInfoAttribute::TypeInfo::DecodableType
+							customBasicInfoAttribute = static_cast<bool>(0);
 					};
 				};
 			} // namespace Attributes

@@ -55,6 +55,15 @@ bool emberAfRandomNumberGeneratorClusterGenerateCallback(chip::app::CommandHandl
 	return false;
 }
 
+bool emberAfOnOffClusterCustomOnOffCommandCallback(CommandHandler *commandObj, const ConcreteCommandPath &commandPath, const OnOff::Commands::CustomOnOffCommand::DecodableType &commandData)
+{
+	LOG_INF("CustomOnOffCommand received");
+
+	commandObj->AddStatus(commandPath, Protocols::InteractionModel::Status::Success);
+
+	return true;
+}
+
 void ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)
 {
 	if ((DK_BTN2_MSK & hasChanged) & state) {
@@ -109,10 +118,14 @@ void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &a
 	ClusterId clusterId = attributePath.mClusterId;
 	AttributeId attributeId = attributePath.mAttributeId;
 
-	if (clusterId == OnOff::Id && attributeId == OnOff::Attributes::OnOff::Id) {
-		LOG_INF("Cluster OnOff: attribute OnOff set to %" PRIu8 "", *value);
-
-		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(*value);
+	if (clusterId == OnOff::Id){
+		if (attributeId == OnOff::Attributes::OnOff::Id) {
+			LOG_INF("Cluster OnOff: attribute OnOff set to %" PRIu8 "", *value);
+	
+			Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(*value);
+		} else if (attributeId == OnOff::Attributes::CustomOnOffAttribute::Id) {
+			LOG_INF("Cluster OnOff: attribute CustomOnOffAttribute set to %" PRIu8 "", *value);
+		}
 	} else if (clusterId == RandomNumberGenerator::Id && attributeId == RandomNumberGenerator::Attributes::GeneratedNumber::Id) {
 		int16_t generatedNumber = 0;
 		memcpy(&generatedNumber, value, sizeof(int16_t));

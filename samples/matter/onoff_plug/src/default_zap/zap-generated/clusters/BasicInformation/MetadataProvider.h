@@ -70,6 +70,8 @@ namespace app
 					return MaxPathsPerInvoke::kMetadataEntry;
 				case ConfigurationVersion::Id:
 					return ConfigurationVersion::kMetadataEntry;
+				case CustomBasicInfoAttribute::Id:
+					return CustomBasicInfoAttribute::kMetadataEntry;
 				default:
 					return std::nullopt;
 				}
@@ -84,6 +86,8 @@ namespace app
 				switch (commandId) {
 				case MfgSpecificPing::Id:
 					return MfgSpecificPing::kMetadataEntry;
+				case CustomBasicInfoCommand::Id:
+					return CustomBasicInfoCommand::kMetadataEntry;
 
 				default:
 					return std::nullopt;

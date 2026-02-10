@@ -32,6 +32,8 @@ namespace app
 					return OffWaitTime::kMetadataEntry;
 				case StartUpOnOff::Id:
 					return StartUpOnOff::kMetadataEntry;
+				case CustomOnOffAttribute::Id:
+					return CustomOnOffAttribute::kMetadataEntry;
 				default:
 					return std::nullopt;
 				}
@@ -55,6 +57,8 @@ namespace app
 					return OnWithRecallGlobalScene::kMetadataEntry;
 				case OnWithTimedOff::Id:
 					return OnWithTimedOff::kMetadataEntry;
+				case CustomOnOffCommand::Id:
+					return CustomOnOffCommand::kMetadataEntry;
 
 				default:
 					return std::nullopt;

@@ -18,7 +18,7 @@ namespace app
 			{
 
 				// Total number of attributes supported by the cluster, including global attributes
-				inline constexpr uint32_t kAttributesCount = 29;
+				inline constexpr uint32_t kAttributesCount = 30;
 
 				namespace DataModelRevision
 				{
@@ -164,6 +164,11 @@ namespace app
 				{
 					inline constexpr AttributeId Id = Globals::Attributes::ClusterRevision::Id;
 				} // namespace ClusterRevision
+
+				namespace CustomBasicInfoAttribute
+				{
+					inline constexpr AttributeId Id = 0xFFF10000;
+				} // namespace CustomBasicInfoAttribute
 
 			} // namespace Attributes
 		} // namespace BasicInformation

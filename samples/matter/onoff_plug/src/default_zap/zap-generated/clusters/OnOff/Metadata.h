@@ -58,8 +58,16 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, Access::Privilege::kManage);
 				} // namespace StartUpOnOff
-				constexpr std::array<DataModel::AttributeEntry, 1> kMandatoryMetadata = {
+				namespace CustomOnOffAttribute
+				{
+					inline constexpr DataModel::AttributeEntry
+						kMetadataEntry(CustomOnOffAttribute::Id,
+							       BitFlags<DataModel::AttributeQualityFlags>(),
+							       Access::Privilege::kView, Access::Privilege::kOperate);
+				} // namespace CustomOnOffAttribute
+				constexpr std::array<DataModel::AttributeEntry, 2> kMandatoryMetadata = {
 					OnOff::kMetadataEntry,
+					CustomOnOffAttribute::kMetadataEntry,
 
 				};
 
@@ -107,6 +115,13 @@ namespace app
 							       BitFlags<DataModel::CommandQualityFlags>(),
 							       Access::Privilege::kOperate);
 				} // namespace OnWithTimedOff
+				namespace CustomOnOffCommand
+				{
+					inline constexpr DataModel::AcceptedCommandEntry
+						kMetadataEntry(CustomOnOffCommand::Id,
+							       BitFlags<DataModel::CommandQualityFlags>(),
+							       Access::Privilege::kOperate);
+				} // namespace CustomOnOffCommand
 
 			} // namespace Commands
 

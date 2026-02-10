@@ -7277,6 +7277,12 @@ bool emberAfOnOffClusterOnWithTimedOffCallback(
 	chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
 	const chip::app::Clusters::OnOff::Commands::OnWithTimedOff::DecodableType &commandData);
 /**
+ * @brief On/Off Cluster CustomOnOffCommand Command callback (from client)
+ */
+bool emberAfOnOffClusterCustomOnOffCommandCallback(
+	chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
+	const chip::app::Clusters::OnOff::Commands::CustomOnOffCommand::DecodableType &commandData);
+/**
  * @brief Level Control Cluster MoveToLevel Command callback (from client)
  */
 bool emberAfLevelControlClusterMoveToLevelCallback(

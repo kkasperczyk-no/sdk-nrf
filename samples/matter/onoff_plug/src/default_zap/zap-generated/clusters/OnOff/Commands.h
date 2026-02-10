@@ -88,6 +88,12 @@ namespace app
 					struct DecodableType;
 				} // namespace OnWithTimedOff
 
+				namespace CustomOnOffCommand
+				{
+					struct Type;
+					struct DecodableType;
+				} // namespace CustomOnOffCommand
+
 			} // namespace Commands
 
 			namespace Commands
@@ -339,6 +345,45 @@ namespace app
 						CHIP_ERROR Decode(TLV::TLVReader &reader);
 					};
 				}; // namespace OnWithTimedOff
+				namespace CustomOnOffCommand
+				{
+					enum class Fields : uint8_t {};
+
+					struct Type {
+					public:
+						// Use GetCommandId instead of commandId directly to avoid naming
+						// conflict with CommandIdentification in ExecutionOfACommand
+						static constexpr CommandId GetCommandId()
+						{
+							return Commands::CustomOnOffCommand::Id;
+						}
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::OnOff::Id;
+						}
+
+						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
+
+						using ResponseType = DataModel::NullObjectType;
+
+						static constexpr bool MustUseTimedInvoke() { return false; }
+					};
+
+					struct DecodableType {
+					public:
+						static constexpr CommandId GetCommandId()
+						{
+							return Commands::CustomOnOffCommand::Id;
+						}
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::OnOff::Id;
+						}
+						static constexpr bool kIsFabricScoped = false;
+
+						CHIP_ERROR Decode(TLV::TLVReader &reader);
+					};
+				}; // namespace CustomOnOffCommand
 			} // namespace Commands
 		} // namespace OnOff
 	} // namespace Clusters

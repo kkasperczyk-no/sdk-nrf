@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configurator>
+  <clusterExtension code="0x28">
+    <attribute name="CustomBasicInfoAttribute" side="server" code="0xfff10000" define="CUSTOM_BASICINFO_ATTRIBUTE" type="boolean" writable="true"/>
+    <command name="CustomBasicInfoCommand" code="0xfff10000" source="client">
+      <description>Custom command for the Basic Information cluster</description>
+    </command>
+  </clusterExtension>
+</configurator>

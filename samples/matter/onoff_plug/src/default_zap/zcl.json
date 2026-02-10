@@ -151,7 +151,9 @@
         "matter-devices.xml",
         "sample-mei-cluster.xml",
         "zone-management-cluster.xml",
-        "RandomNumberGenerator.xml"
+        "RandomNumberGenerator.xml",
+        "onoff-cluster_extension.xml",
+        "basic-information-cluster_extension.xml"
     ],
     "manufacturersXml": "../../../../../../modules/lib/matter/src/app/zap-templates/zcl/data-model/manufacturers.xml",
     "options": {

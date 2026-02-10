@@ -17,7 +17,7 @@ namespace app
 			{
 
 				// Total number of client to server commands supported by the cluster
-				inline constexpr uint32_t kAcceptedCommandsCount = 1;
+				inline constexpr uint32_t kAcceptedCommandsCount = 2;
 
 				// Total number of server to client commands supported by the cluster (response
 				// commands)
@@ -27,6 +27,11 @@ namespace app
 				{
 					inline constexpr CommandId Id = 0x00000000;
 				} // namespace MfgSpecificPing
+
+				namespace CustomBasicInfoCommand
+				{
+					inline constexpr CommandId Id = 0xFFF10000;
+				} // namespace CustomBasicInfoCommand
 
 			} // namespace Commands
 		} // namespace BasicInformation

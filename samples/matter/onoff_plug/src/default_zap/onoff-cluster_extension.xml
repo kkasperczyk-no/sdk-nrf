@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configurator>
+  <clusterExtension code="0x6">
+    <attribute name="CustomOnOffAttribute" side="server" code="0xfff10000" define="CUSTOM_ONOFF_ATTRIBUTE" type="boolean" writable="true"/>
+    <command name="CustomOnOffCommand" code="0xfff10000" source="client">
+      <description>Custom command for the OnOff cluster</description>
+    </command>
+  </clusterExtension>
+</configurator>

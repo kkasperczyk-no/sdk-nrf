@@ -190,6 +190,24 @@ namespace app
 						}
 					};
 				} // namespace ClusterRevision
+				namespace CustomOnOffAttribute
+				{
+					struct TypeInfo {
+						using Type = bool;
+						using DecodableType = bool;
+						using DecodableArgType = bool;
+
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::OnOff::Id;
+						}
+						static constexpr AttributeId GetAttributeId()
+						{
+							return Attributes::CustomOnOffAttribute::Id;
+						}
+						static constexpr bool MustUseTimedWrite() { return false; }
+					};
+				} // namespace CustomOnOffAttribute
 
 				struct TypeInfo {
 					struct DecodableType {
@@ -218,6 +236,8 @@ namespace app
 							static_cast<uint32_t>(0);
 						Attributes::ClusterRevision::TypeInfo::DecodableType clusterRevision =
 							static_cast<uint16_t>(0);
+						Attributes::CustomOnOffAttribute::TypeInfo::DecodableType
+							customOnOffAttribute = static_cast<bool>(0);
 					};
 				};
 			} // namespace Attributes

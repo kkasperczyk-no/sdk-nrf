@@ -17,7 +17,7 @@ namespace app
 			{
 
 				// Total number of client to server commands supported by the cluster
-				inline constexpr uint32_t kAcceptedCommandsCount = 6;
+				inline constexpr uint32_t kAcceptedCommandsCount = 7;
 
 				// Total number of server to client commands supported by the cluster (response
 				// commands)
@@ -52,6 +52,11 @@ namespace app
 				{
 					inline constexpr CommandId Id = 0x00000042;
 				} // namespace OnWithTimedOff
+
+				namespace CustomOnOffCommand
+				{
+					inline constexpr CommandId Id = 0xFFF10000;
+				} // namespace CustomOnOffCommand
 
 			} // namespace Commands
 		} // namespace OnOff
