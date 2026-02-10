@@ -12,6 +12,8 @@
 #include "lib/core/CHIPError.h"
 #include "lib/support/CodeUtils.h"
 
+#include "basic_information_extension.h"
+
 #include <setup_payload/OnboardingCodesUtil.h>
 
 #include <app-common/zap-generated/callback.h>
@@ -30,6 +32,8 @@ using namespace ::chip::app::Clusters::RandomNumberGenerator;
 using namespace ::chip::DeviceLayer;
 
 constexpr EndpointId kOnOffPlugEndpointId = 1;
+
+RegisteredServerCluster<BasicInformationExtension> sBasicInformationExtension;
 
 bool emberAfRandomNumberGeneratorClusterGenerateCallback(chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
 	const RandomNumberGenerator::Commands::Generate::DecodableType &commandData)
@@ -104,6 +108,18 @@ CHIP_ERROR AppTask::Init()
 CHIP_ERROR AppTask::StartApp()
 {
 	ReturnErrorOnFailure(Init());
+
+	/* Replaces the registered BasicInformation cluster with a customized one that adds random number handling. */
+	auto &registry = chip::app::CodegenDataModelProvider::Instance().Registry();
+
+	ServerClusterInterface *interface =
+		registry.Get({ kRootEndpointId, chip::app::Clusters::BasicInformation::Id });
+
+	VerifyOrDie(interface != nullptr);
+
+	registry.Unregister(interface);
+	VerifyOrDie(registry.Register(sBasicInformationExtension.Registration()) == CHIP_NO_ERROR);
+
 
 	while (true) {
 		Nrf::DispatchNextTask();
