@@ -264,11 +264,14 @@ Matter
 ------
 
 * Added support for nRF54LM20B SoC in Matter samples and applications.
+* Added support for the nRF54L15 TAG board in Matter samples and applications.
+  The `Matter Quick Start app`_ v1.1.0 that is part of nRF Connect for Desktop now supports the nRF54L15 TAG board.
 * Updated:
 
   * The :ref:`matter_test_event_triggers_default_test_event_triggers` section with the new Closure Control cluster test event triggers.
   * Decreased Matter OTA image transfer time by around 15%.
   * By enabling PSA Crypto support by default, even when Wi-Fi is enabled.
+  * The :ref:`ug_matter_platform_and_dmp` page with the certification ID granted for Nordic Matter Compliant Platform working with the Matter 1.5.0 version.
 
 * Deprecated the secure persistent storage backend enabled with the :option:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND` Kconfig option.
 
@@ -428,6 +431,8 @@ nRF Machine Learning (Edge Impulse)
 
 Thingy:53: Matter weather station
 ---------------------------------
+
+* Added support for the ``nrf54l15tag/nrf54l15/cpuapp`` board target.
 
 Installer (MCUboot Firmware Loader installer)
 -----------------------------------------------
@@ -736,6 +741,14 @@ Matter samples
 
   * Added support for :ref:`matter_light_bulb_aws_iot_integration` in the nRF54LM20 DK with the nRF7002-EB II shield attached.
 
+* :ref:`matter_temperature_sensor_sample`:
+
+  * Added support for the ``nrf54l15tag/nrf54l15/cpuapp`` board target.
+
+* :ref:`matter_template_sample`:
+
+  * Added support for the ``nrf54l15tag/nrf54l15/cpuapp`` board target.
+
 Networking samples
 ------------------
 
@@ -1012,7 +1025,8 @@ Other libraries
 ---------------
 
 * Added the :ref:`lib_accel_to_angle` library for converting three-dimensional acceleration into pitch and roll angles.
-
+* Added the ``nrf_802154_callbacks_dispatcher`` library for dispatching callbacks from the nRF IEEE 802.15.4 radio driver to the appropriate client.
+  This library is useful if the application needs to use more than one nRF IEEE 802.15.4 radio driver client and each client has different callbacks implementations.
 * Deprecated the :ref:`ei_wrapper` library.
   Replaced by Edge Impulse SDK in `Edge AI Add-on for nRF Connect SDK`_.
 
